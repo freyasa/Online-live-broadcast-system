@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.niit.onlivestream.mapper.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.niit.onlivestream.domain.UserInfo">
+            <id property="uuid" column="uuid" jdbcType="VARCHAR"/>
+            <result property="useraccount" column="userAccount" jdbcType="VARCHAR"/>
+            <result property="userpassword" column="userPassword" jdbcType="VARCHAR"/>
+            <result property="username" column="userName" jdbcType="VARCHAR"/>
+            <result property="userage" column="userAge" jdbcType="INTEGER"/>
+            <result property="useremail" column="userEmail" jdbcType="VARCHAR"/>
+            <result property="userprivilege" column="userPrivilege" jdbcType="INTEGER"/>
+            <result property="usercreatetime" column="userCreateTime" jdbcType="TIMESTAMP"/>
+            <result property="userupdatetime" column="userUpdateTime" jdbcType="TIMESTAMP"/>
+            <result property="userisdelete" column="userIsDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uuid,userAccount,userPassword,
+        userName,userAge,userEmail,
+        userPrivilege,userCreateTime,userUpdateTime,
+        userIsDelete,userSex,userAvatar
+    </sql>
+</mapper>

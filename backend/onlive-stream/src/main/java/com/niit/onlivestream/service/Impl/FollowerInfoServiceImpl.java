@@ -1,9 +1,9 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.FollowerInfo;
-import generator.service.FollowerInfoService;
 import com.niit.onlivestream.mapper.FollowerInfoMapper;
+import com.niit.onlivestream.service.FollowerInfoService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class FollowerInfoServiceImpl extends ServiceImpl<FollowerInfoMapper, FollowerInfo>
-    implements FollowerInfoService{
+    implements FollowerInfoService {
 
 }
 

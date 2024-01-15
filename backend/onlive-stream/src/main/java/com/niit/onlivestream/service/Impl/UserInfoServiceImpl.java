@@ -1,8 +1,8 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.UserInfo;
-import generator.service.UserInfoService;
+import com.niit.onlivestream.service.UserInfoService;
 import com.niit.onlivestream.mapper.UserInfoMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
-    implements UserInfoService{
+    implements UserInfoService {
 
 }
 

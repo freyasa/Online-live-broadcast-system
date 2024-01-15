@@ -1,9 +1,9 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.CommentLog;
-import generator.service.CommentLogService;
 import com.niit.onlivestream.mapper.CommentLogMapper;
+import com.niit.onlivestream.service.CommentLogService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class CommentLogServiceImpl extends ServiceImpl<CommentLogMapper, CommentLog>
-    implements CommentLogService{
+    implements CommentLogService {
 
 }
 

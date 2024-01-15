@@ -1,9 +1,9 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.RoomLog;
-import generator.service.RoomLogService;
 import com.niit.onlivestream.mapper.RoomLogMapper;
+import com.niit.onlivestream.service.RoomLogService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class RoomLogServiceImpl extends ServiceImpl<RoomLogMapper, RoomLog>
-    implements RoomLogService{
+    implements RoomLogService {
 
 }
 

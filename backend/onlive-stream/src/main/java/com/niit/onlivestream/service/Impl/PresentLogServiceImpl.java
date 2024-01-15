@@ -1,9 +1,9 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.PresentLog;
-import generator.service.PresentLogService;
 import com.niit.onlivestream.mapper.PresentLogMapper;
+import com.niit.onlivestream.service.PresentLogService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class PresentLogServiceImpl extends ServiceImpl<PresentLogMapper, PresentLog>
-    implements PresentLogService{
+    implements PresentLogService {
 
 }
 

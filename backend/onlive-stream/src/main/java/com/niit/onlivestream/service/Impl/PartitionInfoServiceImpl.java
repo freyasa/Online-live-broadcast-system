@@ -1,9 +1,9 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.PartitionInfo;
-import generator.service.PartitionInfoService;
 import com.niit.onlivestream.mapper.PartitionInfoMapper;
+import com.niit.onlivestream.service.PartitionInfoService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class PartitionInfoServiceImpl extends ServiceImpl<PartitionInfoMapper, PartitionInfo>
-    implements PartitionInfoService{
+    implements PartitionInfoService {
 
 }
 

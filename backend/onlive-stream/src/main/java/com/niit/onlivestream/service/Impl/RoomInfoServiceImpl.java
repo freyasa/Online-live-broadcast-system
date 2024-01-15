@@ -1,9 +1,9 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.RoomInfo;
-import generator.service.RoomInfoService;
 import com.niit.onlivestream.mapper.RoomInfoMapper;
+import com.niit.onlivestream.service.RoomInfoService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
-    implements RoomInfoService{
+    implements RoomInfoService {
 
 }
 

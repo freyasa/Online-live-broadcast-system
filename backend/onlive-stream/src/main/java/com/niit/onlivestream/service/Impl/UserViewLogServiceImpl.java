@@ -1,9 +1,9 @@
-package com.niit.onlivestream.service.impl;
+package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.domain.UserViewLog;
-import generator.service.UserViewLogService;
 import com.niit.onlivestream.mapper.UserViewLogMapper;
+import com.niit.onlivestream.service.UserViewLogService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class UserViewLogServiceImpl extends ServiceImpl<UserViewLogMapper, UserViewLog>
-    implements UserViewLogService{
+    implements UserViewLogService {
 
 }
 

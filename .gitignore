@@ -3,3 +3,5 @@ document/.DS_Store
 frontend/online/node_modules/
 frontend/online1/node_modules/
 .DS_Store
+frontend/online/.idea/
+frontend/online1/.idea/

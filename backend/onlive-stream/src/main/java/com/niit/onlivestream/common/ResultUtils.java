@@ -3,8 +3,6 @@ package com.niit.onlivestream.common;
 /**
  * 返回工具类
  *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
  */
 public class ResultUtils {
 
@@ -16,7 +14,7 @@ public class ResultUtils {
      * @return
      */
     public static <T> BaseResponse<T> success(T data) {
-        return new BaseResponse<>(0, data, "ok");
+        return new BaseResponse<>(200, data, "ok");
     }
 
     /**
@@ -50,8 +48,6 @@ public class ResultUtils {
     public static BaseResponse error(ErrorCode errorCode, String message, String description) {
         return new BaseResponse(errorCode.getCode(), null, message, description);
     }
-
-    // https://space.bilibili.com/12890453/
 
     /**
      * 失败

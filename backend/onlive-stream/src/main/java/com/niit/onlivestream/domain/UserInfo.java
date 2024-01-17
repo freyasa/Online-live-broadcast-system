@@ -46,7 +46,7 @@ public class UserInfo implements Serializable {
     private String useremail;
 
     /**
-     * 
+     * 0 普通 1 会员 2 管理员
      */
     private Integer userprivilege;
 
@@ -63,17 +63,19 @@ public class UserInfo implements Serializable {
     /**
      * 
      */
-    private Integer userisdelete;
+    @TableField()
+    private Integer isdelete;
 
     /**
      * 
      */
-    private byte[] usersex;
+    private Integer usersex;
 
     /**
      * 
      */
     private byte[] useravatar;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -99,7 +101,7 @@ public class UserInfo implements Serializable {
             && (this.getUserprivilege() == null ? other.getUserprivilege() == null : this.getUserprivilege().equals(other.getUserprivilege()))
             && (this.getUsercreatetime() == null ? other.getUsercreatetime() == null : this.getUsercreatetime().equals(other.getUsercreatetime()))
             && (this.getUserupdatetime() == null ? other.getUserupdatetime() == null : this.getUserupdatetime().equals(other.getUserupdatetime()))
-            && (this.getUserisdelete() == null ? other.getUserisdelete() == null : this.getUserisdelete().equals(other.getUserisdelete()));
+            && (this.getIsdelete() == null ? other.getIsdelete() == null : this.getIsdelete().equals(other.getIsdelete()));
     }
 
     @Override
@@ -115,7 +117,7 @@ public class UserInfo implements Serializable {
         result = prime * result + ((getUserprivilege() == null) ? 0 : getUserprivilege().hashCode());
         result = prime * result + ((getUsercreatetime() == null) ? 0 : getUsercreatetime().hashCode());
         result = prime * result + ((getUserupdatetime() == null) ? 0 : getUserupdatetime().hashCode());
-        result = prime * result + ((getUserisdelete() == null) ? 0 : getUserisdelete().hashCode());
+        result = prime * result + ((getIsdelete() == null) ? 0 : getIsdelete().hashCode());
         return result;
     }
 
@@ -134,7 +136,7 @@ public class UserInfo implements Serializable {
         sb.append(", userprivilege=").append(userprivilege);
         sb.append(", usercreatetime=").append(usercreatetime);
         sb.append(", userupdatetime=").append(userupdatetime);
-        sb.append(", userisdelete=").append(userisdelete);
+        sb.append(", userisdelete=").append(isdelete);
         sb.append(", usersex=").append(usersex);
         sb.append(", useravatar=").append(useravatar);
         sb.append(", serialVersionUID=").append(serialVersionUID);

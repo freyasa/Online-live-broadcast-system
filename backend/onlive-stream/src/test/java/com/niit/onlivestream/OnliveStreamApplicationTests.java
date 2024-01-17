@@ -17,18 +17,6 @@ class OnliveStreamApplicationTests {
 	@Resource
 	UserInfoService userInfoService;
 
-	@Test
-	public void testService(){
-		List<UserInfo> userInfoList = userInfoService.userInfoGetAll();
-		for (UserInfo u:userInfoList) {
-			System.out.println("用户信息:"+u);
-		}
-	}
-
-	@Test
-	public void testServiceInsert(){
-		userInfoService.userRegister("wqe123456","123456","123456");
-	}
 
 
 

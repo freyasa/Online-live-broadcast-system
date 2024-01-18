@@ -22,6 +22,19 @@ const toPagePath = (url: string) => {
 
 <template>
   <div>
+    <el-container>
+      <el-header>
+        <div style="background-color: #213547">Header</div>
+      </el-header>
+      <el-main>
+        <div style="background-color: #213547">Main</div>
+      </el-main>
+      <el-footer>
+        <div style="background-color: #213547">Footer</div>
+      </el-footer>
+    </el-container>
+  </div>
+  <div>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
     </a>

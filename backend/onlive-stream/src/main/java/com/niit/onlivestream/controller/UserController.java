@@ -6,8 +6,8 @@ import com.niit.onlivestream.common.ResultUtils;
 import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.UserInfoService;
-import com.niit.onlivestream.vo.UserLoginRequest;
-import com.niit.onlivestream.vo.UserRegisterRequest;
+import com.niit.onlivestream.vo.UserInfoRequest.UserLoginRequest;
+import com.niit.onlivestream.vo.UserInfoRequest.UserRegisterRequest;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +67,8 @@ public class UserController {
             throw new BusinessException(ErrorCode.SUCCESS,"账户或密码不正确");
         return ResultUtils.success(userInfo);
     }
+
+
 
 
     @PostMapping("/delete")

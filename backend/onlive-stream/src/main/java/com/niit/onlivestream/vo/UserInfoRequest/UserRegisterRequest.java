@@ -1,4 +1,4 @@
-package com.niit.onlivestream.vo;
+package com.niit.onlivestream.vo.UserInfoRequest;
 
 import lombok.Data;
 

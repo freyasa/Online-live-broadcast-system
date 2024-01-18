@@ -17,4 +17,5 @@ public interface UserInfoService extends IService<UserInfo> {
     int userLogout(HttpServletRequest request);
     List<UserInfo> userInfoGetAll();
     UserInfo userGetById(String id);
+
 }

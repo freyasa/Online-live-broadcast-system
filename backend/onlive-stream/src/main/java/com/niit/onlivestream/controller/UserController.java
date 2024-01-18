@@ -1,6 +1,5 @@
 package com.niit.onlivestream.controller;
 
-
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
 import com.niit.onlivestream.common.ResultUtils;
@@ -49,6 +48,12 @@ public class UserController {
         return ResultUtils.success(result);
     }
 
+    /**
+     *
+     * @param userLoginRequest 登录请求体
+     * @param request 保存session
+     * @return 脱敏后的用户信息
+     */
     @PostMapping("/login")
     public BaseResponse<UserInfo> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request){
         if(userLoginRequest==null)

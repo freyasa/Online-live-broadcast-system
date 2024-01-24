@@ -13,18 +13,4 @@ import java.util.List;
 @SpringBootTest
 class OnliveStreamApplicationTests {
 
-
-
-	@Resource
-	UserInfoService userInfoService;
-
-
-	public void test(){
-		UserUpdateRequest updateRequest =new UserUpdateRequest();
-
-	}
-
-
-
-
 }

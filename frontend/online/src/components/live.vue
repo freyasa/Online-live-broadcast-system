@@ -67,13 +67,31 @@ const setLength = () => {
       </el-card>
 
       <el-card class="box-card" style="width: 300px; height: 880px">
-        <div style="height: 178px; width: 100%">
-          高能用户
+        <div style="height: 178px; width: 100%; text-align: center">
+          <div style="font-size: 14px; font-weight: 560; padding-top: 10px">高能用户</div>
         </div>
-        <div style="height: 560px; width: 300px; padding: 5px 10px 5px 10px">
-          <div style="background-color: lightpink; height: 100%; width: 280px">
-            聊天界面
-          </div>
+
+        <el-divider style="margin: 0"/>
+
+        <div style="height: 560px; width: 280px; padding: 5px 10px 5px 10px">
+
+          <el-scrollbar max-height="560px" style="overflow: auto">
+            <ul v-infinite-scroll="load"
+                style="background-color: white; height: 100%; width: 280px; margin: 0; padding: 0;">
+              <li v-for="i in 20" :key="i">
+                <div style="padding: 5px; font-size: 14px">
+                  <span style="color: #9499A0">发送者：</span>
+                  <span style="color: #61666D">消息内容</span>
+                </div>
+              </li>
+              <li>
+                <div style="padding: 5px; font-size: 14px">
+                  <span style="color: #9499A0">发送者：</span>
+                  <span style="color: #61666D">消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容</span>
+                </div>
+              </li>
+            </ul>
+          </el-scrollbar>
         </div>
         <div style="height: 145px; width: 100%; margin-top: 5px;">
           <div
@@ -89,39 +107,43 @@ const setLength = () => {
               @keyup="setLength()"
           />
             <div style="position:relative; left:220px; bottom:23px; font-size:12px; color:#999999">
-              {{ inputNumber +" / 20" }}
+              {{ inputNumber + " / 20" }}
             </div>
           </div>
           <el-button type="primary" size="small" style="margin-left: 210px; margin-top: 8px">&nbsp;&nbsp;&nbsp;发送&nbsp;&nbsp;&nbsp;</el-button>
         </div>
       </el-card>
     </div>
+    <div style="width: 1189px; height: 200px; margin-left: 200px; margin-top:12px; padding: 0; background:#000;">
+      <el-card class="box-card">
+      </el-card>
+    </div>
   </div>
 
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <!--  1920 1395 60 1300-->
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
 </template>
 
 <style lang="less" scoped>

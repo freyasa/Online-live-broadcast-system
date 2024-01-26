@@ -5,16 +5,13 @@ import number = CSS.number;
 
 const inputBarrage = ref('')
 const inputNumber = ref(0)
+const barrageCount = ref(10)
 
-// function setLength(obj, maxlength, id) {
-//   let num = maxlength - obj.value.length;
-//   let leng = id;
-//   if (num < 0) {
-//     num = 0;
-//   }
-//   document.getElementById(leng).innerHTML = num + "/20";
-//   console.log(num)
-// }
+// 滑到底请求一下
+const loadBarrage = () => {
+  barrageCount.value += 2
+  console.log(barrageCount.value)
+}
 
 const setLength = () => {
   inputNumber.value = inputBarrage.value === '' ? 0 : inputBarrage.value.length
@@ -76,15 +73,15 @@ const setLength = () => {
         <div style="height: 560px; width: 280px; padding: 5px 10px 5px 10px">
 
           <el-scrollbar max-height="560px" style="overflow: auto">
-            <ul v-infinite-scroll="load"
+            <ul v-infinite-scroll="loadBarrage"
                 style="background-color: white; height: 100%; width: 280px; margin: 0; padding: 0;">
-              <li v-for="i in 20" :key="i">
+              <li>
                 <div style="padding: 5px; font-size: 14px">
                   <span style="color: #9499A0">发送者：</span>
                   <span style="color: #61666D">消息内容</span>
                 </div>
               </li>
-              <li>
+              <li  v-for="i in barrageCount" :key="i">
                 <div style="padding: 5px; font-size: 14px">
                   <span style="color: #9499A0">发送者：</span>
                   <span style="color: #61666D">消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容</span>

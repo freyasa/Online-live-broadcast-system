@@ -13,9 +13,9 @@ import java.util.List;
 public interface UserInfoService extends IService<UserInfo> {
     String userRegister(String userAccount, String userPassword, String checkPassword);
     UserInfo userLogin(String userAccount, String userPassword, HttpServletRequest request);
+    Integer userUpdatePassword(String oldPassword, String newPassword, String checkPassword);
     UserInfo getSafetyUser(UserInfo originUser);
-    int userLogout(HttpServletRequest request);
-    List<UserInfo> userInfoGetAll();
-    UserInfo userGetById(String id);
+
+
 
 }

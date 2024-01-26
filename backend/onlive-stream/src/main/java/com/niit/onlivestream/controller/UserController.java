@@ -1,23 +1,31 @@
 package com.niit.onlivestream.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
 import com.niit.onlivestream.common.ResultUtils;
 import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.UserInfoService;
+import com.niit.onlivestream.util.JwtUtil;
+import com.niit.onlivestream.util.ThreadLocalUtil;
+import com.niit.onlivestream.vo.UserInfoRequest.UserChangePswRequest;
 import com.niit.onlivestream.vo.UserInfoRequest.UserLoginRequest;
+import com.niit.onlivestream.vo.UserInfoRequest.UserLoginResponse;
 import com.niit.onlivestream.vo.UserInfoRequest.UserRegisterRequest;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.niit.onlivestream.contant.UserConstant.ADMIN_ROLE;
 import static com.niit.onlivestream.contant.UserConstant.USER_LOGIN_STATE;
+import static com.niit.onlivestream.util.OMUtils.MapToObject;
+import static com.niit.onlivestream.util.OMUtils.ObjectToMap;
 
 
 @RestController
@@ -55,48 +63,77 @@ public class UserController {
      * @return 脱敏后的用户信息
      */
     @PostMapping("/login")
-    public BaseResponse<UserInfo> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request){
+    public BaseResponse<UserLoginResponse> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request){
         if(userLoginRequest==null)
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
         if(StringUtils.isAnyBlank(userAccount,userPassword))
             throw new BusinessException(ErrorCode.NULL_ERROR);
+
+        //开始执行操作
         UserInfo userInfo = userService.userLogin(userAccount,userPassword,request);
         if(userInfo==null)
             throw new BusinessException(ErrorCode.SUCCESS,"账户或密码不正确");
-        return ResultUtils.success(userInfo);
+
+        //生成Token
+        Map<String,Object> claim = new HashMap<>();
+        claim = ObjectToMap(userInfo);
+        String token = JwtUtil.getToken(claim);
+
+        // 封装返回体
+        UserLoginResponse response =new UserLoginResponse();
+        response = getResponse(userInfo);
+        response.setToken(token);
+
+        // 返回
+        return ResultUtils.success(response);
+    }
+
+
+    @PostMapping("/getCurrentUser")
+    public BaseResponse<UserInfo > userLogin(){
+        UserInfo user= ThreadLocalUtil.get();
+        return  ResultUtils.success(user);
     }
 
 
 
-
-    @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteUser(@RequestBody String id, HttpServletRequest request) {
-        if (!isAdmin(request)) {
-            throw new BusinessException(ErrorCode.NO_AUTH);
-        }
-        if (id !=null && !id.equals("")) {
+    @PostMapping("/updatePsw")
+    public BaseResponse<String> userRegister(@RequestBody UserChangePswRequest request) {
+        // 校验
+        if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean b = userService.removeById(id);
-        return ResultUtils.success(b);
+        String oldPassword = request.getOldPassword();
+        String newPassword = request.getNewPassword();
+        String checkPassword = request.getCheckPassword();
+
+        if (StringUtils.isAnyBlank(oldPassword,newPassword,checkPassword)) {
+            throw new BusinessException(ErrorCode.NULL_ERROR,"缺少必要参数");
+        }
+        int result = userService.userUpdatePassword(oldPassword,newPassword,checkPassword);
+        return ResultUtils.success(null,"更新成功");
     }
 
 
 
-    /**
-     * 是否为管理员
-     *
-     * @param request
-     * @return
-     */
-    private boolean isAdmin(HttpServletRequest request) {
-        // 仅管理员可查询
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        UserInfo user = (UserInfo) userObj;
-        return user != null && user.getUserprivilege() == ADMIN_ROLE;
+    public UserLoginResponse getResponse(UserInfo userInfo){
+        if (userInfo == null) {
+            return null;
+        }
+        UserLoginResponse response = new UserLoginResponse();
+        response.setUseraccount(userInfo.getUseraccount());
+        response.setUuid(userInfo.getUuid());
+        response.setUsername(userInfo.getUsername());
+        response.setUserage(userInfo.getUserage());
+        response.setUseremail(userInfo.getUseremail());
+        response.setUserprivilege(userInfo.getUserprivilege());
+        response.setUserpassword(null);
+        response.setUseravatar(userInfo.getUseravatar());
+        response.setUsersex(userInfo.getUsersex());
+        response.setUsercreatetime(userInfo.getUsercreatetime());
+        return  response;
     }
-
 
 }

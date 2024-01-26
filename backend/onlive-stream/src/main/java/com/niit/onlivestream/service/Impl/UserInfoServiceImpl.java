@@ -1,14 +1,13 @@
 package com.niit.onlivestream.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.niit.onlivestream.common.ErrorCode;
-import com.niit.onlivestream.common.ResultUtils;
 import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.UserInfoService;
 import com.niit.onlivestream.mapper.UserInfoMapper;
+import com.niit.onlivestream.util.ThreadLocalUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -111,7 +110,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账户不能包含特殊字符");
         }
         // 2. 加密
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+        String encryptPassword = encodePws(userPassword);
         // 查询用户是否存在
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
@@ -121,7 +120,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账户与密码不匹配");
         }
         // 3. 用户脱敏
         UserInfo safetyUser = getSafetyUser(user);
@@ -131,19 +130,33 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     }
 
     @Override
-    public int userLogout(HttpServletRequest request) {
-        return 0;
+    public Integer userUpdatePassword(String oldPassword, String newPassword, String checkPassword) {
+        //两次密码一致且长度不少于8
+        if(!newPassword.equals(checkPassword))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"更新的两次密码不一致");
+        if(oldPassword.length()<8 || newPassword.length()<8)
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"密码长度少于8");
+        //原密码是否正确
+        //调用userService根据用户名拿到原密码 比对
+        UserInfo userInfo = ThreadLocalUtil.get();
+        String userAccount = userInfo.getUseraccount();
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("isDelete",0);
+        UserInfo loginUser = userInfoMapper.selectOne(queryWrapper);
+        String password = loginUser.getUserpassword();
+        oldPassword =  encodePws(oldPassword);
+        if(!password.equals(oldPassword))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账户原密码不正确");
+        newPassword = encodePws(newPassword);
+        UserInfo newUser = new UserInfo();
+        newUser.setUserpassword(newPassword);
+        int update = userInfoMapper.update(newUser,queryWrapper);
+        if(update<=0)
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"更新密码失败");
+        return update;
     }
 
-    @Override
-    public List<UserInfo> userInfoGetAll() {
-        return null;
-    }
-
-    @Override
-    public UserInfo userGetById(String id) {
-        return null;
-    }
 
     /**
      * 用户脱敏
@@ -167,6 +180,11 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         safetyUser.setUseravatar(originUser.getUseravatar());
         safetyUser.setUsersex(originUser.getUsersex());
         return safetyUser;
+    }
+
+
+    public String encodePws(String password){
+        return DigestUtils.md5DigestAsHex((SALT + password).getBytes());
     }
 }
 

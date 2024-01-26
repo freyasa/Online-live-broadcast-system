@@ -12,15 +12,21 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class OnliveStreamApplicationTests {
 
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
 
     @Test
@@ -50,6 +56,20 @@ class OnliveStreamApplicationTests {
     }
 
 
+    @Test
+    void testStringSet(){
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        operations.set("username","李四");
+        operations.set("id","1",15, TimeUnit.SECONDS);
+    }
 
+    @Test
+    void testStringGet(){
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        String username = operations.get("username");
+        String id = operations.get("id");
+        System.out.println(username);
+        System.out.println(id);
+    }
 
 }

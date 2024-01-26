@@ -9,18 +9,19 @@ import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.UserInfoService;
 import com.niit.onlivestream.util.JwtUtil;
 import com.niit.onlivestream.util.ThreadLocalUtil;
-import com.niit.onlivestream.vo.UserInfoRequest.UserChangePswRequest;
-import com.niit.onlivestream.vo.UserInfoRequest.UserLoginRequest;
-import com.niit.onlivestream.vo.UserInfoRequest.UserLoginResponse;
-import com.niit.onlivestream.vo.UserInfoRequest.UserRegisterRequest;
+import com.niit.onlivestream.vo.UserInfoRequest.*;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.niit.onlivestream.contant.UserConstant.ADMIN_ROLE;
 import static com.niit.onlivestream.contant.UserConstant.USER_LOGIN_STATE;
@@ -34,7 +35,8 @@ public class UserController {
 
     @Resource
     private UserInfoService userService;
-
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
     /**
      * 用户注册
      * @param userRegisterRequest 注册请求体
@@ -81,6 +83,12 @@ public class UserController {
         claim = ObjectToMap(userInfo);
         String token = JwtUtil.getToken(claim);
 
+
+        //把Token存储到Redis中   过期时间  1 个小时
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        operations.set(userInfo.getUuid(),token,1, TimeUnit.HOURS);
+
+
         // 封装返回体
         UserLoginResponse response =new UserLoginResponse();
         response = getResponse(userInfo);
@@ -98,9 +106,44 @@ public class UserController {
     }
 
 
+    @PostMapping("/updateBaseInfo")
+    public BaseResponse<String> userRegister(@RequestBody UserChangeInfoRequest request) {
+        // 校验
+        if (request == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if(StringUtils.isAnyBlank(request.getUuid())){
+            throw new BusinessException(ErrorCode.NULL_ERROR,"没有ID");
+        }
+        UserInfo userInfo = ThreadLocalUtil.get();
+        if(!userInfo.getUuid().equals(request.getUuid()))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"非法入侵ID");
+        UserInfo userUpdate = new UserInfo();
+        if(request.getUsersex()==1||request.getUsersex()==2)
+            userUpdate.setUsersex(request.getUsersex());
+        if(request.getUseravatar()!=null&&request.getUseravatar().length>0)
+            userUpdate.setUseravatar(request.getUseravatar());
+        if(request.getUseremail()!=null&&request.getUseremail().length()>0)
+            userUpdate.setUseremail(request.getUseremail());
+        if(request.getUserage()>0)
+            userUpdate.setUseremail(request.getUseremail());
+        if(request.getUsername()!=null&& request.getUsername().length()>0)
+            userUpdate.setUsername(request.getUsername());
+        if(request.getUserage()>0)
+            userUpdate.setUserage(userUpdate.getUserage());
+        userUpdate.setUserupdatetime(new Date());
+        QueryWrapper<UserInfo> queryWrapper =new QueryWrapper<>();
+        queryWrapper.eq("uuid",request.getUuid());
+        boolean update = userService.update(userUpdate, queryWrapper);
+        if(!update)
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"更新用户基本信息失败");
+        return ResultUtils.success(null,"更新成功");
+    }
+
 
     @PostMapping("/updatePsw")
-    public BaseResponse<String> userRegister(@RequestBody UserChangePswRequest request) {
+    public BaseResponse<String> userChangePsw(@RequestBody UserChangePswRequest request,
+                                             @RequestHeader("Authorization") String token) {
         // 校验
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -113,6 +156,11 @@ public class UserController {
             throw new BusinessException(ErrorCode.NULL_ERROR,"缺少必要参数");
         }
         int result = userService.userUpdatePassword(oldPassword,newPassword,checkPassword);
+        if(result>0){
+            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+            UserInfo user= ThreadLocalUtil.get();
+            operations.getOperations().delete(user.getUuid());
+        }
         return ResultUtils.success(null,"更新成功");
     }
 

@@ -8,11 +8,12 @@ package com.niit.onlivestream.common;
 public enum ErrorCode {
 
     SUCCESS(201, "ok", ""),
-    PARAMS_ERROR(40000, "请求参数错误", ""),
-    NULL_ERROR(40001, "请求数据为空", ""),
-    NOT_LOGIN(40100, "未登录", ""),
-    NO_AUTH(40101, "无权限", ""),
-    SYSTEM_ERROR(50000, "系统内部异常", "");
+    TOKEN_OUTTIME(201,"Token已过期",""),
+    PARAMS_ERROR(201, "请求参数错误", ""),
+    NULL_ERROR(201, "请求数据为空", ""),
+    NOT_LOGIN(201, "未登录", ""),
+    NO_AUTH(201, "无权限", ""),
+    SYSTEM_ERROR(202, "系统内部异常", "");
 
     private final int code;
 

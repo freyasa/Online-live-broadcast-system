@@ -1,4 +1,4 @@
-package com.niit.onlivestream.util;
+package com.niit.onlivestream.config;
 
 
 import com.baomidou.mybatisplus.annotation.DbType;

@@ -1,7 +1,5 @@
-package com.niit.onlivestream.vo.UserInfoRequest;
+package com.niit.onlivestream.vo.UserResponse;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.niit.onlivestream.domain.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,5 +34,7 @@ public class UserLoginResponse implements Serializable {
     private byte[] useravatar;
 
     private String token;
+
+
 
 }

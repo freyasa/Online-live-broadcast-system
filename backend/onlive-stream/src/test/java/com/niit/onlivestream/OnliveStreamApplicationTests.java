@@ -1,23 +1,21 @@
 package com.niit.onlivestream;
 
+import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.niit.onlivestream.domain.UserInfo;
-import com.niit.onlivestream.service.UserInfoService;
-import com.niit.onlivestream.vo.UserInfoRequest.UserUpdateRequest;
+import com.niit.onlivestream.domain.RoomInfo;
+import com.niit.onlivestream.util.SerializeUtil;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -71,5 +69,24 @@ class OnliveStreamApplicationTests {
         System.out.println(username);
         System.out.println(id);
     }
+
+
+
+    @Test
+    void testSerialize() throws Exception {
+        RoomInfo roomInfo =new RoomInfo();
+        roomInfo.setRoomname("李三的直播间");
+        roomInfo.setUuid("123456");
+        roomInfo.setLiveid(123);
+        roomInfo.setProfile("这是我的直播间");
+        System.out.println(roomInfo);
+        //转成json字符串
+        String json = JSON.toJSON(roomInfo).toString();
+        System.out.println(json);
+        //json字符串转成对象
+        RoomInfo user1 = JSON.parseObject(json,RoomInfo.class);
+        System.out.println(user1);
+    }
+
 
 }

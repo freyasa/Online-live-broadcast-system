@@ -2,7 +2,7 @@ package com.niit.onlivestream.exception;
 
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
-import com.niit.onlivestream.common.ResultUtils;
+import com.niit.onlivestream.util.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-
 
     @ExceptionHandler(BusinessException.class)
     public BaseResponse<?> businessExceptionHandler(BusinessException e) {

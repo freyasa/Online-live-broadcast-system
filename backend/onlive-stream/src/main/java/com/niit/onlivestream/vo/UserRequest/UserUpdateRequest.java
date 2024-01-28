@@ -1,4 +1,4 @@
-package com.niit.onlivestream.vo.UserInfoRequest;
+package com.niit.onlivestream.vo.UserRequest;
 
 import com.niit.onlivestream.domain.UserInfo;
 import lombok.Data;

@@ -1,6 +1,12 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://8.140.143.119:3306/PP2024
+    url: jdbc:mysql://8.140.143.119:3306/onlinecv
     username: root
-    password: 123456
+    password: root
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 123456
+      database: 0 # 默认为0

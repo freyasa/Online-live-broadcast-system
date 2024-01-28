@@ -17,7 +17,6 @@ public class PartitionInfo implements Serializable {
     /**
      * 
      */
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**

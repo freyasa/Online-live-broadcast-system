@@ -3,16 +3,17 @@ package com.niit.onlivestream.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
-import com.niit.onlivestream.common.ResultUtils;
+import com.niit.onlivestream.util.ResultUtils;
 import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.exception.BusinessException;
+import com.niit.onlivestream.service.RoomInfoService;
 import com.niit.onlivestream.service.UserInfoService;
 import com.niit.onlivestream.util.JwtUtil;
 import com.niit.onlivestream.util.ThreadLocalUtil;
-import com.niit.onlivestream.vo.UserInfoRequest.*;
+import com.niit.onlivestream.vo.UserRequest.*;
+import com.niit.onlivestream.vo.UserResponse.UserLoginResponse;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -23,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.niit.onlivestream.contant.UserConstant.ADMIN_ROLE;
-import static com.niit.onlivestream.contant.UserConstant.USER_LOGIN_STATE;
-import static com.niit.onlivestream.util.OMUtils.MapToObject;
 import static com.niit.onlivestream.util.OMUtils.ObjectToMap;
 
 
@@ -37,6 +35,8 @@ public class UserController {
     private UserInfoService userService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private RoomInfoService roomInfoService;
     /**
      * 用户注册
      * @param userRegisterRequest 注册请求体
@@ -54,8 +54,11 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
             throw new BusinessException(ErrorCode.NULL_ERROR);
         }
-        String result = userService.userRegister(userAccount, userPassword, checkPassword);
-        return ResultUtils.success(result);
+        // 拿到userID
+        String userId = userService.userRegister(userAccount, userPassword, checkPassword);
+        //注册直播序列号
+        roomInfoService.InsertLiveId(userId,userAccount);
+        return ResultUtils.success("注册成功");
     }
 
     /**
@@ -72,7 +75,6 @@ public class UserController {
         String userPassword = userLoginRequest.getUserPassword();
         if(StringUtils.isAnyBlank(userAccount,userPassword))
             throw new BusinessException(ErrorCode.NULL_ERROR);
-
         //开始执行操作
         UserInfo userInfo = userService.userLogin(userAccount,userPassword,request);
         if(userInfo==null)
@@ -84,10 +86,9 @@ public class UserController {
         String token = JwtUtil.getToken(claim);
 
 
-        //把Token存储到Redis中   过期时间  1 个小时
+        //把Token存储到Redis中   过期时间  12 个小时
         ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-        operations.set(userInfo.getUuid(),token,1, TimeUnit.HOURS);
-
+        operations.set(userInfo.getUuid(),token,12, TimeUnit.HOURS);
 
         // 封装返回体
         UserLoginResponse response =new UserLoginResponse();
@@ -100,7 +101,7 @@ public class UserController {
 
 
     @PostMapping("/getCurrentUser")
-    public BaseResponse<UserInfo > userLogin(){
+    public BaseResponse<UserInfo> userLogin(){
         UserInfo user= ThreadLocalUtil.get();
         return  ResultUtils.success(user);
     }
@@ -142,8 +143,7 @@ public class UserController {
 
 
     @PostMapping("/updatePsw")
-    public BaseResponse<String> userChangePsw(@RequestBody UserChangePswRequest request,
-                                             @RequestHeader("Authorization") String token) {
+    public BaseResponse<String> userChangePsw(@RequestBody UserChangePswRequest request) {
         // 校验
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

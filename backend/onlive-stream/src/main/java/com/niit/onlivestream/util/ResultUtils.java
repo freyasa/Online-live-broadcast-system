@@ -1,4 +1,7 @@
-package com.niit.onlivestream.common;
+package com.niit.onlivestream.util;
+
+import com.niit.onlivestream.common.BaseResponse;
+import com.niit.onlivestream.common.ErrorCode;
 
 /**
  * 返回工具类

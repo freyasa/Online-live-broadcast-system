@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 public class RoomLogServiceImpl extends ServiceImpl<RoomLogMapper, RoomLog>
     implements RoomLogService {
 
+    @Override
+    public void findRoomLodAll() {
+
+    }
 }
 
 

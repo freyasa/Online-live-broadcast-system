@@ -157,6 +157,7 @@ public class UserController {
         }
         int result = userService.userUpdatePassword(oldPassword,newPassword,checkPassword);
         if(result>0){
+            //去除token
             ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
             UserInfo user= ThreadLocalUtil.get();
             operations.getOperations().delete(user.getUuid());

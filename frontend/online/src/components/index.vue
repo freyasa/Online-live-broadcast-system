@@ -22,8 +22,8 @@ const toPagePath = (url: string) => {
 const toRecommendCarousel = (context) => {
   console.log(context); // 输出组件实例
   // console.log(context.target.value); // 输出组件实例
-  context.target.style.border='dashed red';
-  context.target.style.visibility = "hidden";
+  context.target.style.border='solid red';
+  // context.target.style.visibility = "hidden";
 
   console.log(context.target.style.border);
 }

@@ -113,6 +113,8 @@ public class InfluencerController {
         boolean logResult = roomLogService.save(roomLog);
         if(!logResult)
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"保存失败");
+        //从Redis删除数据
+        liveTemplate.delete(liveID);
         return ResultUtils.success("结束直播成功");
     }
 

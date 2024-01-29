@@ -95,21 +95,28 @@ public class UserController {
         operations.set(userInfo.getUuid(),token,12, TimeUnit.HOURS);
 
         // 封装返回体
-        UserLoginResponse response =new UserLoginResponse();
-        response = getResponse(userInfo);
+        UserLoginResponse response = getResponse(userInfo);
         response.setToken(token);
 
         // 返回
         return ResultUtils.success(response);
     }
 
-
+    /**
+     * 根据token
+     * @return 得到当前用户信息
+     */
     @PostMapping("/getCurrentUser")
     public BaseResponse<UserInfo> userLogin(){
         UserInfo user= ThreadLocalUtil.get();
         return  ResultUtils.success(user);
     }
 
+    /**
+     * 更新账户基本信息
+     * @param request 基本信息请求
+     * @return 更新是否成共
+     */
 
     @PostMapping("/updateBaseInfo")
     public BaseResponse<String> userRegister(@RequestBody UserChangeInfoRequest request) {
@@ -161,10 +168,10 @@ public class UserController {
         }
         int result = userService.userUpdatePassword(oldPassword,newPassword,checkPassword);
         if(result>0){
-            //去除token
-//            ValueOperations<String, Object> operations = redisTemplate.opsForValue();
-//            UserInfo user= ThreadLocalUtil.get();
-//            operations.getOperations().delete(user.getUuid());
+            // 去除token
+            ValueOperations<String, String> operations = redisTemplate.opsForValue();
+            UserInfo user= ThreadLocalUtil.get();
+            operations.getOperations().delete(user.getUuid());
         }
         return ResultUtils.success(null,"更新成功");
     }

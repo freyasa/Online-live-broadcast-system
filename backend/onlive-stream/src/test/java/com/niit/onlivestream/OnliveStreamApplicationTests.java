@@ -64,6 +64,7 @@ class OnliveStreamApplicationTests {
     @Test
     void testStringGet(){
         ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+
         String username = operations.get("username");
         String id = operations.get("id");
         System.out.println(username);

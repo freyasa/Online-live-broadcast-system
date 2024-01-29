@@ -13,6 +13,7 @@ import com.niit.onlivestream.service.RoomInfoService;
 import com.niit.onlivestream.service.RoomLogService;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +30,9 @@ public class InfluencerController {
     private RoomInfoService roomInfoService;
     @Resource
     private RoomLogService roomLogService;
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
+
+
+
 
     private static final String liveQueue = "liveQueue";
     /**
@@ -46,6 +48,12 @@ public class InfluencerController {
         return ResultUtils.success(roomInfo);
     }
 
+
+    /**
+     * 开始直播
+     * @param request  RoomInfo
+     * @return  直播成功
+     */
     @PostMapping("/startlive")
     public BaseResponse<String> startLive(@RequestBody RoomInfo request){
         if(request==null)
@@ -63,7 +71,9 @@ public class InfluencerController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"序列号与用户ID不匹配");
 
         // Redis 加入到开播队列
-        SetOperations<String,String> liveSet = stringRedisTemplate.opsForSet();
+//        SetOperations<String,String> liveSet = stringRedisTemplate.opsForSet();
+
+
         String room;
         // 对象转JSON
         try {
@@ -72,7 +82,9 @@ public class InfluencerController {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"转JSON失败");
         }
         System.out.println("Json字符串是:"+room);
-        liveSet.add(liveQueue,room);
+//        liveSet.add(liveQueue,room);
+
+
         //先持久化部分 roomLog
         RoomLog roomLog =new RoomLog();
         roomLog.setCreatetime(new Date());
@@ -84,6 +96,7 @@ public class InfluencerController {
         if(!saveRoomLogResult)
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"插入直播记录失败");
         // 存redis 一部分roomlog
+
         return ResultUtils.success("开播成功");
     }
 
@@ -93,24 +106,44 @@ public class InfluencerController {
 //
 //    }
 
-    @GetMapping("/roomAll")
-    public BaseResponse<ArrayList<RoomInfo>> getRoomInfoAll(){
-        Set<String> elements =stringRedisTemplate.opsForSet().members(liveQueue);
-        if(elements==null)
-            return ResultUtils.success(null,"无人开播");
-        ArrayList<RoomInfo> roomInfos = new ArrayList<>();
-        for (String json:elements) {
-            System.out.println("从Redis里面拿到的字符串是:"+json);
-            RoomInfo roomInfo = new RoomInfo();
-            try {
-                 roomInfo = JSON.parseObject(json,RoomInfo.class);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            roomInfos.add(roomInfo);
-        }
-        return ResultUtils.success(roomInfos);
+
+    /**
+     * 根据主键liveID查询是否直播
+     * 是 返回房间信息
+     * 否 返回null
+     */
+
+    @GetMapping("/findIslive")
+    public BaseResponse<RoomInfo> getRoomByLiveId(@RequestParam Integer liveID){
+        if(liveID==null)
+            throw new BusinessException(ErrorCode.NULL_ERROR,"没有房间号");
+        return null;
     }
+
+
+    /**
+     * get请求
+     * @return  得到所有直播间
+     */
+//    @GetMapping("/roomAll")
+//    public BaseResponse<ArrayList<RoomInfo>> getRoomInfoAll(){
+//        Set<String> elements =stringRedisTemplate.opsForSet().members(liveQueue);
+//        if(elements==null)
+//            return ResultUtils.success(null,"无人开播");
+//        ArrayList<RoomInfo> roomInfos = new ArrayList<>();
+//        for (String json:elements) {
+//            System.out.println("从Redis里面拿到的字符串是:"+json);
+//            RoomInfo roomInfo = new RoomInfo();
+//            try {
+//                 roomInfo = JSON.parseObject(json,RoomInfo.class);
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//            roomInfos.add(roomInfo);
+//        }
+//        return ResultUtils.success(roomInfos);
+//    }
+
 
 
 }

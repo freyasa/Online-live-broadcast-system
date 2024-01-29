@@ -3,6 +3,7 @@ package com.niit.onlivestream.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
+import com.niit.onlivestream.config.RedisConfig;
 import com.niit.onlivestream.util.ResultUtils;
 import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.exception.BusinessException;
@@ -15,6 +16,7 @@ import com.niit.onlivestream.vo.UserResponse.UserLoginResponse;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,9 @@ public class UserController {
 
     @Resource
     private UserInfoService userService;
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
+
+
+
     @Resource
     private RoomInfoService roomInfoService;
     /**
@@ -85,10 +88,9 @@ public class UserController {
         claim = ObjectToMap(userInfo);
         String token = JwtUtil.getToken(claim);
 
-
         //把Token存储到Redis中   过期时间  12 个小时
-        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-        operations.set(userInfo.getUuid(),token,12, TimeUnit.HOURS);
+//        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+//        operations.set(userInfo.getUuid(),token,12, TimeUnit.HOURS);
 
         // 封装返回体
         UserLoginResponse response =new UserLoginResponse();
@@ -158,9 +160,9 @@ public class UserController {
         int result = userService.userUpdatePassword(oldPassword,newPassword,checkPassword);
         if(result>0){
             //去除token
-            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-            UserInfo user= ThreadLocalUtil.get();
-            operations.getOperations().delete(user.getUuid());
+//            ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+//            UserInfo user= ThreadLocalUtil.get();
+//            operations.getOperations().delete(user.getUuid());
         }
         return ResultUtils.success(null,"更新成功");
     }

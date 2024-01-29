@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: local
   # session 失效时间
   session:
     timeout: 86400

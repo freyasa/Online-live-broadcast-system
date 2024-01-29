@@ -1,6 +1,7 @@
 package com.niit.onlivestream.interceptor;
 
 import com.niit.onlivestream.common.ErrorCode;
+import com.niit.onlivestream.config.RedisConfig;
 import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.util.JwtUtil;
@@ -8,6 +9,7 @@ import com.niit.onlivestream.util.ThreadLocalUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -21,8 +23,8 @@ import static com.niit.onlivestream.util.OMUtils.MapToObject;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
+
+    private RedisTemplate<String, Object> redisTemplate;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws Exception{
         String token = request.getHeader("Authorization");
@@ -36,8 +38,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             throw new BusinessException(ErrorCode.NOT_LOGIN,"token为空");
         }
         //从redis中获取相同的token
-        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-        String redisToken = operations.get(user.getUuid());
+        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+        String redisToken = (String) operations.get(user.getUuid());
         //token失效
         if(redisToken==null)
             throw new BusinessException(ErrorCode.TOKEN_OUTTIME,"请重新登录");

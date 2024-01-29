@@ -9,4 +9,15 @@ spring:
       host: localhost
       port: 6379
       password: 123456
-      database: 0 # 默认为0
+      database:
+        db1: 1
+        db2: 2
+        db3: 3
+      jedis:
+        pool:
+          max-active: 8
+          max-wait: -1 #表示没有阻塞
+          max-idle: 8
+          min-idle: 0
+      timeout: 3000
+

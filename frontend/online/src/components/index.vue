@@ -10,7 +10,6 @@ const recommendCarouselLiveId = ref(0)
 const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg')
 
 
-
 //------------function-----------------
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
@@ -19,21 +18,23 @@ const toPagePath = (url: string) => {
   });
 };
 
-const toRecommendCarousel = (context) => {
+const toRecommendCarousel = (context, index) => {
+
+  const docu = document.getElementById('recommend_carousel' + index);
+  console.log(docu); // 输出组件实例
   console.log(context); // 输出组件实例
   // console.log(context.target.value); // 输出组件实例
-  context.target.style.border='solid red';
+  /* width | style | color */
+  // context.target.style.border = '3px solid #61ace9';
+  // context.target.style.backgroundColor = '#61ace9';
+  // context.target.style.padding = '30px';
   // context.target.style.visibility = "hidden";
-
+  docu.style.backgroundColor = '#61ace9'
   console.log(context.target.style.border);
 }
 
 
 //------------setup-----------------
-
-
-
-
 
 
 </script>
@@ -55,16 +56,18 @@ const toRecommendCarousel = (context) => {
         >
         </video>
       </div>
-      <div style="width: 220px; height: 630px; margin-left: 12px; border-radius: 5px; background-color: rgba(0, 0, 0, 0.5)">
+      <div
+          style="width: 220px; height: 630px; margin-left: 12px; border-radius: 5px; background-color: rgba(0, 0, 0, 0.5)">
 
-        <div v-for="i in 5" :key="i" class="recommend_carousel" @click="toRecommendCarousel($event)"
-             style="width: 200px; height: 110px; margin-top: 13px; margin-left: 10px; margin-right: 10px">
-          <el-image style="width: 200px; height: 110px; border-radius: 5px" :src="urlTemplate" :fit="fit"/>
+        <div v-for="(i, index) in 5" :id="'recommend_carousel' + index" :key="i" class="recommend_carousel" @click="toRecommendCarousel($event, index)"
+             style="width: 200px; height: 110px; margin-top: 13px; margin-left: 10px; margin-right: 10px; ">
+          <div>
+            <el-image style="width: 190px; height: 100px; margin-top: 5px; border-radius: 5px" :src="urlTemplate" :fit="fit"/>
+          </div>
         </div>
 
       </div>
     </div>
-
   </div>
 
   <div style="background-color: #f1f2f3; text-align: center">
@@ -121,6 +124,9 @@ const toRecommendCarousel = (context) => {
   animation-fill-mode: both;
 }
 
+.recommend_carousel:focus {
+  background-color: #33A2EF;
+}
 
 @keyframes fly {
   0% {

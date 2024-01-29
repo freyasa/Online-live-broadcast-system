@@ -1,15 +1,20 @@
 <script lang="ts" setup>
-import global from "../global/global";
+//------------import-----------------
+// import global from "../global/global";
 import {ref, reactive, toRefs, unref} from 'vue'
-import { ClickOutside as vClickOutside } from 'element-plus'
+import {ClickOutside as vClickOutside} from 'element-plus'
 import {presentTemplate, battery} from "../global/base64Template";
+import {rank1, rank2, rank3} from "../global/base64Template";
+import {login} from "../global/global";
 
+//------------variable-----------------
 const inputBarrage = ref('')
 const inputNumber = ref(0)
 const barrageCount = ref(10)
 const url = ref(presentTemplate)
 const batteryUrl = ref(battery)
 
+//------------function-----------------
 // 滑到底请求一下
 const loadBarrage = () => {
   barrageCount.value += 2
@@ -28,11 +33,24 @@ const recharge = () => {
   console.log('recharge')
 }
 
-const buttonRef = ref()
-const popoverRef = ref()
-const onClickOutside = () => {
-  unref(popoverRef).popperRef?.delayHide?.()
+const isLogin = () => {
+  if (login.loginState) {
+
+  }
 }
+
+
+
+// const buttonRef = ref()
+// const popoverRef = ref()
+// const onClickOutside = () => {
+//   unref(popoverRef).popperRef?.delayHide?.()
+// }
+
+
+
+//------------setup-----------------
+
 </script>
 
 <template>
@@ -117,19 +135,76 @@ const onClickOutside = () => {
         <div style="height: 178px; width: 100%; text-align: center" ref="buttonRef" v-click-outside="onClickOutside">
           <div style="font-size: 14px; font-weight: 560; padding-top: 10px">高能用户</div>
 
-          <el-popover
-              ref="popoverRef"
-              :virtual-ref="buttonRef"
-              trigger="click"
-              title="With title"
-              virtual-triggering
-              :width="300"
-              :teleported="false"
-              :popper-style="{  }"
-              show-arrow="false"
-          >
-            <span>asdasdasdasd</span>
-          </el-popover>
+          <!--          <el-popover-->
+          <!--              ref="popoverRef"-->
+          <!--              :virtual-ref="buttonRef"-->
+          <!--              trigger="click"-->
+          <!--              title="With title"-->
+          <!--              virtual-triggering-->
+          <!--              :width="300"-->
+          <!--              :teleported="false"-->
+          <!--              :popper-style="{  }"-->
+          <!--              :show-arrow="false"-->
+          <!--              :offset="-179"-->
+          <!--          >-->
+          <!--            <span>asdasdasdasd</span>-->
+          <!--          </el-popover>-->
+          <div style="margin-top: 12px">
+
+            <div style="width: 100%; height: 42px; display: inline-flex">
+              <div style="width: 24px; height: 16px; margin-left: 9px">
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit" />
+              </div>
+
+              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
+                <el-avatar :size="36" :src="circleUrl" />
+              </div>
+
+              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
+                {{ '用户名' }}
+              </div>
+
+              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">
+                {{ '120' }}
+              </div>
+            </div>
+
+            <div style="width: 100%; height: 42px; display: inline-flex">
+              <div style="width: 24px; height: 16px; margin-left: 9px">
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit" />
+              </div>
+
+              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
+                <el-avatar :size="36" :src="circleUrl" />
+              </div>
+
+              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
+                {{ '用户名' }}
+              </div>
+
+              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">
+                {{ '12' }}
+              </div>
+            </div>
+
+            <div style="width: 100%; height: 42px; display: inline-flex">
+              <div style="width: 24px; height: 16px; margin-left: 9px">
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit" />
+              </div>
+
+              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
+                <el-avatar :size="36" :src="circleUrl" />
+              </div>
+
+              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
+                {{ '用户名' }}
+              </div>
+
+              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">
+                {{ '1' }}
+              </div>
+            </div>
+          </div>
         </div>
 
         <el-divider style="margin: 0"/>

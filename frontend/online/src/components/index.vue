@@ -1,31 +1,88 @@
 <script setup lang="ts">
+//------------import-----------------
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
 
-const router = useRouter();
 
+//------------variable-----------------
+const router = useRouter();
+const recommendCarouselLiveId = ref(0)
+const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg')
+
+
+
+//------------function-----------------
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
   router.push({
     path: url,
   });
 };
+
+const toRecommendCarousel = (context) => {
+  console.log(context); // 输出组件实例
+  // console.log(context.target.value); // 输出组件实例
+  context.target.style.border='dashed red';
+  context.target.style.visibility = "hidden";
+
+  console.log(context.target.style.border);
+}
+
+
+//------------setup-----------------
+
+
+
+
+
+
 </script>
 
 <template>
-  <div style="background-color: #f1f2f3; text-align: center">
-    <div style="width: 86%; margin-left: 7%">
-      <div style="width: 100%; text-align: left">
-        <span style="padding-left: 20px; font-size: 30px">推荐直播</span>
+  <div style="width: 100%; height: 738px;
+  background-position: center; text-align: center;
+  background-image: url('http://8.140.143.119:8000/images/2024/01/27/pexels-photo-1054218bc2f53a94c640c5d.jpg')">
+    <div style="height: 630px; width: 1342px; display: inline-flex; margin-top: 54px">
+      <div style="width: auto; height: 630px">
+        <video
+            id="videoLive"
+            crossorigin="anonymous"
+            controls
+            autoplay
+            width="100%"
+            height="100%"
+            style="object-fit: fill"
+        >
+        </video>
       </div>
-      <el-card class="box-card" @click="toPagePath('/live/' + '1')" style="cursor:pointer">
-        <el-image style="width: 92%; height: 60%"
-                  src="https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg" fit="scale-down"/>
+      <div style="width: 220px; height: 630px; margin-left: 12px; border-radius: 5px; background-color: rgba(0, 0, 0, 0.5)">
+
+        <div v-for="i in 5" :key="i" class="recommend_carousel" @click="toRecommendCarousel($event)"
+             style="width: 200px; height: 110px; margin-top: 13px; margin-left: 10px; margin-right: 10px">
+          <el-image style="width: 200px; height: 110px; border-radius: 5px" :src="urlTemplate" :fit="fit"/>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background-color: #f1f2f3; text-align: center">
+    <div style="width: 1380px; margin-left: 270px">
+      <div style="width: 100%; text-align: left">
+        <span style="padding-left: 10px; font-size: 25px; font-weight: 400">推荐直播</span>
+      </div>
+      <el-card class="box-card" @click="toPagePath('/live/' + '1')" style="cursor:pointer" v-for="i in 50" :key="i">
+        <div style="width: 92%; height: 60%; padding-left: 4%; padding-top: 4%">
+          <el-image style="width: 100%; height: 100%; border-radius: 5px"
+                    :src="urlTemplate"
+                    fit="scale-down"/>
+        </div>
         <div style="text-align: left; width: 92%; margin-left: 4%;  display: flex">
-        <el-avatar :size="50" :src="circleUrl" style="margin-top: 2%; margin-left: 1%"/>
+          <el-avatar :size="50" :src="circleUrl" style="margin-top: 2%; margin-left: 1%"/>
           <div style="display: inline-block; margin-left: 15px; margin-top: 2.5%;">
             <div>
-            <span style="font-size: 18px">这里是标题</span>
+              <span style="font-size: 18px">这里是标题</span>
             </div>
             <div>
               <span style="font-size: 14px; color: #7f7f7f">这里是用户名</span>
@@ -36,62 +93,6 @@ const toPagePath = (url: string) => {
           </div>
         </div>
       </el-card>
-      <el-card class="box-card">
-
-      </el-card>
-      <el-card class="box-card">
-        MainCard
-      </el-card>
-      <el-card class="box-card">
-        MainCard
-      </el-card>
-      <el-card class="box-card">
-        MainCard
-      </el-card>
-      <el-card class="box-card">
-        MainCard
-      </el-card>
-      <el-card class="box-card">
-        MainCard
-      </el-card>
-      <el-card class="box-card">
-        MainCard
-      </el-card>
-      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>      <el-card class="box-card">
-        MainCard
-      </el-card>
     </div>
   </div>
 </template>
@@ -99,15 +100,18 @@ const toPagePath = (url: string) => {
 <style lang="less" scoped>
 
 .box-card {
-  //box-shadow: var(--el-box-shadow);
-  //box-shadow: none;
-  //border: none;
+  box-shadow: var(--el-box-shadow);
+  box-shadow: none;
+  border: none;
   border-radius: 0;
   background-color: #f1f2f3;
-  height: 220px;
-  width: 280px;
-  margin: 15px;
-  padding-top: 10px;
+  height: 224px;
+  width: 276px;
+  //margin-left: 10px;
+  //margin-right: 10px;
+  //margin-bottom: 27px;
+  //padding-top: 10px;
+  margin: 0;
   --el-card-padding: 0 !important;
   display: inline-block;
 }

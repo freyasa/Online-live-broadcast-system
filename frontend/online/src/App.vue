@@ -3,7 +3,7 @@
 // import Login from './components/login.vue'
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
-
+import {login} from './global/global'
 const router = useRouter();
 
 const toPagePath = (url: string) => {

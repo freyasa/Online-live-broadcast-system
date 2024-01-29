@@ -14,6 +14,6 @@ let login = {
     loginState: false,
 }
 
-export default {
+export {
     login
 }

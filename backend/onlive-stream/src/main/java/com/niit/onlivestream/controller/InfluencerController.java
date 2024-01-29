@@ -1,7 +1,6 @@
 package com.niit.onlivestream.controller;
 
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
@@ -11,16 +10,17 @@ import com.niit.onlivestream.domain.RoomLog;
 import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.RoomInfoService;
 import com.niit.onlivestream.service.RoomLogService;
+import com.niit.onlivestream.vo.OnliveRequest.StreamRequest;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static com.niit.onlivestream.contant.RedisDataUse.LiveRedisTemplate;
 
 @RestController
 @RequestMapping("/influencer")
@@ -32,9 +32,10 @@ public class InfluencerController {
     private RoomLogService roomLogService;
 
 
+    @Resource(name = LiveRedisTemplate)
+    private RedisTemplate<String, Object> liveTemplate;
 
 
-    private static final String liveQueue = "liveQueue";
     /**
      *
      * @param uuid 用户名
@@ -55,10 +56,10 @@ public class InfluencerController {
      * @return  直播成功
      */
     @PostMapping("/startlive")
-    public BaseResponse<String> startLive(@RequestBody RoomInfo request){
+    public BaseResponse<String> startLive(@RequestBody StreamRequest request){
         if(request==null)
             throw new BusinessException(ErrorCode.NULL_ERROR);
-        if (StringUtils.isAnyBlank(request.getUuid(),request.getRoomname()))
+        if (StringUtils.isAnyBlank(request.getUuid()))
             throw new BusinessException(ErrorCode.NULL_ERROR,"部分数据为空");
         int liveId = request.getLiveid();
         String userId = request.getUuid();
@@ -70,41 +71,50 @@ public class InfluencerController {
         if(roomInfo==null)
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"序列号与用户ID不匹配");
 
-        // Redis 加入到开播队列
-//        SetOperations<String,String> liveSet = stringRedisTemplate.opsForSet();
-
-
-        String room;
-        // 对象转JSON
-        try {
-            room = JSON.toJSON(roomInfo).toString();
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"转JSON失败");
-        }
-        System.out.println("Json字符串是:"+room);
-//        liveSet.add(liveQueue,room);
-
-
         //先持久化部分 roomLog
         RoomLog roomLog =new RoomLog();
         roomLog.setCreatetime(new Date());
-        roomLog.setRoomforeignid(liveId);
-        roomLog.setName(request.getRoomname());
-        roomLog.setProfile(request.getProfile());
-        roomLog.setRoomAvatar(request.getRoomAvatar());
-        boolean saveRoomLogResult =  roomLogService.save(roomLog);
-        if(!saveRoomLogResult)
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"插入直播记录失败");
+        roomLog.setRoomforeignid(roomInfo.getLiveid());
+        roomLog.setName(roomInfo.getRoomname());
+        roomLog.setProfile(roomInfo.getProfile());
+        roomLog.setRoomAvatar(roomInfo.getRoomAvatar());
+        roomLog.setPartitionid(roomInfo.getPartitionid());
         // 存redis 一部分roomlog
-
-        return ResultUtils.success("开播成功");
+        // Redis 加入到开播队列
+        ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
+        String live = String.valueOf(liveId);
+        liveDB.set(live,roomLog,3, TimeUnit.DAYS);
+        return ResultUtils.success("开始直播成功");
     }
 
+    @PostMapping("endlive")
+    public BaseResponse<String> endLive(@RequestBody StreamRequest request){
+        if(request==null)
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        if (StringUtils.isAnyBlank(request.getUuid()))
+            throw new BusinessException(ErrorCode.NULL_ERROR,"部分数据为空");
+        int liveId = request.getLiveid();
+        String userId = request.getUuid();
+        //查一下用户ID和直播序列号 是不是 一一对应
+        QueryWrapper<RoomInfo> queryWrapper =new QueryWrapper<>();
+        queryWrapper.eq("liveid",liveId);
+        queryWrapper.eq("uuid",userId);
+        RoomInfo roomInfo = roomInfoService.getOne(queryWrapper);
+        if(roomInfo==null)
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"序列号与用户ID不匹配");
 
-//    @PostMapping("endlive")
-//    public BaseResponse<String> endLive(@RequestBody ){
-//
-//    }
+        //从RedIS里面拿取数据
+        String liveID = String.valueOf(request.getLiveid());
+        ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
+        RoomLog roomLog = (RoomLog) liveDB.get(liveID);
+        if(roomLog==null)
+            throw new BusinessException(ErrorCode.TOKEN_OUTTIME,"直播间信息未及时关闭三天自动关闭");
+        roomLog.setStoptime(new Date());
+        boolean logResult = roomLogService.save(roomLog);
+        if(!logResult)
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"保存失败");
+        return ResultUtils.success("结束直播成功");
+    }
 
 
     /**

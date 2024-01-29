@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import static com.niit.onlivestream.contant.RedisDataUse.LiveRedisTemplate;
+import static com.niit.onlivestream.contant.RedisDataUse.TokenRedisTemplate;
+
 
 @SpringBootTest
 public class RedisTest {
 
     // 这里跟 name的值 跟在  RedisConfig的 @Bean("redisTemplate")
-    @Resource(name = "redisTemplate0")
+    @Resource(name = TokenRedisTemplate )
     private RedisTemplate<String, Object> redisTemplate0;
-    @Resource(name = "redisTemplate1")
+    @Resource(name = LiveRedisTemplate)
     private RedisTemplate<String, Object> redisTemplate1;
 
     @Test

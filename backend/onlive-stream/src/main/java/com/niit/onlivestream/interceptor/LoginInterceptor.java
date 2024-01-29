@@ -17,6 +17,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Map;
 
+import static com.niit.onlivestream.contant.RedisDataUse.TokenStringRedisTemplate;
 import static com.niit.onlivestream.util.OMUtils.MapToObject;
 
 
@@ -24,7 +25,8 @@ import static com.niit.onlivestream.util.OMUtils.MapToObject;
 public class LoginInterceptor implements HandlerInterceptor {
 
 
-    private RedisTemplate<String, Object> redisTemplate;
+    @Resource(name = TokenStringRedisTemplate)
+    private StringRedisTemplate redisTemplate;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws Exception{
         String token = request.getHeader("Authorization");
@@ -38,8 +40,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             throw new BusinessException(ErrorCode.NOT_LOGIN,"token为空");
         }
         //从redis中获取相同的token
-        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
-        String redisToken = (String) operations.get(user.getUuid());
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String redisToken = operations.get(user.getUuid());
         //token失效
         if(redisToken==null)
             throw new BusinessException(ErrorCode.TOKEN_OUTTIME,"请重新登录");

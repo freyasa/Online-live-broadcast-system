@@ -18,6 +18,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
+import static com.niit.onlivestream.contant.RedisDataUse.*;
+
 /**
  * Redis多数据库配置
  * @author  arthur
@@ -90,34 +92,41 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    @Bean("redisTemplate0")
+    /**
+     * userToken数据库
+     * @return
+     */
+
+    @Bean(name = TokenRedisTemplate)
     //加这个注解表示默认使用 也就是 主库的意思 我这里默认使用0号
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = getObjectRedisTemplate();
         redisTemplate.setConnectionFactory(this.getFactory(db0));
         return redisTemplate;
     }
-
-
-    @Bean("stringRedisTemplate0")
+    @Bean(name = TokenStringRedisTemplate)
     public StringRedisTemplate stringRedisTemplate() {
         RedisConnectionFactory factory = getFactory(db0);
         return new StringRedisTemplate(factory);
     }
 
-
-    @Bean("stringRedisTemplate1")
-    public StringRedisTemplate getRedisTemplate2(){
-        RedisConnectionFactory factory = getFactory(db1);
-        return new StringRedisTemplate(factory);
-    }
-
-    @Bean("redisTemplate1")
+    /**
+     * 直播信息数据库
+     * @return
+     */
+    @Bean(name = LiveRedisTemplate)
     public RedisTemplate<String, Object> redisTemplate2() {
         RedisTemplate<String, Object> redisTemplate = getObjectRedisTemplate();
         redisTemplate.setConnectionFactory(this.getFactory(db1));
         return redisTemplate;
     }
+    @Bean(name = LiveStringRedisTemplate)
+    public StringRedisTemplate getRedisTemplate2(){
+        RedisConnectionFactory factory = getFactory(db1);
+        return new StringRedisTemplate(factory);
+    }
+
+
 
 
 

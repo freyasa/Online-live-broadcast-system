@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KWQ Music</title>
+    <base href="./">
+    <link type="text/css" rel="stylesheet" href="./css/project_index.css">
+    <link rel="shortcut icon" href="./pic/index_image/favicon.ico">
+</head>
+<body style="margin: 0">
+    <div class="wrap">
+        <header>
+            <div class = "top">
+                <div class = "kwqMusicTitle">
+                    <img class="logo" src="./pic/index_image/logo.jpg">
+                    <h1>KWQ Music</h1>
+                </div>
+
+                <div class = "topMenu">
+                    <ul>
+                        <li class="ActiveMenu_color">
+                            <div class="dropdown">
+                                <a href="index.html">Music Hall</a>
+                                <div class="dropdown-content">
+<!--                                    <a style="position: static" href="#">链接 1</a>
+                                    <a style="position: static" href="#">链接 2</a>
+                                    <a style="position: static" href="#">链接 3</a>-->
+                                </div>
+                            </div>
+
+                        </li>
+
+                        <li class="noActiveMenu_color">
+                            <div class="dropdown">
+                                <a href="./myMusic.html">My Music</a>
+<!--                                <div class="dropdown-content">
+                                    <a href="#">链接 1</a>
+                                    <a href="#">链接 2</a>
+                                    <a href="#">链接 3</a>
+                                </div>-->
+                            </div>
+                        </li>
+
+                        <li class="noActiveMenu_color">
+                            <div class="dropdown">
+                                <a href="index.html">APP</a>
+<!--                                <div class="dropdown-content">
+                                    <a href="#">链接 1</a>
+                                    <a href="#">链接 2</a>
+                                    <a href="#">链接 3</a>
+                                </div>-->
+                            </div>
+                        </li>
+
+                        <li class="noActiveMenu_color">
+                            <div class="dropdown">
+                                <a href="index.html">Open Platform</a>
+<!--                                <div class="dropdown-content">
+                                    <a href="#">链接 1</a>
+                                    <a href="#">链接 2</a>
+                                    <a href="#">链接 3</a>
+                                </div>-->
+                            </div>
+                        </li>
+
+                        <li class="noActiveMenu_color">
+                            <div class="dropdown">
+                                <a href="./singer.html">Singer</a>
+<!--                                <div class="dropdown-content">
+                                    <a href="#">链接 1</a>
+                                    <a href="#">链接 2</a>
+                                    <a href="#">链接 3</a>
+                                </div>-->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="search">
+                    <div class = "searchInput">
+                        <form>
+                            <div class = "searchInput_input">
+                                <input type="search" placeholder="Search Music、Singer">
+                            </div>
+
+                            <div class="searchInput_btn">
+                                <button>
+                                    <svg t="1622611328707" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7670" width="18" height="18"><path d="M448 768c176.725333 0 320-143.274667 320-320 0-176.725333-143.274667-320-320-320-176.725333 0-320 143.274667-320 320 0 176.725333 143.274667 320 320 320z m0 42.666667c-200.298667 0-362.666667-162.368-362.666667-362.666667S247.701333 85.333333 448 85.333333s362.666667 162.368 362.666667 362.666667-162.368 362.666667-362.666667 362.666667z m304.917333-27.584a21.333333 21.333333 0 0 1 30.165334-30.165334l150.848 150.848a21.333333 21.333333 0 0 1-30.165334 30.165334l-150.848-150.826667z" fill="#3D3D3D" p-id="7671"></path></svg>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="chkLogin" id="chk_Login_id">
+                    <div class="noLogin" id = noLogin_id>
+                        <div class="signIn" id="signIn_id">
+                            <a href="./sign_in.html">Sign In</a>
+                        </div>
+
+                        <div class="signUp" id="signUp_id">
+                            <a href="./sign_up.html">Sign Up</a>
+                        </div>
+                    </div>
+                    <div class="isLogin" id="isLogin_id">
+                        <span>Hi, </span><span id="login_id">NULL</span>
+                    </div>
+                    <div class="logout" id="logout_id">
+                        <a class="" href="javascript:void(0)" id="logout_a_id">Log out</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+        </header>
+
+        <div class="mod_index_songRecommendation">
+            <br>
+            <h1 class="songRecommendation_h1">SONG RECOMMENDATION</h1>
+
+            <div class="songClass">
+                <ul>
+                    <li>
+                        <a href="javascript:void(0)" id = "recommendBtn" onclick="return_recommend()">Recommend For You</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Mainland</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Hong Kong and Taiwan</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" id="westernBtn" onclick="return_western()">Western</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Japan</a>
+                    </li>
+                </ul>
+            </div>
+            <div class = "recommend_part" id="recommend_part_id">
+                <div class = "recommend_songs_father">
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="./audio_play.html">
+                                <img class="song_play" src="./pic/album/zhoujielun/qingtian_zhoujielun.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img class = "hover_play" src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="./audio_play.html" class="song_name">QingTian</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Jay Chou</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/lironghao/nianshaoyouwei_lironghao.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">NianShaoYouWei</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Ronghao Li</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/zhoushen/dayu_zhoushen.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">DaYu</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Charlie</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/xusong/youhebuke_xusong.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">YouHeBuKe</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Vae</a>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+
+                <div class = "recommend_songs_father">
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/jinzhiwen/yuanzougaofei_jinzhiwen.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">YuanZouGaoFei</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">김지문</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/linjunjie/tashou_linjunjie.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">TaShuo</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">JJ Lin</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/niunaikafei/mingtiannihao_niunaikafei.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">MingTian, NiHao</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Milk Coffee</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/xuezhiqian/tianwailaiwu_xuezhiqian.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">TianWaiLaiWu</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Joker</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class = "western_part" id="western_part_id">
+                <div class = "recommend_songs_father">
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="./index.html">
+                                <img class="song_play" src="./pic/album/MichaelJackson/dangerous_MichaelJackson.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img class = "hover_play" src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="./index.html" class="song_name">Dangerous</a>
+                            <br>
+                            <a href="./index.html"  class="recommend_songs_singer">Michael Jackson</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/TaylorSwift/lovestory_TaylorSwift.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">Love Story</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Taylor Swift</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/JustinBieber/baby_JustinBieber.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">Baby</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Justin Bieber</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/AlanWalker/faded_AlanWalker.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">Faded</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Alan Walker</a>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+
+                <div class = "recommend_songs_father">
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/BillieEilish/badguy_BillieEilish.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">bad guy</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Billie Eilish</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/ElvisPresley/JailhouseRock_ElvisPresley.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">Jailhouse Rock</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Elvis Presley</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/InaWroldsen/IWantedYou_InaWroldsen.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">I Wanted You</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">Ina Wroldsen</a>
+                        </div>
+                    </div>
+
+                    <div class = "recommend_songs">
+                        <div class="song_float">
+                            <a href="index.html">
+                                <img class="song_play" src="./pic/album/TheHighSchoolMusicalCast/We'reAllinThisTogether.jpeg">
+                                <div class="overlay_play">
+                                    <div class="float_play">
+                                        <img src="./pic/index_image/bofang.png">
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="song_information">
+                            <a href="index.html" class="song_name">We're All in This Together</a>
+                            <br>
+                            <a href="index.html" class="recommend_songs_singer">The High School Musical Cast</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>        <!--mod_index_songRecommendation-->
+
+<!--        <div class="mod_index_newSongs">
+            <br>
+            <h1 class="newSongs_h1">NEW SONG EXPRESS</h1>
+
+            <div class="newSongClass">
+                <ul>
+                    <li>
+                        <a href="index.html">Recommend For You</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Mainland</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Hong Kong and Taiwan</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Western</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Japan</a>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="new_songs_father">
+                <div class="new_songs">
+                    <div class="new_song_float">
+                        <a href="index.html">
+                            <img src="album_image/zhoujielun/qingtian_zhoujielun.jpeg">
+                        </a>
+                    </div>
+                    <div class="new_song_information">
+                        <a class="new_song_name" href="index.html">晴天</a>
+                        <a class="new_songs_singer"href="index.html">周杰伦</a>
+                    </div>
+                </div>
+
+                <div class="new_songs">
+                    <div class="new_song_float">
+                        <a href="index.html">
+                            <img src="album_image/zhoujielun/qingtian_zhoujielun.jpeg">
+                        </a>
+                    </div>
+                    <div class="new_song_information">
+                        <a class="new_song_name" href="index.html">晴天</a>
+                        <a class="new_songs_singer"href="index.html">周杰伦</a>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+
+
+        <div class="new_song_starts">
+            <br>
+            <h1 class="songRecommendation_h1">RECOMMEND SINGER</h1>
+
+<!--            <div class="songClass">
+                <ul>
+                    <li>
+                        <a href="index.html">Recommend For You</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Mainland</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Hong Kong and Taiwan</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Western</a>
+                    </li>
+                    <li>
+                        <a href="index.html">Japan</a>
+                    </li>
+                </ul>
+            </div>-->
+
+            <div class = "recommend_songs_father">
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/zhoujielun.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img class = "hover_play" src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">Jay Chou</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">周杰伦</a>-->
+                    </div>
+                </div>
+
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/linjunjie.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">JJ Lin</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">李荣浩</a>-->
+                    </div>
+                </div>
+
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/BIGBANG.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">BIGBANG (빅뱅)</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">周深</a>-->
+                    </div>
+                </div>
+
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/YonezuKenshi.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">米津玄師 (よねづ けんし)</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">许嵩</a>-->
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+
+            <div class = "recommend_songs_father">
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/BLACKPINK.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">BLACKPINK</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">金志文</a>-->
+                    </div>
+                </div>
+
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/JustenBieber.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">Justin Bieber</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">林俊杰</a>-->
+                    </div>
+                </div>
+
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/Maroon5.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">Maroon 5</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">牛奶咖啡</a>-->
+                    </div>
+                </div>
+
+                <div class = "recommend_songs">
+                    <div class="song_float">
+                        <a href="index.html">
+                            <img class="song_play" src="./pic/singer/TaylorSwift.jpeg">
+<!--                            <div class="overlay_play">
+                                <div class="float_play">
+                                    <img src="project_image/bofang.png">
+                                </div>
+                            </div>-->
+                        </a>
+                    </div>
+                    <div class="singer_information">
+                        <a href="index.html" class="song_name">Taylor Swift</a>
+                        <br>
+                        <!--<a href="index.html" class="recommend_songs_singer">薛之谦</a>-->
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>        <!--mod_index_songRecommendation-->
+
+
+    </div>
+<!--    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>-->
+    <footer>
+        <div class = "my_footer">
+            <br>
+            <div class = "cooperation">
+
+                <div class="download">
+                    <div class="download_head">
+                        <a>Download KWQ Music Application</a>
+                    </div>
+                    <div class="line_system_icon">
+                        <div class="system_icon">
+                            <a class="motivate">
+                                <div class="svg_icon">
+                                    <svg t="1622611525282" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8586" width="40" height="40">
+                                        <path d="M426.285714 574.857143l0 372-389.714286-53.714286 0-318.285714 389.714286 0zm0-424.571429l0 376.571429-389.714286 0 0-322.857143zm561.142857 424.571429l0 449.142857-518.285714-71.428571 0-377.714286 518.285714 0zm0-501.714286l0 453.714286-518.285714 0 0-382.285714z" p-id="8587" fill="#999999"></path>
+                                    </svg>
+                                </div>
+                                <!--<img class="system_class" src="project_image/windows-b.png">-->
+                            </a>
+                            <br>
+                            <a>PC</a>
+                        </div>
+                        <div class="system_icon">
+                            <a class="motivate">
+                                <div class="svg_icon">
+                                    <svg t="1622611918557" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9588" width="40" height="40">
+                                        <path d="M960 108.8c35.2 0 64 28.8 64 64v518.4c0 35.2-28.8 64-64 64H646.4l57.6 115.2c6.4 16 0 35.2-12.8 41.6-3.2 3.2-9.6 3.2-12.8 3.2H348.8c-19.2 0-32-12.8-32-32 0-6.4 0-9.6 3.2-12.8l57.6-115.2H64c-35.2 0-64-28.8-64-64V172.8c0-35.2 28.8-64 64-64h896zM598.4 294.4c-35.2-3.2-67.2 19.2-86.4 19.2-16 0-41.6-19.2-70.4-19.2-35.2 0-70.4 22.4-89.6 54.4-38.4 64-9.6 163.2 25.6 217.6l6.4 9.6c16 22.4 35.2 48 60.8 44.8 28.8 0 38.4-19.2 70.4-19.2 32 0 41.6 19.2 70.4 16 28.8 0 48-25.6 67.2-54.4s28.8-60.8 28.8-60.8h-3.2C665.6 496 624 473.6 624 416c0-54.4 44.8-80 48-83.2-19.2-32-57.6-38.4-73.6-38.4z m0-105.6c-22.4 0-48 16-64 32-12.8 16-25.6 41.6-22.4 67.2 25.6 0 48-12.8 64-32 12.8-16 25.6-41.6 22.4-67.2z" fill="#999999" p-id="9589"></path>
+                                    </svg>
+                                </div>
+    <!--                            <img class="system_class" src="project_image/mac-b.png">-->
+                            </a>
+                            <br>
+                            <a>Mac</a>
+                        </div>
+                    </div>
+                    <div class="line_system_icon">
+                        <div class="system_icon">
+                            <a class="motivate">
+                                <div class="svg_icon">
+                                    <svg t="1622612003134" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10495" width="40" height="40">
+                                        <path d="M391.460571 275.968q9.142857 0 15.725714-6.582857t6.582857-15.725714-6.582857-15.725714-15.725714-6.582857-15.433143 6.582857-6.290286 15.725714 6.290286 15.725714 15.433143 6.582857zM632.539429 275.968q9.142857 0 15.433143-6.582857t6.290286-15.725714-6.290286-15.725714-15.433143-6.582857-15.725714 6.582857-6.582857 15.725714 6.582857 15.725714 15.725714 6.582857zM168.594286 381.147429q23.990857 0 41.179429 17.115429t17.115429 41.179429l0 245.686857q0 24.576-16.822857 41.691429t-41.398857 17.115429-41.691429-17.115429-17.115429-41.691429l0-245.686857q0-23.990857 17.115429-41.179429t41.691429-17.115429zM774.290286 391.972571l0 380.562286q0 26.258286-18.285714 44.544t-44.032 18.285714l-42.861714 0 0 129.682286q0 24.576-17.115429 41.691429t-41.691429 17.115429-41.691429-17.115429-17.115429-41.691429l0-129.682286-78.848 0 0 129.682286q0 24.576-17.115429 41.691429t-41.691429 17.115429q-23.990857 0-41.179429-17.115429t-17.115429-41.691429l-0.585143-129.682286-42.276571 0q-26.258286 0-44.544-18.285714t-18.285714-44.544l0-380.562286 524.580571 0zM641.682286 160.548571q61.147429 31.451429 97.718857 87.698286t36.571429 123.172571l-528.603429 0q0-66.852571 36.571429-123.172571t98.304-87.698286l-40.594286-74.825143q-4.022857-7.460571 2.852571-11.410286 7.460571-3.437714 11.410286 3.437714l41.179429 75.410286q54.272-23.990857 114.834286-23.990857t114.834286 23.990857l41.179429-75.410286q4.022857-6.875429 11.410286-3.437714 6.875429 4.022857 2.852571 11.410286zM914.285714 439.442286l0 245.686857q0 24.576-17.115429 41.691429t-41.691429 17.115429q-23.990857 0-41.179429-17.115429t-17.115429-41.691429l0-245.686857q0-24.576 17.115429-41.398857t41.179429-16.822857q24.576 0 41.691429 16.822857t17.115429 41.398857z" p-id="10496" fill="#999999"></path>
+                                    </svg>
+                                </div>
+                                <!--<img class="system_class" src="project_image/android-b.png">-->
+                            </a>
+                            <br>
+                            <a>Android</a>
+                        </div>
+                        <div class="system_icon">
+                            <a class="motivate">
+                                <div class="svg_icon">
+                                    <svg t="1622612090401" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11962" width="40" height="40">
+                                        <path d="M791.488 544.095c-1.28-129.695 105.76-191.871 110.528-194.975-60.16-88.032-153.856-100.064-187.232-101.472-79.744-8.064-155.584 46.944-196.064 46.944-40.352 0-102.816-45.76-168.96-44.544-86.912 1.28-167.072 50.528-211.808 128.384-90.304 156.703-23.136 388.831 64.896 515.935 43.008 62.208 94.304 132.064 161.632 129.568 64.832-2.592 89.376-41.952 167.744-41.952s100.416 41.952 169.056 40.672c69.76-1.312 113.984-63.392 156.704-125.792 49.376-72.16 69.728-142.048 70.912-145.632-1.536-0.704-136.064-52.224-137.408-207.136zM662.56 163.52C698.304 120.16 722.432 60 715.84 0c-51.488 2.112-113.888 34.304-150.816 77.536-33.152 38.368-62.144 99.616-54.368 158.432 57.472 4.48 116.128-29.216 151.904-72.448z" p-id="11963" fill="#999999"></path>
+                                    </svg>
+                                </div>
+    <!--                            <img class="system_class" src="project_image/ios-b.png">-->
+                            </a>
+                            <br>
+                            <a>ios</a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="cooperation_company">
+                    <div class="cooperation_company_h1">
+                        <a>Cooperation link</a>
+                    </div>
+                    <div class = cooperation_link>
+                        <div class="cooperation_link_line">
+                            <a>CJ ENM</a>
+                            <a href="https://www.google.com/">Google</a>
+                            <a>Facebook</a>
+                        </div>
+
+                        <div class="cooperation_link_line">
+                            <a>Wechat</a>
+                            <a>QQ music</a>
+                            <a>Twitter</a>
+                        </div>
+
+                        <div class="cooperation_link_line">
+                            <a>Baidu</a>
+                            <a href="https://freyasa.github.io" target="_blank">MandySa</a>
+                            <a>Victor</a>
+                        </div>
+
+                        <div class="cooperation_link_line">
+                            <a>Shelby</a>
+                            <a>Kuzma</a>
+                            <a>Fox</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="copyright">
+                <a>Copyright © 2020 - 2021 KWQ. All Rights Reserved.</a>
+            </div>
+            <div class="company">
+                <a>KWQ Company Business license of network culture：NO. 1919810</a>
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        var isLogin = false;
+        var loginId = document.getElementById("login_id");
+        var noLogin_id = document.getElementById("noLogin_id");
+        var isLogin_id = document.getElementById("isLogin_id");
+        var logout = document.getElementById("logout_a_id");
+        var logout_id = document.getElementById("logout_id");
+
+        let recommendBar = document.getElementById("recommend_part_id");
+        let westernBar = document.getElementById("western_part_id");
+
+
+        window.onload = function(){
+            checkLogin();
+        }
+
+        logout.onclick = function (){
+            localStorage.setItem("login_id_db", "");
+            location.reload();
+        }
+
+        function checkLogin(){
+            if(localStorage.getItem("login_id_db") !== ""){
+                isLogin = true;
+                loginId.innerText = localStorage.getItem("login_id_db");
+                noLogin_id.style.display = "none";
+                isLogin_id.style.display = "inline-block";
+                logout.style.display = "inline-block";
+
+            }else{
+                noLogin_id.style.display = "inline-block";
+                isLogin_id.style.display = "none";
+                logout.style.display = "none";
+            }
+        }
+
+
+        function return_recommend(){
+            recommendBar.style.display = "inline-block";
+            westernBar.style.display = "none";
+        }
+
+        function return_western(){
+            recommendBar.style.display = "none";
+            westernBar.style.display = "inline-block";
+        }
+
+    </script>
+   
+</body>
+</html>

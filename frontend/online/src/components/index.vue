@@ -9,6 +9,8 @@ const router = useRouter();
 const recommendCarouselLiveId = ref(0)
 const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg')
 
+let lastSelectRecommendCarousel = null;
+
 
 //------------function-----------------
 const toPagePath = (url: string) => {
@@ -19,10 +21,9 @@ const toPagePath = (url: string) => {
 };
 
 const toRecommendCarousel = (context, index) => {
-
   const docu = document.getElementById('recommend_carousel' + index);
-  console.log(docu); // 输出组件实例
-  console.log(context); // 输出组件实例
+  // console.log(docu); // 输出组件实例
+  // console.log(context); // 输出组件实例
   // console.log(context.target.value); // 输出组件实例
   /* width | style | color */
   // context.target.style.border = '3px solid #61ace9';
@@ -30,7 +31,11 @@ const toRecommendCarousel = (context, index) => {
   // context.target.style.padding = '30px';
   // context.target.style.visibility = "hidden";
   docu.style.backgroundColor = '#61ace9'
-  console.log(context.target.style.border);
+  if (lastSelectRecommendCarousel != null && lastSelectRecommendCarousel != docu)
+    lastSelectRecommendCarousel.style.backgroundColor = 'transparent'
+
+  lastSelectRecommendCarousel = docu
+  // console.log(context.target.style.border);
 }
 
 
@@ -60,9 +65,9 @@ const toRecommendCarousel = (context, index) => {
           style="width: 220px; height: 630px; margin-left: 12px; border-radius: 5px; background-color: rgba(0, 0, 0, 0.5)">
 
         <div v-for="(i, index) in 5" :id="'recommend_carousel' + index" :key="i" class="recommend_carousel" @click="toRecommendCarousel($event, index)"
-             style="width: 200px; height: 110px; margin-top: 13px; margin-left: 10px; margin-right: 10px; ">
+             style="width: 200px; height: 110px; margin-top: 13px; margin-left: 10px; margin-right: 10px; border-radius: 5px">
           <div>
-            <el-image style="width: 190px; height: 100px; margin-top: 5px; border-radius: 5px" :src="urlTemplate" :fit="fit"/>
+            <el-image style="width: 196px; height: 106px; margin-top: 2px; border-radius: 5px" :src="urlTemplate" :fit="fit"/>
           </div>
         </div>
 

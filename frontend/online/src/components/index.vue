@@ -33,7 +33,6 @@ const toRecommendCarousel = (context, index) => {
   docu.style.backgroundColor = '#61ace9'
   if (lastSelectRecommendCarousel != null && lastSelectRecommendCarousel != docu)
     lastSelectRecommendCarousel.style.backgroundColor = 'transparent'
-
   lastSelectRecommendCarousel = docu
   // console.log(context.target.style.border);
 }

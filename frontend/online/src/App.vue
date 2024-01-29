@@ -24,14 +24,13 @@ const data = reactive({
 })
 const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
 
-const state = reactive({
-  circleUrl:
-      'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-  sizeList: ['small', '', 'large'] as const,
-})
+// const state = reactive({
+//   circleUrl:
+//       'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+//   sizeList: ['small', '', 'large'] as const,
+// })
 
-const {circleUrl, sizeList} = toRefs(state)
-
+// const {circleUrl, sizeList} = toRefs(state)
 
 </script>
 
@@ -58,7 +57,12 @@ const {circleUrl, sizeList} = toRefs(state)
             <el-menu-item index="4">娱乐</el-menu-item>
             <el-menu-item index="5">电台</el-menu-item>
             <div class="flex-grow"/>
-            <el-menu-item index="6">Orders</el-menu-item>
+            <el-menu-item index="6" v-if="!login.loginState">登录</el-menu-item>
+            <el-menu-item index="6" v-else>
+              <div>
+                <el-avatar class="personal_info" :size="36" :src="circleUrl" style="vertical-align: top; margin-top: 10px;"/>
+              </div>
+            </el-menu-item>
           </el-menu>
         </el-affix>
       </el-header>
@@ -121,6 +125,27 @@ const {circleUrl, sizeList} = toRefs(state)
 }
 
 .flex-grow {
-  flex-grow: 0.9;
+  flex-grow: 0.8;
 }
+
+.personal_info {
+  animation: fly 0.1s linear;
+  animation-fill-mode: both;
+
+}
+
+@keyframes fly {
+  0% {
+  }
+  100% {
+    //box-shadow: 6px 8px 12px #7f7f7f, -3px 4px 6px #7f7f7f;
+    //width: 420px;
+    //height: 250px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: var(--el-box-shadow);
+    transform: scale(2);
+  }
+}
+
 </style>

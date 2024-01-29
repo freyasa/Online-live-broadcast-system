@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.niit.onlivestream.contant.RedisDataUse.TokenStringRedisTemplate;
 import static com.niit.onlivestream.util.OMUtils.ObjectToMap;
 
 
@@ -36,7 +37,8 @@ public class UserController {
     @Resource
     private UserInfoService userService;
 
-
+    @Resource(name = TokenStringRedisTemplate)
+    private StringRedisTemplate redisTemplate;
 
     @Resource
     private RoomInfoService roomInfoService;
@@ -88,9 +90,9 @@ public class UserController {
         claim = ObjectToMap(userInfo);
         String token = JwtUtil.getToken(claim);
 
-        //把Token存储到Redis中   过期时间  12 个小时
-//        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
-//        operations.set(userInfo.getUuid(),token,12, TimeUnit.HOURS);
+        // 把Token存储到Redis中   过期时间  12 个小时
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        operations.set(userInfo.getUuid(),token,12, TimeUnit.HOURS);
 
         // 封装返回体
         UserLoginResponse response =new UserLoginResponse();

@@ -14,8 +14,68 @@ const toPagePath = (url: string) => {
   });
 };
 
-const userAvatar = () => {
+const userAvatarUp = () => {
   let userAvatarDiv = document.getElementById('userAvatarDiv');
+  let userAvatar = document.getElementById('userAvatar');
+  let userCard = document.getElementById('userCard');
+  userCard.style.visibility = 'visible'
+  // userAvatarDiv.style.animation = 'fly 0.15s linear';
+  // userAvatarDiv.style.animationFillMode = 'both';
+  userAvatarDiv.style.width='76px';
+  userAvatarDiv.style.height='76px';
+
+  // userAvatar.style.width='76px';
+  // userAvatar.style.height='76px';
+
+  userAvatarDiv.animate(
+      [
+        {
+          //0%
+          width: '36px',
+          height: '36px'
+        },
+        {
+          // 100%
+          width: '76px',
+          height: '76px',
+          // transform: 'translate(10px, 0)'
+        },
+      ],
+      150,
+  );
+  // userAvatar.animate(
+  //     [
+  //       {
+  //         //0%
+  //         width: '36px',
+  //         height: '36px'
+  //       },
+  //       {
+  //         // 100%
+  //         width: '76px',
+  //         height: '76px',
+  //         transform: 'translate(10px, 0)'
+  //       },
+  //     ],
+  //     150,
+  // );
+  //
+  //
+  // userAvatarDiv.style.transform='translate(10px, 0)';
+  //animation: fly 0.15s linear;
+  //animation-fill-mode: both;
+
+  // width: 76px;
+  // height: 76px;
+  // transform: translate(10px, 0);
+  // margin-top: 15px;
+  // border-radius: 38px;
+}
+
+const userAvatarDown = () => {
+  let userAvatarDiv = document.getElementById('userAvatarDiv');
+  let userCard = document.getElementById('userCard');
+  userCard.style.visibility = 'hidden'
   console.log(1)
 }
 
@@ -80,19 +140,21 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
             <div class="flex-grow"/>
             <el-menu-item index="6" v-if="!login.loginState">登录</el-menu-item>
             <el-menu-item index="6" v-else style="border-bottom: 0">
-              <div id="userAvatarDiv" onmousemove="userAvatar" class="personal_info" style="width: 100%; height: 100%; margin-top: 24px">
-<!--                <el-avatar :size="36"-->
-<!--                           :src="'https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg'"-->
-<!--                           style="vertical-align: top"/>-->
-<!--<div>-->
+              <div id="userAvatarDiv" @mouseover="userAvatarUp" class="personal_info"
+                   style="width: 76px; height: 76px; z-index: 10">
+                <!--                <el-avatar :size="36"-->
+                <!--                           :src="'https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg'"-->
+                <!--                           style="vertical-align: top"/>-->
+                <!--<div>-->
                 <img id="userAvatar" src="https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg"
-                     style="border-radius: 18px; width: 36px; height: 36px; vertical-align: top"/>
+                     style="border-radius: 18px; width: 36px; height: 36px "/>
               </div>
 
-<!--              <div>-->
-<!--                <el-card class="box-card" style="">-->
-<!--                </el-card>-->
-<!--              </div>-->
+              <div>
+                <el-card id="userCard" @mouseout="userAvatarDown"
+                         style="height: 436px; width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1; border-radius: 10px; visibility: hidden;">
+                </el-card>
+              </div>
             </el-menu-item>
           </el-menu>
         </el-affix>
@@ -160,9 +222,8 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
 }
 
 .personal_info :hover {
-  //animation: fly 0.15s linear;
-  //animation-fill-mode: both;
-
+  animation: fly 0.15s linear;
+  animation-fill-mode: both;
 }
 
 @keyframes fly {

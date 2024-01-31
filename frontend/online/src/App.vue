@@ -4,6 +4,7 @@
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
 import {login} from './global/global'
+
 const router = useRouter();
 
 const toPagePath = (url: string) => {
@@ -12,6 +13,11 @@ const toPagePath = (url: string) => {
     path: url,
   });
 };
+
+const userAvatar = () => {
+  let userAvatarDiv = document.getElementById('userAvatarDiv');
+  console.log(1)
+}
 
 // const router = useRouter();
 // const logo = "https://img2.imgtp.com/2024/01/23/5NAXxwFs.png";
@@ -35,8 +41,23 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
 </script>
 
 <template>
-  <el-backtop :right="100" :bottom="100"/>
+  <!--  <el-backtop :right="100" :bottom="100"/>-->
 
+  <el-backtop :bottom="100">
+    <div
+        style="
+        height: 100%;
+        width: 100%;
+        background-color: var(--el-bg-color-overlay);
+        box-shadow: var(--el-box-shadow-lighter);
+        text-align: center;
+        line-height: 40px;
+        color: #1989fa;
+      "
+    >
+      UP
+    </div>
+  </el-backtop>
   <div>
     <el-container>
       <el-header style="padding: 0; height: 60px">
@@ -58,10 +79,20 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
             <el-menu-item index="5">电台</el-menu-item>
             <div class="flex-grow"/>
             <el-menu-item index="6" v-if="!login.loginState">登录</el-menu-item>
-            <el-menu-item index="6" v-else>
-              <div>
-                <el-avatar class="personal_info" :size="36" :src="circleUrl" style="vertical-align: top; margin-top: 10px;"/>
+            <el-menu-item index="6" v-else style="border-bottom: 0">
+              <div id="userAvatarDiv" onmousemove="userAvatar" class="personal_info" style="width: 100%; height: 100%; margin-top: 24px">
+<!--                <el-avatar :size="36"-->
+<!--                           :src="'https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg'"-->
+<!--                           style="vertical-align: top"/>-->
+<!--<div>-->
+                <img id="userAvatar" src="https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg"
+                     style="border-radius: 18px; width: 36px; height: 36px; vertical-align: top"/>
               </div>
+
+<!--              <div>-->
+<!--                <el-card class="box-card" style="">-->
+<!--                </el-card>-->
+<!--              </div>-->
             </el-menu-item>
           </el-menu>
         </el-affix>
@@ -128,9 +159,9 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
   flex-grow: 0.8;
 }
 
-.personal_info {
-  animation: fly 0.1s linear;
-  animation-fill-mode: both;
+.personal_info :hover {
+  //animation: fly 0.15s linear;
+  //animation-fill-mode: both;
 
 }
 
@@ -139,13 +170,18 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
   }
   100% {
     //box-shadow: 6px 8px 12px #7f7f7f, -3px 4px 6px #7f7f7f;
-    //width: 420px;
-    //height: 250px;
-    border-radius: 10px;
-    background-color: #ffffff;
-    box-shadow: var(--el-box-shadow);
-    transform: scale(2);
+    width: 76px;
+    height: 76px;
+    //left: 20px;
+    transform: translate(10px, 0);
+    //margin-left: -20px;
+    margin-top: 15px;
+    border-radius: 38px;
+    //background-color: #ffffff;
+    //box-shadow: var(--el-box-shadow);
+    //transform: scale(2);
   }
 }
+
 
 </style>

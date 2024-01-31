@@ -4,12 +4,14 @@ package com.niit.onlivestream.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
+import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.util.ResultUtils;
 import com.niit.onlivestream.domain.RoomInfo;
 import com.niit.onlivestream.domain.RoomLog;
 import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.RoomInfoService;
 import com.niit.onlivestream.service.RoomLogService;
+import com.niit.onlivestream.util.ThreadLocalUtil;
 import com.niit.onlivestream.vo.OnliveRequest.StreamRequest;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +54,7 @@ public class InfluencerController {
 
     /**
      * 开始直播
-     * @param request  RoomInfo
+     * @param request  用户ID 直播序列号
      * @return  直播成功
      */
     @PostMapping("/startlive")
@@ -63,6 +65,9 @@ public class InfluencerController {
             throw new BusinessException(ErrorCode.NULL_ERROR,"部分数据为空");
         int liveId = request.getLiveid();
         String userId = request.getUuid();
+        UserInfo user= ThreadLocalUtil.get();
+        if(!user.getUuid().equals(userId))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"非法入侵用户ID");
         //查一下用户ID和直播序列号 是不是 一一对应
         QueryWrapper<RoomInfo> queryWrapper =new QueryWrapper<>();
         queryWrapper.eq("liveid",liveId);
@@ -73,12 +78,14 @@ public class InfluencerController {
 
         //先持久化部分 roomLog
         RoomLog roomLog =new RoomLog();
+        roomLog.setId(roomLog.getId());
         roomLog.setCreatetime(new Date());
         roomLog.setRoomforeignid(roomInfo.getLiveid());
         roomLog.setName(roomInfo.getRoomname());
         roomLog.setProfile(roomInfo.getProfile());
         roomLog.setRoomAvatar(roomInfo.getRoomAvatar());
         roomLog.setPartitionid(roomInfo.getPartitionid());
+        boolean saveRoomLog = roomLogService.save(roomLog);
         // 存redis 一部分roomlog
         // Redis 加入到开播队列
         ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
@@ -86,6 +93,13 @@ public class InfluencerController {
         liveDB.set(live,roomLog,3, TimeUnit.DAYS);
         return ResultUtils.success("开始直播成功");
     }
+
+
+    /**
+     * 结束直播
+     * @param request 用户ID 直播序列号
+     * @return 结束成功
+     */
 
     @PostMapping("endlive")
     public BaseResponse<String> endLive(@RequestBody StreamRequest request){
@@ -95,6 +109,9 @@ public class InfluencerController {
             throw new BusinessException(ErrorCode.NULL_ERROR,"部分数据为空");
         int liveId = request.getLiveid();
         String userId = request.getUuid();
+        UserInfo user= ThreadLocalUtil.get();
+        if(!user.getUuid().equals(userId))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"非法入侵用户ID");
         //查一下用户ID和直播序列号 是不是 一一对应
         QueryWrapper<RoomInfo> queryWrapper =new QueryWrapper<>();
         queryWrapper.eq("liveid",liveId);
@@ -110,14 +127,16 @@ public class InfluencerController {
         if(roomLog==null)
             throw new BusinessException(ErrorCode.TOKEN_OUTTIME,"直播间信息未及时关闭三天自动关闭");
         roomLog.setStoptime(new Date());
-        boolean logResult = roomLogService.save(roomLog);
+        // 更新房间数据
+        QueryWrapper<RoomLog> queryWrapper2 =new QueryWrapper<>();
+        queryWrapper2.eq("id",roomLog.getId());
+        boolean logResult = roomLogService.update(roomLog,queryWrapper2);
         if(!logResult)
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"保存失败");
         //从Redis删除数据
         liveTemplate.delete(liveID);
         return ResultUtils.success("结束直播成功");
     }
-
 
     /**
      * 根据主键liveID查询是否直播
@@ -126,14 +145,20 @@ public class InfluencerController {
      */
 
     @GetMapping("/findIslive")
-    public BaseResponse<RoomInfo> getRoomByLiveId(@RequestParam Integer liveID){
-        if(liveID==null)
+    public BaseResponse<RoomLog> getRoomByLiveId(@RequestParam Integer liveID){
+        if(liveID==null|| liveID==0)
             throw new BusinessException(ErrorCode.NULL_ERROR,"没有房间号");
-        return null;
+        // 得到liveID
+        String live = String.valueOf(liveID);
+        ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
+        RoomLog roomLog = (RoomLog) liveDB.get(live);
+        if(roomLog==null)
+            throw  new BusinessException(ErrorCode.SUCCESS,"没有直播");
+        return ResultUtils.success(roomLog,"正在直播");
     }
 
 
-    /**
+    /*
      * get请求
      * @return  得到所有直播间
      */

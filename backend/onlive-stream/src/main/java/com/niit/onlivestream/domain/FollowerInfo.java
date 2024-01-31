@@ -21,14 +21,15 @@ public class FollowerInfo implements Serializable {
     private Integer id;
 
     /**
-     * 主播
+     * 关注者
+     */
+    private String following;
+    /**
+     * 被关注者
      */
     private String followed;
 
-    /**
-     * 粉丝
-     */
-    private String following;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

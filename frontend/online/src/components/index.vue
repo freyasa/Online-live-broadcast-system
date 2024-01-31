@@ -2,11 +2,11 @@
 //------------import-----------------
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
-
+import {onMounted,onUnmounted} from 'vue'
 
 //------------variable-----------------
 const router = useRouter();
-const recommendCarouselLiveId = ref(1)
+const recommendCarouselLiveId = ref(0)
 const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg')
 
 let lastSelectRecommendCarousel = null;
@@ -39,6 +39,11 @@ const toRecommendCarousel = (context, index) => {
 
 
 //------------setup-----------------
+onMounted(()=>{
+  console.log('我创建了');
+  lastSelectRecommendCarousel = document.getElementById('recommend_carousel0');
+  lastSelectRecommendCarousel.style.backgroundColor = '#61ace9'
+})
 
 
 </script>

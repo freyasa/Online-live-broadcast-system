@@ -3,7 +3,6 @@ import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
 import {login} from './global/global'
 
-
 const router = useRouter();
 let imgHover = false;
 let cardHover = false;
@@ -32,7 +31,7 @@ const userAvatarUp = () => {
       // 100%
       width: '76px',
       height: '76px',
-      transform: 'translate(14px, 30px)',
+      transform: 'translate(10px, 30px)',
       borderRadius: '38px'
     },
   ]
@@ -123,14 +122,12 @@ const displayControl = () => {
   if (!imgHover && !cardHover && cardUp) userAvatarDown();
 }
 
-window.setInterval(displayControl,100)
+window.setInterval(displayControl, 100)
 
 
 </script>
 
 <template>
-  <!--  <el-backtop :right="100" :bottom="100"/>-->
-
   <el-backtop :bottom="100">
     <div
         style="
@@ -181,11 +178,33 @@ window.setInterval(displayControl,100)
               <!--              @mouseout="userAvatarDown"-->
               <div>
                 <el-card @mouseover="cardHover=true" @mouseout="cardHover=false" id="userCard"
-                         style="height: 436px; width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1; border-radius: 10px; visibility: visible;">
+                         style="height: 436px; width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1;
+                         border-radius: 10px; visibility: visible; cursor: default">
 
-                  <div style="font-weight: 450; font-size: 15px"> {{}} </div>
+                  <div style="height: 20px"></div>
+
+                  <div style="font-weight: 500; font-size: 16px; line-height: normal; text-align: center">
+                    {{ login.user.userName }}
+                  </div>
+
+                  <div>
+                    <div class="listItem">
+                      个人中心
+                    </div>
+                    <div class="listItem">
+                      我的直播间
+                    </div>
+                    <div class="listItem">
+                      退出登录
+                    </div>
+                  </div>
+
                 </el-card>
               </div>
+            </el-menu-item>
+
+            <el-menu-item index="7" style="position: absolute; right: 80px">
+              <el-button color="#e06696" :dark='false' style="color: white">我要开播</el-button>
             </el-menu-item>
           </el-menu>
         </el-affix>
@@ -281,5 +300,18 @@ window.setInterval(displayControl,100)
   }
 }
 
+.listItem {
+  height: 40px;
+  width: 252px;
+  border-radius: 6px;
+  color: #61666d;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'PingFang SC';
+}
+
+.listItem :hover {
+  background-color: #000;
+}
 
 </style>

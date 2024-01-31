@@ -1,11 +1,13 @@
 <script setup lang="ts">
-// import HelloWorld from './components/HelloWorld.vue'
-// import Login from './components/login.vue'
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
 import {login} from './global/global'
 
+
 const router = useRouter();
+let userAvatar = document.getElementById('userAvatar');
+let userCard = document.getElementById('userCard');
+
 
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
@@ -15,68 +17,87 @@ const toPagePath = (url: string) => {
 };
 
 const userAvatarUp = () => {
-  let userAvatarDiv = document.getElementById('userAvatarDiv');
-  let userAvatar = document.getElementById('userAvatar');
-  let userCard = document.getElementById('userCard');
   userCard.style.visibility = 'visible'
-  // userAvatarDiv.style.animation = 'fly 0.15s linear';
-  // userAvatarDiv.style.animationFillMode = 'both';
-  userAvatarDiv.style.width='76px';
-  userAvatarDiv.style.height='76px';
 
-  // userAvatar.style.width='76px';
-  // userAvatar.style.height='76px';
+  const keyframes = [
+    {
+      //0%
+      width: '36px',
+      height: '36px'
+    },
+    {
+      // 100%
+      width: '76px',
+      height: '76px',
+      transform: 'translate(14px, 30px)',
+      borderRadius: '38px'
+    },
+  ]
 
-  userAvatarDiv.animate(
-      [
-        {
-          //0%
-          width: '36px',
-          height: '36px'
-        },
-        {
-          // 100%
-          width: '76px',
-          height: '76px',
-          // transform: 'translate(10px, 0)'
-        },
-      ],
-      150,
+  const options = {
+    // 动画执行次数
+    iterations: 1,
+    // 动画开始时间点
+    iterationStart: 0,
+    // 动画开始之前的延迟
+    delay: 100,
+    // 动画结束之后的延迟
+    // endDelay: 100,
+    // 动画是否在下一周期逆向播放
+    direction: 'normal',
+    // 动画时长
+    duration: 150,
+    // 动画前后保持的状态
+    fill: 'forwards',
+    // 动画缓动类型
+    easing: 'ease-in-out',
+  }
+  userAvatar.animate(
+    keyframes, options
   );
-  // userAvatar.animate(
-  //     [
-  //       {
-  //         //0%
-  //         width: '36px',
-  //         height: '36px'
-  //       },
-  //       {
-  //         // 100%
-  //         width: '76px',
-  //         height: '76px',
-  //         transform: 'translate(10px, 0)'
-  //       },
-  //     ],
-  //     150,
-  // );
-  //
-  //
-  // userAvatarDiv.style.transform='translate(10px, 0)';
-  //animation: fly 0.15s linear;
-  //animation-fill-mode: both;
-
-  // width: 76px;
-  // height: 76px;
-  // transform: translate(10px, 0);
-  // margin-top: 15px;
-  // border-radius: 38px;
 }
 
 const userAvatarDown = () => {
-  let userAvatarDiv = document.getElementById('userAvatarDiv');
-  let userCard = document.getElementById('userCard');
   userCard.style.visibility = 'hidden'
-  console.log(1)
+
+  const keyframes = [
+    {
+      //0%
+      width: '76px',
+      height: '76px',
+      // transform: 'translate(14px, 20px)',
+      borderRadius: '38px'
+    },
+    {
+      // 100%
+      width: '36px',
+      height: '36px',
+      transform: 'translate(0px, 0px)',
+      borderRadius: '18px'
+    },
+  ]
+
+  const options = {
+    // 动画执行次数
+    iterations: 1,
+    // 动画开始时间点
+    iterationStart: 0,
+    // 动画开始之前的延迟
+    delay: 100,
+    // 动画结束之后的延迟
+    endDelay: 100,
+    // 动画是否在下一周期逆向播放
+    direction: 'normal',
+    // 动画时长
+    duration: 150,
+    // 动画前后保持的状态
+    fill: 'forwards',
+    // 动画缓动类型
+    easing: 'ease-in-out',
+  }
+  userAvatar.animate(
+      keyframes, options
+  );
 }
 
 // const router = useRouter();
@@ -98,6 +119,15 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
 
 // const {circleUrl, sizeList} = toRefs(state)
 
+
+setTimeout(function() {
+  var c = window.getComputedStyle(document.getElementById('t')).getPropertyValue('overflow');
+  if (c === 'hidden') {
+    alert('Mouse in box');
+  } else {
+    alert('Mouse not in box');
+  }
+}, 100);
 </script>
 
 <template>
@@ -140,19 +170,19 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
             <div class="flex-grow"/>
             <el-menu-item index="6" v-if="!login.loginState">登录</el-menu-item>
             <el-menu-item index="6" v-else style="border-bottom: 0">
-              <div id="userAvatarDiv" @mouseover="userAvatarUp" class="personal_info"
-                   style="width: 76px; height: 76px; z-index: 10">
+<!--              <div id="userAvatarDiv" class="personal_info"-->
+<!--                   style="width: 76px; height: 76px; z-index: 10; position: absolute">-->
                 <!--                <el-avatar :size="36"-->
                 <!--                           :src="'https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg'"-->
                 <!--                           style="vertical-align: top"/>-->
                 <!--<div>-->
-                <img id="userAvatar" src="https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg"
-                     style="border-radius: 18px; width: 36px; height: 36px "/>
-              </div>
-
+                <img @mouseout="userAvatarDown" @mouseover="userAvatarUp" id="userAvatar" src="https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg"
+                     style="border-radius: 18px; width: 36px; height: 36px; z-index: 100"/>
+<!--              </div>-->
+<!--              @mouseout="userAvatarDown"-->
               <div>
-                <el-card id="userCard" @mouseout="userAvatarDown"
-                         style="height: 436px; width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1; border-radius: 10px; visibility: hidden;">
+                <el-card id="userCard"
+                         style="animation-fill-mode: forwards; height: 436px; width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1; border-radius: 10px; visibility: hidden;">
                 </el-card>
               </div>
             </el-menu-item>
@@ -224,6 +254,12 @@ const {patternVisible, debugVisible, aboutExeVisible} = toRefs(data)
 .personal_info :hover {
   animation: fly 0.15s linear;
   animation-fill-mode: both;
+}
+
+#userAvatar {
+  -webkit-backface-visibility:hidden; //隐藏转换的元素的背面
+  -webkit-transform-style: preserve-3d; //使被转换的元素的子元素保留其 3D 转换
+  -webkit-transform:translate3d(0,0,0); //开启GPU硬件加速模式，使用GPU代替CPU渲染动画（在安卓系统中有时会有莫名其妙的BUG，建议慎重）
 }
 
 @keyframes fly {

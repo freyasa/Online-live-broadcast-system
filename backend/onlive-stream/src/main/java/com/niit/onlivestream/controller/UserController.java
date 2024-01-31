@@ -106,7 +106,7 @@ public class UserController {
      * 根据token
      * @return 得到当前用户信息
      */
-    @PostMapping("/getCurrentUser")
+    @GetMapping("/getCurrentUser")
     public BaseResponse<UserInfo> userLogin(){
         UserInfo user= ThreadLocalUtil.get();
         return  ResultUtils.success(user);
@@ -137,12 +137,12 @@ public class UserController {
             userUpdate.setUseravatar(request.getUseravatar());
         if(request.getUseremail()!=null&&request.getUseremail().length()>0)
             userUpdate.setUseremail(request.getUseremail());
-        if(request.getUserage()>0)
-            userUpdate.setUseremail(request.getUseremail());
         if(request.getUsername()!=null&& request.getUsername().length()>0)
             userUpdate.setUsername(request.getUsername());
         if(request.getUserage()>0)
-            userUpdate.setUserage(userUpdate.getUserage());
+            userUpdate.setUserage(request.getUserage());
+        if(request.getUserSignature()!=null&&request.getUserSignature().length()>0)
+            userUpdate.setUserSignature(request.getUserSignature());
         userUpdate.setUserupdatetime(new Date());
         QueryWrapper<UserInfo> queryWrapper =new QueryWrapper<>();
         queryWrapper.eq("uuid",request.getUuid());

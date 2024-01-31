@@ -1,5 +1,6 @@
 package com.niit.onlivestream.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -17,7 +18,7 @@ public class UserInfo implements Serializable {
     /**
      * 
      */
-    @TableId
+    @TableId(type = IdType.ASSIGN_UUID)
     private String uuid;
 
     /**
@@ -76,6 +77,8 @@ public class UserInfo implements Serializable {
      */
     private byte[] useravatar;
 
+
+    private String userSignature;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 177145909499L;

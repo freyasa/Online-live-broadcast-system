@@ -11,8 +11,8 @@ spring:
       password: 123456
       timeout: 3
       database:
-          db0: 0
-          db1: 1
+        db0: 0
+        db1: 1
       lettuce:
         pool:
           max-active: 100

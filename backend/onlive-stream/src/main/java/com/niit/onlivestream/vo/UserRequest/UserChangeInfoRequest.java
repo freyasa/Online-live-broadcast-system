@@ -23,5 +23,7 @@ public class UserChangeInfoRequest implements Serializable {
 
     private byte[] useravatar;
 
+    private String userSignature;
+
 
 }

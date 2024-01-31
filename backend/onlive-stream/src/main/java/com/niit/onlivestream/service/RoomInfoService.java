@@ -16,6 +16,4 @@ public interface RoomInfoService extends IService<RoomInfo> {
 
     RoomInfo getRoomById(String uuid);
 
-    void updateRoomInfo(RoomInfo roomInfo);
-
 }

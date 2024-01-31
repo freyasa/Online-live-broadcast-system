@@ -47,11 +47,6 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"找不到对应ID的直播序列号");
         return roomInfo;
     }
-
-    @Override
-    public void updateRoomInfo(RoomInfo roomInfo) {
-
-    }
 }
 
 

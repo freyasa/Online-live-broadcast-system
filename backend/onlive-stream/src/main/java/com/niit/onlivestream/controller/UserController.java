@@ -109,7 +109,10 @@ public class UserController {
     @GetMapping("/getCurrentUser")
     public BaseResponse<UserInfo> userLogin(){
         UserInfo user= ThreadLocalUtil.get();
-        return  ResultUtils.success(user);
+        QueryWrapper<UserInfo> queryWrapper =new QueryWrapper<>();
+        queryWrapper.eq("uuid",user.getUuid());
+        UserInfo userInfo = userService.getOne(queryWrapper);
+        return  ResultUtils.success(userInfo);
     }
 
     /**

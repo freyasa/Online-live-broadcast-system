@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.niit.onlivestream.common.BaseResponse;
 import com.niit.onlivestream.common.ErrorCode;
 import com.niit.onlivestream.domain.FollowerInfo;
+import com.niit.onlivestream.domain.RoomLog;
 import com.niit.onlivestream.domain.UserInfo;
 import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.FollowerInfoService;
@@ -14,9 +15,11 @@ import com.niit.onlivestream.vo.SpectatorRequest.*;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static com.niit.onlivestream.contant.RedisDataUse.LiveRedisTemplate;
 import static com.niit.onlivestream.contant.funType.TYPE_FOLLOWED;
@@ -128,8 +131,14 @@ public class SpectatorController {
         UserInfo userInfo = ThreadLocalUtil.get();
         if(!userInfo.getUuid().equals(request.getUuid()))
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"非法入侵ID");
+        //  执行操作
+        ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
+        RoomLog roomLog = (RoomLog) liveDB.get(liveId);
+        if(roomLog==null)
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"直播间不存在");
+        roomLog.setTotalstar(roomLog.getTotalstar()+1);
+        liveDB.set(liveId,roomLog);
         return ResultUtils.success("点赞成功");
-
     }
 
 

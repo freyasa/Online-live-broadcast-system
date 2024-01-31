@@ -13,6 +13,7 @@ import com.niit.onlivestream.service.RoomInfoService;
 import com.niit.onlivestream.service.RoomLogService;
 import com.niit.onlivestream.util.ThreadLocalUtil;
 import com.niit.onlivestream.vo.OnliveRequest.StreamRequest;
+import com.niit.onlivestream.vo.OnliveRequest.UpdateLiveRequest;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -85,12 +86,14 @@ public class InfluencerController {
         roomLog.setProfile(roomInfo.getProfile());
         roomLog.setRoomAvatar(roomInfo.getRoomAvatar());
         roomLog.setPartitionid(roomInfo.getPartitionid());
+        roomLog.setTotalstar(0);
+        roomLog.setTotalpresentvalues(0);
         boolean saveRoomLog = roomLogService.save(roomLog);
         // 存redis 一部分roomlog
         // Redis 加入到开播队列
         ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
         String live = String.valueOf(liveId);
-        liveDB.set(live,roomLog,3, TimeUnit.DAYS);
+        liveDB.set(live,roomLog,10, TimeUnit.DAYS);
         return ResultUtils.success("开始直播成功");
     }
 
@@ -125,9 +128,9 @@ public class InfluencerController {
         ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
         RoomLog roomLog = (RoomLog) liveDB.get(liveID);
         if(roomLog==null)
-            throw new BusinessException(ErrorCode.TOKEN_OUTTIME,"直播间信息未及时关闭三天自动关闭");
+            throw new BusinessException(ErrorCode.TOKEN_OUTTIME,"直播间信息未及时关闭十天自动关闭");
         roomLog.setStoptime(new Date());
-        // 更新房间数据
+        // 更新房间LOG数据
         QueryWrapper<RoomLog> queryWrapper2 =new QueryWrapper<>();
         queryWrapper2.eq("id",roomLog.getId());
         boolean logResult = roomLogService.update(roomLog,queryWrapper2);
@@ -157,29 +160,65 @@ public class InfluencerController {
         return ResultUtils.success(roomLog,"正在直播");
     }
 
+    @PostMapping("/updateLive")
+    public BaseResponse<String> updateRoomInfo(@RequestBody UpdateLiveRequest updateLiveRequest){
+        if(updateLiveRequest==null)
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        if (StringUtils.isAnyBlank(updateLiveRequest.getUuid()))
+            throw new BusinessException(ErrorCode.NULL_ERROR,"部分数据为空");
+        String liveId = String.valueOf(updateLiveRequest.getLiveId());
+        String userId = updateLiveRequest.getUuid();
+        UserInfo user= ThreadLocalUtil.get();
+        if(!user.getUuid().equals(userId))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"非法入侵用户ID");
+        //查一下用户ID和直播序列号 是不是 一一对应
+        QueryWrapper<RoomInfo> queryWrapper =new QueryWrapper<>();
+        queryWrapper.eq("liveid",updateLiveRequest.getLiveId());
+        queryWrapper.eq("uuid",userId);
+        RoomInfo roomInfo = roomInfoService.getOne(queryWrapper);
 
-    /*
-     * get请求
-     * @return  得到所有直播间
-     */
-//    @GetMapping("/roomAll")
-//    public BaseResponse<ArrayList<RoomInfo>> getRoomInfoAll(){
-//        Set<String> elements =stringRedisTemplate.opsForSet().members(liveQueue);
-//        if(elements==null)
-//            return ResultUtils.success(null,"无人开播");
-//        ArrayList<RoomInfo> roomInfos = new ArrayList<>();
-//        for (String json:elements) {
-//            System.out.println("从Redis里面拿到的字符串是:"+json);
-//            RoomInfo roomInfo = new RoomInfo();
-//            try {
-//                 roomInfo = JSON.parseObject(json,RoomInfo.class);
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//            roomInfos.add(roomInfo);
-//        }
-//        return ResultUtils.success(roomInfos);
-//    }
+        if(roomInfo==null)
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        // 开始操作 w分别往MySQL和Redis里面去写
+        ValueOperations<String,Object> liveDB = liveTemplate.opsForValue();
+        RoomLog roomLog = (RoomLog) liveDB.get(liveId);
+        int flag =1; // 未开播
+        if(roomLog==null)
+            flag=0;
+        if(updateLiveRequest.getRoomName()!=null && updateLiveRequest.getRoomName().length()>0){
+            roomInfo.setRoomname(updateLiveRequest.getRoomName());
+            if(flag ==1)
+                roomLog.setName(updateLiveRequest.getRoomName());
+        }
+
+        if(updateLiveRequest.getPartitionId()!=null &&updateLiveRequest.getPartitionId()>0&&updateLiveRequest.getPartitionId()<=10){
+            roomInfo.setPartitionid(updateLiveRequest.getPartitionId());
+            if(flag ==1)
+                roomLog.setPartitionid(updateLiveRequest.getPartitionId());
+
+        }
+
+        if(updateLiveRequest.getProfile()!=null&& updateLiveRequest.getProfile().length()>0){
+            roomInfo.setProfile(updateLiveRequest.getProfile());
+            if(flag ==1)
+                roomLog.setProfile(updateLiveRequest.getProfile());
+
+        }
+
+        if(updateLiveRequest.getRoomAvatar()!=null && updateLiveRequest.getRoomAvatar().length>0){
+            roomInfo.setRoomAvatar(updateLiveRequest.getRoomAvatar());
+            if(flag ==1)
+                roomLog.setRoomAvatar(updateLiveRequest.getRoomAvatar());
+
+        }
+        // 校验完成 REDIS
+        if(flag==1)
+            liveDB.set(liveId,roomLog);
+        // MYSQL
+        roomInfoService.update(roomInfo,queryWrapper);
+        return ResultUtils.success("修改成功");
+    }
+
 
 
 

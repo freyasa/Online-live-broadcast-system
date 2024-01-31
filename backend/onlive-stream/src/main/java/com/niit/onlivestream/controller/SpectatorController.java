@@ -10,10 +10,7 @@ import com.niit.onlivestream.exception.BusinessException;
 import com.niit.onlivestream.service.FollowerInfoService;
 import com.niit.onlivestream.util.ResultUtils;
 import com.niit.onlivestream.util.ThreadLocalUtil;
-import com.niit.onlivestream.vo.SpectatorRequest.FollowRequest;
-import com.niit.onlivestream.vo.SpectatorRequest.FunInfo;
-import com.niit.onlivestream.vo.SpectatorRequest.FunRequest;
-import com.niit.onlivestream.vo.SpectatorRequest.FunResponse;
+import com.niit.onlivestream.vo.SpectatorRequest.*;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -118,6 +115,21 @@ public class SpectatorController {
         funResponse.setNumber(arrayList.size());
         funResponse.setFunInfoList(arrayList);
         return ResultUtils.success(funResponse);
+    }
+
+    @PostMapping("/star")
+    public BaseResponse<String> starLive(@RequestBody StarRequest request){
+        // 校验
+        if(request==null)
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        String liveId = String.valueOf(request.getStarliveid());
+        if(StringUtils.isAnyBlank(request.getUuid(),liveId))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        UserInfo userInfo = ThreadLocalUtil.get();
+        if(!userInfo.getUuid().equals(request.getUuid()))
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"非法入侵ID");
+        return ResultUtils.success("点赞成功");
+
     }
 
 

@@ -1,18 +1,16 @@
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
+import User from "./vo/User";
 
-// function toPagePath(url: string): void {
-//     router.push({
-//         path: url,
-//     });
-//     return undefined
-// }
-//
 
-let globalValue = 1
 let login = {
     loginState: true,
+    user: {
+
+    }
 }
+
+login.user = new User();
 
 export {
     login

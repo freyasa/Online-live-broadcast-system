@@ -4,15 +4,15 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 const defaultRoutes: Array<RouteRecordRaw> = [
   {
     path: "/login",
-    component: () => import("../components/login.vue"),
+    component: () => import("../../components/login.vue"),
   },
   {
     path: "/reg",
-    component: () => import("../components/reg.vue"),
+    component: () => import("../../components/reg.vue"),
   },
   {
     path: "/",
-    component: () => import("../components/index.vue"),
+    component: () => import("../../components/index.vue"),
     name: 'index',
     meta: {
       title: '主页'
@@ -20,7 +20,7 @@ const defaultRoutes: Array<RouteRecordRaw> = [
   },
   {
     path: "/live/:liveId",
-    component: () => import("../components/live.vue"),
+    component: () => import("../../components/live.vue"),
     name: 'live',
     meta: {
       title: '直播间'

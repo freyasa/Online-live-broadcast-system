@@ -3,8 +3,8 @@
 // import global from "../global/global";
 import {ref, reactive, toRefs, unref} from 'vue'
 import {ClickOutside as vClickOutside} from 'element-plus'
-import {presentTemplate, battery} from "../global/base64Template";
-import {rank1, rank2, rank3} from "../global/base64Template";
+import {presentTemplate, battery} from "../global/static/base64Template";
+import {rank1, rank2, rank3} from "../global/static/base64Template";
 import {login} from "../global/global";
 
 //------------variable-----------------
@@ -171,7 +171,7 @@ const isLogin = () => {
 
             <div style="width: 100%; height: 42px; display: inline-flex">
               <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit" />
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank2" :fit="fit" />
               </div>
 
               <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
@@ -189,7 +189,7 @@ const isLogin = () => {
 
             <div style="width: 100%; height: 42px; display: inline-flex">
               <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit" />
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank3" :fit="fit" />
               </div>
 
               <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">

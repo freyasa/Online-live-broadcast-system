@@ -6,7 +6,7 @@ import {ref, reactive, toRefs,} from 'vue'
 
 //------------variable-----------------
 const router = useRouter();
-const recommendCarouselLiveId = ref(0)
+const recommendCarouselLiveId = ref(1)
 const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg')
 
 let lastSelectRecommendCarousel = null;

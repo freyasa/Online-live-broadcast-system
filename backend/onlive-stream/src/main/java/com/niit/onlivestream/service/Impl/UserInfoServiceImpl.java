@@ -54,7 +54,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
-
+        
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
@@ -181,9 +181,13 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         return safetyUser;
     }
 
-
+    /*   对输入的密码进行MD5哈希处理
+    并在密码前附加一个盐值
+    以增加密码的安全性
+    最终返回的是密码的MD5哈希值的十六进制表示形式。*/
     public String encodePws(String password){
         return DigestUtils.md5DigestAsHex((SALT + password).getBytes());
+
     }
 }
 

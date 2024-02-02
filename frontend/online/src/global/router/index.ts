@@ -2,14 +2,14 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
  
 // 2. 配置路由
 const defaultRoutes: Array<RouteRecordRaw> = [
-  {
-    path: "/login",
-    component: () => import("../../components/login.vue"),
-  },
-  {
-    path: "/reg",
-    component: () => import("../../components/reg.vue"),
-  },
+  // {
+  //   path: "/login",
+  //   component: () => import("../../components/login.vue"),
+  // },
+  // {
+  //   path: "/reg",
+  //   component: () => import("../../components/reg.vue"),
+  // },
   {
     path: "/",
     component: () => import("../../components/index.vue"),
@@ -24,6 +24,14 @@ const defaultRoutes: Array<RouteRecordRaw> = [
     name: 'live',
     meta: {
       title: '直播间'
+    }
+  },
+  {
+    path: "/my-info",
+    component: () => import("../../components/my-info.vue"),
+    name: 'my-info',
+    meta: {
+      title: '个人主页'
     }
   },
 ];

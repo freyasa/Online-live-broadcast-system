@@ -54,7 +54,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
-        
+
         // 账户不能包含特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
@@ -128,6 +128,8 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         return safetyUser;
     }
 
+
+    /*修改密码*/
     @Override
     public Integer userUpdatePassword(String oldPassword, String newPassword, String checkPassword) {
         //两次密码一致且长度不少于8
@@ -161,6 +163,8 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
      * 用户脱敏
      * @param originUser 原始用户
      * @return safetyUser
+     * 根据原始用户对象，创建一个新的安全用户对象，并将原始用户对象的一些属性值复制到安全用户对象中
+     * 确保返回的用户对象只包含需要展示或处理的安全信息，而不包含敏感信息
      */
     @Override
     public UserInfo getSafetyUser(UserInfo originUser) {

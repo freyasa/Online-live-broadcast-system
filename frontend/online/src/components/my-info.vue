@@ -27,6 +27,9 @@ const cancelModifyInfo = () => {
   for (let i = 0; i < modifyElement.length; i ++) {
     modifyElement[i].style.display='none'
   }
+
+
+
 }
 </script>
 

@@ -128,6 +128,8 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         return safetyUser;
     }
 
+
+    /*修改密码*/
     @Override
     public Integer userUpdatePassword(String oldPassword, String newPassword, String checkPassword) {
         //两次密码一致且长度不少于8
@@ -161,6 +163,8 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
      * 用户脱敏
      * @param originUser 原始用户
      * @return safetyUser
+     * 根据原始用户对象，创建一个新的安全用户对象，并将原始用户对象的一些属性值复制到安全用户对象中
+     * 确保返回的用户对象只包含需要展示或处理的安全信息，而不包含敏感信息
      */
     @Override
     public UserInfo getSafetyUser(UserInfo originUser) {
@@ -181,9 +185,13 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         return safetyUser;
     }
 
-
+    /*   对输入的密码进行MD5哈希处理
+    并在密码前附加一个盐值
+    以增加密码的安全性
+    最终返回的是密码的MD5哈希值的十六进制表示形式。*/
     public String encodePws(String password){
         return DigestUtils.md5DigestAsHex((SALT + password).getBytes());
+
     }
 }
 

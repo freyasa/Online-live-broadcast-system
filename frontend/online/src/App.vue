@@ -180,7 +180,7 @@ window.setInterval(displayControl, 100)
               <div>
                 <el-card @mouseover="cardHover=true" @mouseout="cardHover=false" id="userCard"
                          style="width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1;
-                         border-radius: 10px; visibility: visible; cursor: default; line-height: normal">
+                         border-radius: 10px; visibility: hidden; cursor: default; line-height: normal">
 
                   <div style="height: 20px"></div>
 

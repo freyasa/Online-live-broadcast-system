@@ -124,20 +124,6 @@ const cancelModifyInfo = () => {
 
       </div>
 
-      <!--      userPassword   varchar(50)                not null,-->
-      <!--      userName       varchar(20) default 'momo' not null,-->
-      <!--      userSex        tinyint(1)  default 0      null,-->
-      <!--      userAge        int         default 0      not null,-->
-      <!--      userAvatar     blob                       null,-->
-      <!--      userEmail      varchar(50)                null,-->
-      <!--      userPrivilege  int         default 0      null,-->
-      <!--      userCreateTime datetime                   not null,-->
-      <!--      userUpdateTime datetime                   null,-->
-      <!--      isDelete       tinyint(1)  default 0      null,-->
-      <!--      userSignature  varchar(50)                null,-->
-      <!--      constraint userAccount-->
-      <!--      unique (userAccount)-->
-      <!--      );-->
       <div style="margin-left: 100px; margin-top: 20px" class="display">
         <el-button type="primary" @click="preModifyInfo">修改信息</el-button>
       </div>
@@ -145,6 +131,7 @@ const cancelModifyInfo = () => {
         <el-button type="success">确认修改</el-button>
         <el-button type="danger" @click="cancelModifyInfo">取消</el-button>
       </div>
+      <br/>
     </div>
   </div>
 </template>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.js"></script>
+</head>
+<body>
+    <div id ="root">
+        <!--引入一个组件，该组件嵌套其他组件实现一个比较复杂的页面-->
+        <app></app>
+    </div>
+
+    <script>
+        const hello = {
+        template: `
+            <div>
+                <h2>{{ mess }}</h2>
+            </div>
+        `,
+        data() {
+            return {
+                mess: '欢迎学习Vue'
+            }
+        }
+      }
+        const school = {
+            template:`
+        <div>
+            <h2>学校名称{{schoolName}}</h2>
+            <h2>学校地址{{schoolAddress}}</h2>
+            <button @click="schoolNameShow">点击显示学校名称</button>
+        </div>
+            `,
+            data() {
+                return {
+                    schoolName:'NXU',
+                    schoolAddress:'银川市西夏区',
+                }
+            },
+            methods: {
+                schoolNameShow(){
+                    alert(this.schoolName);
+                }
+            },
+        }
+        const student = {
+            template: `
+                <div>
+                    <h2>学生姓名：{{studentName}}</h2>
+                    <h2>学生年龄：{{age}}</h2>
+                </div>
+            `,
+            data() {
+                return {
+                    studentName:'马慧',
+                    age:2
+                }
+            },
+        }
+        
+        const app ={
+            template:`
+            <div>
+            <hello></hello>
+            <school></school>
+            <student></student>
+            </div>`
+        }
+        //全局注册
+        const vm = Vue.createApp({});
+        vm.component('hello',hello).component('school',school).component('student',student).component('app',app);
+        vm.mount('#root');
+    </script>
+
+</body>
+</html>

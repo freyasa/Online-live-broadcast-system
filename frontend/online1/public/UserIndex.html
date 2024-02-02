@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html lang="en">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>登录</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+</head>
+<body>
+<!--定义一个容器-->
+<div id="root">
+  <!--v-model.trim过滤输入框中前后输入的空格-->
+  姓名：<input type="text" v-model.trim="userInfo.name"/></br></br>
+  密码：<input type="password" v-model="userInfo.password"/></br></br>
+  <!--v-model.number可以控制输入的内容为数字-->
+  年龄：<input type="number" v-model.number="userInfo.age"/><br/><br/>
+  性别：
+  男：<input type="radio" name="sex" v-model="userInfo.sex" value="M"/>
+  女：<input type="radio" name="sex" v-model="userInfo.sex" value="FM"/><br/><br/>
+  爱好：
+  学习:<input type="checkbox" v-model="userInfo.hobbys" value="学习">
+  打游戏:<input type="checkbox" v-model="userInfo.hobbys" value="打游戏">
+  睡觉:<input type="checkbox" v-model="userInfo.hobbys" value="睡觉"><br/><br/>
+  校区：
+  <select v-model="userInfo.xq">
+    <option value="">-----请选择校区-----</option>
+    <option value="HL">贺兰山校区</option>
+    <option value="HY">怀远校区</option>
+    <option value="NX">南校区</option>
+  </select><br/><br/>
+  其它信息：
+  <!--v-model.lazy: 不会实时收集。当失去焦点时才会收集。不写lazy，当内容变化时就会收集-->
+  <textarea cols="30" rows="10" v-model.lazy="userInfo.detail"></textarea><br/><br/>
+  <input type="checkbox" v-model="userInfo.checked">阅读并接受<a href="https://www.baidu.com">《用户协议》</a><br/><br/>
+  <button @click="submitUserInfo">提交</button>
+</div>
+<script>
+  const app = Vue.createApp({
+    //组合式
+    setup() {
+      let userInfo = Vue.ref({
+        name:'',
+        password:'',
+        age:0,
+        sex:'M',
+        hobbys:[],
+        xq:'',
+        detail:'',
+        checked:true
+      })
+      function submitUserInfo(){
+        if(!userInfo.value.checked){
+          alert('请勾选用户协议~~~~');
+          return;
+        }
+        //console.log('用户信息：',userInfo.value);
+        const data = JSON.stringify(userInfo.value);
+        alert(data);
+        $.ajax({
+          url:'http://127.0.0.1:9090/music/saveUser',
+          type:'POST',
+          data:data,
+          dataType:'json',
+          contentType: "application/json;charset=UTF-8",
+          success(res){
+            console.log('res',res);
+          }
+        })
+      }
+      return{userInfo,submitUserInfo};
+    }
+  }).mount('#root')
+</script>
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>

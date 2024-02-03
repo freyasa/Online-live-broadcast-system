@@ -1,13 +1,14 @@
 class User{
-    private _uuid = '';
-    private _userAccount = '';
-    private _userPassword = '';
-    private _userName = 'momo';
-    private _userSex = 0;
-    private _userAge = 0;
-    private _userAvatar = '';
-    private _userEmail = '';
-    private _userPrivilege = 0;
+    _uuid = '';
+    _userAccount = '';
+    _userPassword = '';
+    _userName = 'momo';
+    _userSex = 0;
+    _userAge = 0;
+    _userAvatar = '';
+    _userEmail = '';
+    _userPrivilege = 0;
+    private _userSignature = '';
 
     get uuid(): string {
         return this._uuid;
@@ -79,6 +80,15 @@ class User{
 
     set userPrivilege(value: number) {
         this._userPrivilege = value;
+    }
+
+
+    get userSignature(): string {
+        return this._userSignature;
+    }
+
+    set userSignature(value: string) {
+        this._userSignature = value;
     }
 }
 

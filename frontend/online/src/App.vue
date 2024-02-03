@@ -2,6 +2,7 @@
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
 import {login} from './global/global'
+import {video, mine, exit} from "./global/static/base64Template";
 
 const router = useRouter();
 let imgHover = false;
@@ -171,15 +172,15 @@ window.setInterval(displayControl, 100)
               <!--                           :src="'https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg'"-->
               <!--                           style="vertical-align: top"/>-->
               <!--<div>-->
-              <img @mouseover="imgHover=true" @mouseout="imgHover=false" id="userAvatar"
+              <img @click="toPagePath('/my-info')" @mouseover="imgHover=true" @mouseout="imgHover=false" id="userAvatar"
                    src="https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg"
                    style="border-radius: 18px; width: 36px; height: 36px; z-index: 100"/>
               <!--              </div>-->
               <!--              @mouseout="userAvatarDown"-->
               <div>
                 <el-card @mouseover="cardHover=true" @mouseout="cardHover=false" id="userCard"
-                         style="height: 436px; width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1;
-                         border-radius: 10px; visibility: visible; cursor: default">
+                         style="width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1;
+                         border-radius: 10px; visibility: hidden; cursor: default; line-height: normal">
 
                   <div style="height: 20px"></div>
 
@@ -187,15 +188,30 @@ window.setInterval(displayControl, 100)
                     {{ login.user.userName }}
                   </div>
 
-                  <div>
+                  <div style="margin-top: 35px" class="listAll">
                     <div class="listItem">
-                      个人中心
+                      <div style="display: inline-flex;margin-top: 10px">
+                        <el-image style="width: 20px; height: 20px; margin-left: 20px" :src="mine" :fit="'fill'"/>
+                      </div>
+                      <div @click="toPagePath('/my-info')" class="listItemFont" style="display: inline-flex">
+                        个人中心
+                      </div>
                     </div>
                     <div class="listItem">
-                      我的直播间
+                      <div style="display: inline-flex;margin-top: 10px">
+                        <el-image style="width: 20px; height: 20px; margin-left: 20px" :src="video" :fit="'fill'"/>
+                      </div>
+                      <div class="listItemFont" style="display: inline-flex">
+                        我的直播间
+                      </div>
                     </div>
                     <div class="listItem">
-                      退出登录
+                      <div style="display: inline-flex;margin-top: 10px">
+                        <el-image style="width: 20px; height: 20px; margin-left: 20px" :src="exit" :fit="'fill'"/>
+                      </div>
+                      <div class="listItemFont" style="display: inline-flex">
+                        退出登录
+                      </div>
                     </div>
                   </div>
 
@@ -204,7 +220,7 @@ window.setInterval(displayControl, 100)
             </el-menu-item>
 
             <el-menu-item index="7" style="position: absolute; right: 80px">
-              <el-button color="#e06696" :dark='false' style="color: white">我要开播</el-button>
+              <el-button color="#ff4b98" :dark='false' style="color: white">我要开播</el-button>
             </el-menu-item>
           </el-menu>
         </el-affix>
@@ -216,9 +232,9 @@ window.setInterval(displayControl, 100)
       </el-main>
 
       <el-footer style="padding: 0">
-        <div style="background-color: #213547">
-          <br/>
-        </div>
+<!--        <div style="background-color: #213547">-->
+<!--          <br/>-->
+<!--        </div>-->
 
       </el-footer>
     </el-container>
@@ -308,10 +324,20 @@ window.setInterval(displayControl, 100)
   font-weight: 600;
   cursor: pointer;
   font-family: 'PingFang SC';
+  //display: inline-block;
+  //background-color: pink;
+  margin-top: 2px;
 }
 
-.listItem :hover {
-  background-color: #000;
+.listAll :hover {
+  background-color: #e1e2e3;
+  //border: 1px solid;
+}
+
+.listItemFont {
+  font-weight: 600;
+  color: #61666d;
+  margin-left: 20px;
 }
 
 </style>

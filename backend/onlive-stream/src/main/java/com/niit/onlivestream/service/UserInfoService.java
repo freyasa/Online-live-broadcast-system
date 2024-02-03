@@ -15,6 +15,7 @@ public interface UserInfoService extends IService<UserInfo> {
     UserInfo userLogin(String userAccount, String userPassword, HttpServletRequest request);
     Integer userUpdatePassword(String oldPassword, String newPassword, String checkPassword);
     UserInfo getSafetyUser(UserInfo originUser);
+    String encodePws(String password);
 
 
 

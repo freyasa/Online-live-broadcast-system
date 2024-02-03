@@ -4,6 +4,10 @@ import User from "../global/vo/User";
 import {ref} from "vue";
 
 let modifyUser = ref(new User());
+for (let i in modifyUser) {
+  modifyUser[i] = login.user[i];
+  // console.log(modifyUser[i])
+}
 
 const preModifyInfo = () => {
   const displayElement = document.getElementsByClassName('display')
@@ -25,7 +29,7 @@ const cancelModifyInfo = () => {
   }
 
   for (let i = 0; i < modifyElement.length; i ++) {
-    modifyElement[i].style.display='none'
+    modifyElement[i].style.display='none';
   }
 
 

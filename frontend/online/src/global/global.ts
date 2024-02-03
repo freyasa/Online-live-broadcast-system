@@ -11,7 +11,6 @@ let login = {
 }
 
 login.user = new User();
-
-export {
+export { 
     login
 }

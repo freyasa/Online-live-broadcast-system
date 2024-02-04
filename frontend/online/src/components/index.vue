@@ -40,7 +40,6 @@ const toRecommendCarousel = (context, index) => {
 
 //------------setup-----------------
 onMounted(()=>{
-  console.log('我创建了');
   lastSelectRecommendCarousel = document.getElementById('recommend_carousel0');
   lastSelectRecommendCarousel.style.backgroundColor = '#61ace9'
 })

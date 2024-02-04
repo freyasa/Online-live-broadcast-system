@@ -27,39 +27,19 @@ import static com.niit.onlivestream.contant.RedisDataUse.*;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.data.redis.database.db0}")
-    private int db0;
+    private final int db0 = 0;
 
-    @Value("${spring.data.redis.database.db1}")
-    private int db1;
-
-    @Value("${spring.data.redis.host}")
-    private String host;
-
-    @Value("${spring.data.redis.password}")
-    private String password;
-
-    @Value("${spring.data.redis.port}")
-    private int port;
-
-    @Value("${spring.data.redis.timeout}")
-    private int timeout;
-
-    @Value("${spring.data.redis.lettuce.pool.max-idle}")
-    private int maxIdle;
-
-    @Value("${spring.data.redis.lettuce.pool.max-active}")
-    private int maxActive;
-
-    @Value("${spring.data.redis.lettuce.pool.min-idle}")
-    private int minIdle;
+    private final int db1 = 1;
 
     @Bean
     public GenericObjectPoolConfig getPoolConfig(){
         // 配置redis连接池
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        int maxActive = 100;
         poolConfig.setMaxTotal(maxActive);
+        int maxIdle = 100;
         poolConfig.setMaxIdle(maxIdle);
+        int minIdle = 10;
         poolConfig.setMinIdle(minIdle);
         return poolConfig;
     }
@@ -67,9 +47,13 @@ public class RedisConfig {
     private RedisConnectionFactory getFactory(int database) {
         // 构建工厂对象
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        String host = "8.140.143.119";
         config.setHostName(host);
+        int port = 6379;
         config.setPort(port);
+        String password = "123456";
         config.setPassword(RedisPassword.of(password));
+        int timeout = 3;
         LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
                 .commandTimeout(Duration.ofSeconds(timeout))
                 .poolConfig(getPoolConfig())

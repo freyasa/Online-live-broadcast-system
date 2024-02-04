@@ -31,8 +31,9 @@ const cancelModifyInfo = () => {
   for (let i = 0; i < modifyElement.length; i ++) {
     modifyElement[i].style.display='none';
   }
+}
 
-
+const affirmModifyInfo = () => {
 
 }
 </script>
@@ -113,17 +114,18 @@ const cancelModifyInfo = () => {
 
         <div class="modify">
           <span class="attribute">年龄</span>:
-          <el-input v-model="modifyUser._userAge" class="value input"></el-input>
+          <el-input-number v-model="modifyUser.userAge" class="value input" :step="1" />
+<!--          <el-input v-model="modifyUser.userAge" class="value input"></el-input>-->
         </div>
 
         <div class="modify">
           <span class="attribute">邮箱</span>:
-          <el-input v-model="modifyUser._userEmail" class="value input"></el-input>
+          <el-input v-model="modifyUser.userEmail" class="value input"></el-input>
         </div>
 
         <div class="modify">
           <span class="attribute">个性签名</span>:
-          <el-input v-model="modifyUser._userSignature" class="value input"></el-input>
+          <el-input v-model="modifyUser.userSignature" class="value input"></el-input>
         </div>
 
       </div>
@@ -132,7 +134,7 @@ const cancelModifyInfo = () => {
         <el-button type="primary" @click="preModifyInfo">修改信息</el-button>
       </div>
       <div style="margin-left: 100px; margin-top: 20px" class="modify">
-        <el-button type="success">确认修改</el-button>
+        <el-button type="success" @click="affirmModifyInfo">确认修改</el-button>
         <el-button type="danger" @click="cancelModifyInfo">取消</el-button>
       </div>
       <br/>

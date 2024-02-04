@@ -51,7 +51,8 @@ onMounted(()=>{
 <template>
   <div style="width: 100%; height: 738px;
   background-position: center; text-align: center;
-  background-image: url('http://8.140.143.119:8000/images/2024/01/27/pexels-photo-1054218bc2f53a94c640c5d.jpg')">
+  background-image: url('https://img2.imgtp.com/2024/02/04/4f6cOhwz.jpg')">
+<!--  background-image: url('http://8.140.143.119:8000/images/2024/01/27/pexels-photo-1054218bc2f53a94c640c5d.jpg')">-->
     <div style="height: 630px; width: 1342px; display: inline-flex; margin-top: 54px">
       <div style="width: auto; height: 630px">
         <video

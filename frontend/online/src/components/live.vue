@@ -54,7 +54,7 @@ const isLogin = () => {
 </script>
 
 <template>
-  <div style="background-image: linear-gradient(to bottom, transparent 70%, white), url('http://8.140.143.119:8000/images/2024/01/25/live_background.jpg');
+  <div style="background-image: linear-gradient(to bottom, transparent 70%, white), url('https://img2.imgtp.com/2024/02/04/VTNr08Zz.jpg');
              height: calc(100vh - 60px); font-family: 'Microsoft YaHei'">
     <div style="text-align: left; display: inline-flex; margin-top: 15px">
       <el-card class="box-card"

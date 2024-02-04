@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import {useRouter} from "vue-router";
-import {ref, reactive, toRefs,} from 'vue'
+import {ref, reactive, toRefs, onMounted,} from 'vue'
 import {login} from './global/global'
 import {video, mine, exit} from "./global/static/base64Template";
+import User from "./global/vo/User";
 
 const router = useRouter();
 let imgHover = false;
 let cardHover = false;
 let cardUp = false;
+let showLoginPage = ref(true);
+let showWhichPage = 'login' // login or register
+let handleUser = ref(new User());
+let login_button = ref(true);
 
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
@@ -123,9 +128,35 @@ const displayControl = () => {
   if (!imgHover && !cardHover && cardUp) userAvatarDown();
 }
 
+const switchPage = () => {
+  let login_docu = document.getElementById('login_menu');
+  let reg_docu = document.getElementById('register_menu');
+
+  if (showWhichPage === 'login') {
+    login_docu.style.color = "#33A2EF";
+    reg_docu.style.color = "#606266";
+    showWhichPage = 'reg'
+    login_button.value = true;
+  } else {
+    login_docu.style.color = "#606266";
+    reg_docu.style.color = "#33A2EF";
+    showWhichPage = 'login'
+    login_button.value = false;
+  }
+}
+
+const handleLogin = () => {
+
+}
+
+const handleRegister = () => {
+
+}
+
 window.setInterval(displayControl, 100)
+onMounted(()=>{
 
-
+})
 </script>
 
 <template>
@@ -155,8 +186,9 @@ window.setInterval(displayControl, 100)
               @select="handleSelect"
           >
             <el-menu-item index="1">
-              <el-image fit="fill" src="http://localhost:5173/images/2024/01/25/logo_transparent.png"
+              <el-image fit="fill" :src="'http://localhost:5173/2024/02/04/L57lXrGq.png'"
                         style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>
+              <!--              <el-image fit="fill" src="http://localhost:5173/images/2024/01/25/logo_transparent.png"-->
               <!--              <span style="margin-left: 1em; font-size: 18px"></span>-->
             </el-menu-item>
             <el-menu-item index="2" @click="toPagePath('/')">首页</el-menu-item>
@@ -164,7 +196,7 @@ window.setInterval(displayControl, 100)
             <el-menu-item index="4">娱乐</el-menu-item>
             <el-menu-item index="5">电台</el-menu-item>
             <div class="flex-grow"/>
-            <el-menu-item index="6" v-if="!login.loginState">登录</el-menu-item>
+            <el-menu-item index="6" v-if="!login.loginState" @click="showLoginPage = true">登录</el-menu-item>
             <el-menu-item index="6" v-else style="border-bottom: 0">
               <!--              <div id="userAvatarDiv" class="personal_info"-->
               <!--                   style="width: 76px; height: 76px; z-index: 10; position: absolute">-->
@@ -232,9 +264,9 @@ window.setInterval(displayControl, 100)
       </el-main>
 
       <el-footer style="padding: 0">
-<!--        <div style="background-color: #213547">-->
-<!--          <br/>-->
-<!--        </div>-->
+        <!--        <div style="background-color: #213547">-->
+        <!--          <br/>-->
+        <!--        </div>-->
 
       </el-footer>
     </el-container>
@@ -246,6 +278,46 @@ window.setInterval(displayControl, 100)
   <!--    <button @click="toPagePath('/login')">login</button>-->
   <!--    <button @click="toPagePath('/reg')">reg</button>-->
   <!--  </div>-->
+
+  <el-dialog v-model="showLoginPage" title="" width="600">
+    <div style="text-align: center;">
+      <div style="display: inline-flex">
+        <div id="login_menu" class="login_menu" tabindex="1" @click="switchPage"
+            style="color: #33A2EF">
+          <span style="font-size: 20px">&nbsp;&nbsp;&nbsp;&nbsp;登录&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+        <el-divider direction="vertical"/>
+        <div id="register_menu" class="login_menu" tabindex="2" @click="switchPage">
+          <span style="font-size: 20px">&nbsp;&nbsp;&nbsp;&nbsp;注册&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+      </div>
+
+      <div style="width: 60%; margin-left: 20%; margin-top: 60px">
+        <div style="">
+          <el-input v-model="handleUser.userAccount" placeholder="">
+            <template #prepend>
+              <div style="font-size: 15px; color: #555555">用户名</div>
+            </template>
+          </el-input>
+        </div>
+        <div style="margin-top: 40px">
+          <el-input v-model="handleUser.userPassword" placeholder="">
+            <template #prepend>
+              <div style="font-size: 15px; color: #555555">密&nbsp;&nbsp;&nbsp;码</div>
+            </template>
+          </el-input>
+        </div>
+        <div style="margin-top: 60px" v-show="login_button">
+          <el-button @click="handleLogin">登&nbsp;&nbsp;录</el-button>
+        </div>
+
+        <div style="margin-top: 60px" v-show="!login_button">
+          <el-button @click="handleRegister">注&nbsp;&nbsp;册</el-button>
+        </div>
+      </div>
+    </div>
+  </el-dialog>
+
 </template>
 
 
@@ -338,6 +410,14 @@ window.setInterval(displayControl, 100)
   font-weight: 600;
   color: #61666d;
   margin-left: 20px;
+}
+
+.login_menu {
+  font-weight: 600;
+}
+
+.login_menu {
+  cursor: pointer;
 }
 
 </style>

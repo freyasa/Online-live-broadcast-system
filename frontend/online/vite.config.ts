@@ -17,6 +17,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path//.replace(/^\/images/, '')
       },
+      '/2024': {
+        target: 'https://img2.imgtp.com/.',	//实际请求地址
+        changeOrigin: true,
+        rewrite: (path) => path//.replace(/^\/images/, '')
+      },
     }
   },
 

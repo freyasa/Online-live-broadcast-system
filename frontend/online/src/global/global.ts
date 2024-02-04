@@ -4,13 +4,13 @@ import User from "./vo/User";
 
 
 let login = {
-    loginState: true,
+    loginState: false,
     user: {
 
     }
 }
 
 login.user = new User();
-export { 
+export {
     login
 }

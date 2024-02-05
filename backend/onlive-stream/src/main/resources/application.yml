@@ -37,6 +37,7 @@ mybatis-plus:
 
 
 server:
-  port: 8081
+  port: 8080
   servlet:
     context-path: /dev
+  address: 0.0.0.0

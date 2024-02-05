@@ -1,5 +1,12 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /dev
+  address: 0.0.0.0
+
 spring:
   # session 失效时间
+
   session:
     timeout: 86400
 
@@ -36,8 +43,3 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
 
-server:
-  port: 8080
-  servlet:
-    context-path: /dev
-  address: 0.0.0.0

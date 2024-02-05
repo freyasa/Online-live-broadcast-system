@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -146,13 +147,14 @@ public class UserController {
             userUpdate.setUserage(request.getUserage());
         if(request.getUserSignature()!=null&&request.getUserSignature().length()>0)
             userUpdate.setUserSignature(request.getUserSignature());
+        System.out.println("用户头像"+ Arrays.toString(request.getUseravatar()));
         userUpdate.setUserupdatetime(new Date());
         QueryWrapper<UserInfo> queryWrapper =new QueryWrapper<>();
         queryWrapper.eq("uuid",request.getUuid());
         boolean update = userService.update(userUpdate, queryWrapper);
         if(!update)
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"更新用户基本信息失败");
-        return ResultUtils.success(null,"更新成功");
+        return ResultUtils.success("更新成功");
     }
 
 

@@ -4,12 +4,13 @@ import {ref, reactive, toRefs, onMounted,} from 'vue'
 import {login} from './global/global'
 import {video, mine, exit} from "./global/static/base64Template";
 import User from "./global/vo/User";
+import { Search } from '@element-plus/icons-vue'
 
 const router = useRouter();
 let imgHover = false;
 let cardHover = false;
 let cardUp = false;
-let showLoginPage = ref(true);
+let showLoginPage = ref(false);
 let showWhichPage = 'login' // login or register
 let handleUser = ref(new User());
 let login_button = ref(true);
@@ -195,6 +196,18 @@ onMounted(()=>{
             <el-menu-item index="3">游戏</el-menu-item>
             <el-menu-item index="4">娱乐</el-menu-item>
             <el-menu-item index="5">电台</el-menu-item>
+            <el-menu-item index="50" style="margin-left: 150px; width: 600px">
+              <el-input
+                  style=""
+                  v-model="input2"
+                  class="w-100 m-2"
+                  placeholder="Please Input"
+                  :prefix-icon="Search"
+              />
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <el-button>搜索</el-button>
+            </el-menu-item>
+
             <div class="flex-grow"/>
             <el-menu-item index="6" v-if="!login.loginState" @click="showLoginPage = true">登录</el-menu-item>
             <el-menu-item index="6" v-else style="border-bottom: 0">
@@ -233,7 +246,7 @@ onMounted(()=>{
                       <div style="display: inline-flex;margin-top: 10px">
                         <el-image style="width: 20px; height: 20px; margin-left: 20px" :src="video" :fit="'fill'"/>
                       </div>
-                      <div class="listItemFont" style="display: inline-flex">
+                      <div class="listItemFont" style="display: inline-flex" @click="toPagePath('/my-live')">
                         我的直播间
                       </div>
                     </div>
@@ -252,7 +265,7 @@ onMounted(()=>{
             </el-menu-item>
 
             <el-menu-item index="7" style="position: absolute; right: 80px">
-              <el-button color="#ff4b98" :dark='false' style="color: white">我要开播</el-button>
+              <el-button color="#ff4b98" :dark='false' style="color: white" @click="toPagePath('/my-live')">我要开播</el-button>
             </el-menu-item>
           </el-menu>
         </el-affix>
@@ -356,7 +369,7 @@ onMounted(()=>{
 }
 
 .flex-grow {
-  flex-grow: 0.8;
+  flex-grow: 0.6;
 }
 
 .personal_info :hover {

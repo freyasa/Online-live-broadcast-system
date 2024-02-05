@@ -34,6 +34,22 @@ const defaultRoutes: Array<RouteRecordRaw> = [
       title: '个人主页'
     }
   },
+  {
+    path: "/my-live",
+    component: () => import("../../components/my-live.vue"),
+    name: 'my-live',
+    meta: {
+      title: '我的直播界面'
+    }
+  },
+  {
+    path: "/show",
+    component: () => import("../../components/live-details.vue"),
+    name: 'show',
+    meta: {
+      title: '房间详情界面'
+    }
+  },
 ];
 // 1.返回一个 router 实列，为函数，里面有配置项（对象） history
 const router = createRouter({

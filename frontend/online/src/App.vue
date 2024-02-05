@@ -161,8 +161,8 @@ window.setInterval(displayControl, 100)
 
 onMounted(() => {
   axios
-      // .get("http://localhost:5173/dev/user/getCurrentUser", {})
-      .post("http://localhost:8081/dev/user/getCurrentUser", {})
+      .get("http://localhost:5173/dev/user/getCurrentUser", {})
+      // .post("http://localhost:8081/dev/user/getCurrentUser", {})
       .then((data) => {
         console.log(data.data);
       })

@@ -24,7 +24,6 @@ import static com.niit.onlivestream.util.OMUtils.MapToObject;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-
     @Resource(name = TokenStringRedisTemplate)
     private StringRedisTemplate redisTemplate;
 

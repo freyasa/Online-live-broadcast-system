@@ -4,7 +4,10 @@ import {ref, reactive, toRefs, onMounted,} from 'vue'
 import {login} from './global/global'
 import {video, mine, exit} from "./global/static/base64Template";
 import User from "./global/vo/User";
-import { Search } from '@element-plus/icons-vue'
+import {Search} from '@element-plus/icons-vue'
+import {logo} from "./global/static/base64Template";
+import axios from 'axios'
+
 
 const router = useRouter();
 let imgHover = false;
@@ -155,8 +158,17 @@ const handleRegister = () => {
 }
 
 window.setInterval(displayControl, 100)
-onMounted(()=>{
 
+onMounted(() => {
+  axios
+      // .get("http://localhost:5173/dev/user/getCurrentUser", {})
+      .post("http://localhost:8081/dev/user/getCurrentUser", {})
+      .then((data) => {
+        console.log(data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 })
 </script>
 
@@ -187,10 +199,11 @@ onMounted(()=>{
               @select="handleSelect"
           >
             <el-menu-item index="1">
-              <el-image fit="fill" :src="'http://localhost:5173/2024/02/04/L57lXrGq.png'"
+              <el-image fit="fill" :src="logo"
                         style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>
               <!--              <el-image fit="fill" src="http://localhost:5173/images/2024/01/25/logo_transparent.png"-->
               <!--              <span style="margin-left: 1em; font-size: 18px"></span>-->
+              <!--              <img src="http://localhost:5173/2024/02/04/L57lXrGq.png" style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>-->
             </el-menu-item>
             <el-menu-item index="2" @click="toPagePath('/')">首页</el-menu-item>
             <el-menu-item index="3">游戏</el-menu-item>
@@ -265,7 +278,8 @@ onMounted(()=>{
             </el-menu-item>
 
             <el-menu-item index="7" style="position: absolute; right: 80px">
-              <el-button color="#ff4b98" :dark='false' style="color: white" @click="toPagePath('/my-live')">我要开播</el-button>
+              <el-button color="#ff4b98" :dark='false' style="color: white" @click="toPagePath('/my-live')">我要开播
+              </el-button>
             </el-menu-item>
           </el-menu>
         </el-affix>
@@ -296,7 +310,7 @@ onMounted(()=>{
     <div style="text-align: center;">
       <div style="display: inline-flex">
         <div id="login_menu" class="login_menu" tabindex="1" @click="switchPage"
-            style="color: #33A2EF">
+             style="color: #33A2EF">
           <span style="font-size: 20px">&nbsp;&nbsp;&nbsp;&nbsp;登录&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </div>
         <el-divider direction="vertical"/>

@@ -2,39 +2,104 @@
 import {login} from "../global/global";
 import User from "../global/vo/User";
 import {ref} from "vue";
+import {genFileId} from 'element-plus'
+import type {UploadInstance, UploadProps, UploadRawFile} from 'element-plus'
 
+const upload = ref<UploadInstance>()
+let showPasswordError = ref(false);
 let modifyUser = ref(new User());
+let modifyPassword = ref({
+  oldPassword: '',
+  newPassword: '',
+  checkPassword: ''
+})
+
 for (let i in modifyUser) {
-  modifyUser[i] = login.user[i];
+  modifyUser.value[i] = login.user[i];
   // console.log(modifyUser[i])
 }
 
 const preModifyInfo = () => {
   const displayElement = document.getElementsByClassName('display')
   const modifyElement = document.getElementsByClassName('modify')
-  for (let i = 0; i < displayElement.length; i ++) {
-    displayElement[i].style.display='none';
+  for (let i = 0; i < displayElement.length; i++) {
+    displayElement[i].style.display = 'none';
   }
 
-  for (let i = 0; i < modifyElement.length; i ++) {
-    modifyElement[i].style.display='block'
+  for (let i = 0; i < modifyElement.length; i++) {
+    modifyElement[i].style.display = 'block'
   }
 }
+
+
+const getBase64 = (file) => {
+  return new Promise(function(resolve, reject) {
+    let reader = new FileReader();
+    let imgResult = "";
+    reader.readAsDataURL(file);
+    reader.onload = function() {
+      imgResult = reader.result;
+    };
+    reader.onerror = function(error) {
+      reject(error);
+    };
+    reader.onloadend = function() {
+      resolve(imgResult);
+    };
+  });
+}
+
+const getFile = (file) => {
+  // if(file.success){
+  console.log(file)
+  const isJPG = file.raw.type === 'image/jpeg';
+  const isPNG = file.raw.type === 'image/png';
+  const isLt5M = file.raw.size / 1024 / 1024 < 5;
+  if (!isJPG && !isPNG) {
+    console.log('上传图片只能是JPG或者PNG格式!');
+  }
+  if (!isLt5M) {
+    console.log('上传图片大小不能超过 5MB!');
+  }
+  if((isJPG || isPNG) && isLt5M){
+    getBase64(file.raw).then(res => {
+      modifyUser.value.userAvatar = res;
+    });
+  }
+}
+
 
 const cancelModifyInfo = () => {
   const displayElement = document.getElementsByClassName('display')
   const modifyElement = document.getElementsByClassName('modify')
-  for (let i = 0; i < displayElement.length; i ++) {
-    displayElement[i].style.display='block';
+  for (let i = 0; i < displayElement.length; i++) {
+    displayElement[i].style.display = 'block';
   }
 
-  for (let i = 0; i < modifyElement.length; i ++) {
-    modifyElement[i].style.display='none';
+  for (let i = 0; i < modifyElement.length; i++) {
+    modifyElement[i].style.display = 'none';
   }
+}
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+}
+
+const affirmModifyAvatar = (options) => {
+  // upload.value!.submit()
+  console.log(options)
+  console.log(upload.value)
 }
 
 const affirmModifyInfo = () => {
+  // upload.value!.submit()
+  // console.log(upload.value)
+}
 
+const affirmModifyPwd = () => {
+  showPasswordError
 }
 </script>
 
@@ -50,10 +115,10 @@ const affirmModifyInfo = () => {
               margin-left: 15%; height: 180px; text-align: left; border-radius: 2px">
       <div style="display: inline-flex; margin-left: 75px; margin-top: 100px">
         <el-avatar :size="64" style=""
-                   src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                   :src="login.user.userAvatar"
         />
         <div style="color: white; font-weight: 600; line-height: 64px; margin-left: 20px; font-size: 20px">
-          {{ login.user.userName }}
+          {{ login.user.username }}
         </div>
       </div>
     </div>
@@ -64,6 +129,7 @@ const affirmModifyInfo = () => {
       <div style="font-weight: 500; margin-left: 30px; font-size: 25px">个人设置</div>
 
       <div style="margin-left: 100px; margin-top: 20px">
+
         <div class="display">
           <span class="attribute">uuid</span>:
           <span class="value"> {{ login.user.uuid }}</span>
@@ -94,50 +160,100 @@ const affirmModifyInfo = () => {
           <span class="value"> {{ login.user.userSignature }}</span>
         </div>
 
-        <div class="modify">
-          <span class="attribute">uuid</span>:
-          <span class="value"> {{ login.user.uuid }}</span>
+        <div>
+          <div class="modify">
+
+            <div class="modify">
+              <span class="attribute">头像</span>:
+              <span class="value">
+                <el-upload
+                    ref="upload"
+                    class="upload-demo"
+                    action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+                    :limit="1"
+                    :on-change="getFile"
+                    :on-exceed="handleExceed"
+                    :http-request="affirmModifyAvatar"
+                    :auto-upload="false"
+                >
+                  <template #trigger>
+                    <el-button type="primary">select file</el-button>
+                  </template>
+<!--                  <el-button class="ml-3" type="success" @click="affirmModifyAvatar">-->
+<!--                    upload to server-->
+<!--                  </el-button>-->
+                  <template #tip>
+                    <div class="el-upload__tip text-red">
+                      limit 1 file, new file will cover the old file
+                    </div>
+                  </template>
+                </el-upload>
+              </span>
+            </div>
+
+            <div class="modify">
+              <span class="attribute">性别</span>:
+              <el-radio-group v-model="modifyUser.userSex">å
+                <el-radio label="1">男</el-radio>
+                <el-radio label="0">女</el-radio>
+              </el-radio-group>
+            </div>
+
+            <span class="attribute">年龄</span>:
+            <el-input-number v-model="modifyUser.userAge" class="value input" :step="1"/>
+            <!--          <el-input v-model="modifyUser.userAge" class="value input"></el-input>-->
+          </div>
+
+          <div class="modify">
+            <span class="attribute">邮箱</span>:
+            <el-input v-model="modifyUser.userEmail" class="value input"></el-input>
+          </div>
+
+          <div class="modify">
+            <span class="attribute">个性签名</span>:
+            <el-input v-model="modifyUser.userSignature" class="value input"></el-input>
+          </div>
+
         </div>
 
-        <div class="modify">
-          <span class="attribute">用户名</span>:
-          <span class="value"> {{ login.user.userAccount }}</span>
+        <div style="margin-left: 100px; margin-top: 20px" class="display">
+          <el-button type="primary" @click="preModifyInfo">修改信息</el-button>
         </div>
-
-        <div class="modify">
-          <span class="attribute">性别</span>:
-          <el-radio-group v-model="modifyUser.userSex">å
-            <el-radio label="1">男</el-radio>
-            <el-radio label="0">女</el-radio>
-          </el-radio-group>
+        <div style="margin-left: 100px; margin-top: 20px" class="modify">
+          <el-button type="success" @click="affirmModifyInfo">确认修改</el-button>
+          <el-button type="danger" @click="cancelModifyInfo">取消</el-button>
         </div>
-
-        <div class="modify">
-          <span class="attribute">年龄</span>:
-          <el-input-number v-model="modifyUser.userAge" class="value input" :step="1" />
-<!--          <el-input v-model="modifyUser.userAge" class="value input"></el-input>-->
-        </div>
-
-        <div class="modify">
-          <span class="attribute">邮箱</span>:
-          <el-input v-model="modifyUser.userEmail" class="value input"></el-input>
-        </div>
-
-        <div class="modify">
-          <span class="attribute">个性签名</span>:
-          <el-input v-model="modifyUser.userSignature" class="value input"></el-input>
-        </div>
-
+        <br/>
       </div>
+      <hr/>
+      <div>
+        <div style="margin-left: 100px; margin-top: 20px" class="modify">
 
-      <div style="margin-left: 100px; margin-top: 20px" class="display">
-        <el-button type="primary" @click="preModifyInfo">修改信息</el-button>
+          <el-alert v-show="showPasswordError" title="旧密码错误或两次输入的密码不一致" type="error" show-icon/>
+
+          <div class="modify">
+            <br/>
+            <span class="attribute">旧密码</span>:
+            <el-input v-model="modifyPassword.oldPassword" class="value input"></el-input>
+            <!--          <el-input v-model="modifyUser.userAge" class="value input"></el-input>-->
+          </div>
+
+          <div class="modify">
+            <span class="attribute">新密码</span>:
+            <el-input v-model="modifyPassword.newPassword" class="value input"></el-input>
+          </div>
+
+          <div class="modify">
+            <span class="attribute">确认密码</span>:
+            <el-input v-model="modifyPassword.checkPassword" class="value input"></el-input>
+          </div>
+          <div style="margin-left: 100px; margin-top: 20px" class="modify">
+            <el-button type="success" @click="affirmModifyPwd">确认修改</el-button>
+            <el-button type="danger" @click="cancelModifyInfo">取消</el-button>
+          </div>
+          <br/>
+        </div>
       </div>
-      <div style="margin-left: 100px; margin-top: 20px" class="modify">
-        <el-button type="success" @click="affirmModifyInfo">确认修改</el-button>
-        <el-button type="danger" @click="cancelModifyInfo">取消</el-button>
-      </div>
-      <br/>
     </div>
   </div>
 </template>

@@ -165,7 +165,6 @@ const handleLogin = () => {
           userPasswordError.value = true;
           affirmPasswordError.value = false;
         } else {
-          login.loginState = true;
           login.user = data.data.data;
           console.log(login.user.userAvatar)
           console.log(login.user.userAvatar == null)
@@ -221,20 +220,24 @@ const handleRegister = () => {
 }
 
 const exitLogin = () => {
-  console.log(1)
   login.loginState = false;
+  loginState.value = false;
   login.user = {};
+  localStorage['user'] = '';
 }
 
 window.setInterval(displayControl, 100)
 
 onMounted(() => {
-  if (localStorage['user'] != null) {
+  if (localStorage['user'] != null && localStorage['user'] != '') {
     login.user = JSON.parse(localStorage['user']);
     login.loginState = true;
+    loginState.value = true;
   } else {
     login.loginState = false;
+    loginState.value = false;
   }
+  console.log(login.user)
 })
 </script>
 
@@ -288,8 +291,8 @@ onMounted(() => {
             </el-menu-item>
 
             <div class="flex-grow"/>
-            <el-menu-item index="6" v-show="!login.loginState" @click="showLoginPage = true">登录</el-menu-item>
-            <el-menu-item index="6" v-show="login.loginState" style="border-bottom: 0">
+            <el-menu-item index="6" v-show="!loginState" @click="showLoginPage = true">登录</el-menu-item>
+            <el-menu-item index="6" v-show="loginState" style="border-bottom: 0">
               <!--              <div id="userAvatarDiv" class="personal_info"-->
               <!--                   style="width: 76px; height: 76px; z-index: 10; position: absolute">-->
               <!--                <el-avatar :size="36"-->
@@ -297,7 +300,7 @@ onMounted(() => {
               <!--                           style="vertical-align: top"/>-->
               <!--<div>-->
               <img @click="toPagePath('/my-info')" @mouseover="imgHover=true" @mouseout="imgHover=false" id="userAvatar"
-                   src="https://i2.hdslb.com/bfs/face/816b2f8c9eb9bcc2784e923cd75dd42ec2c087a5.jpg"
+                   :src="login.user.userAvatar"
                    style="border-radius: 18px; width: 36px; height: 36px; z-index: 100"/>
               <!--              </div>-->
               <!--              @mouseout="userAvatarDown"-->
@@ -309,7 +312,7 @@ onMounted(() => {
                   <div style="height: 20px"></div>
 
                   <div style="font-weight: 500; font-size: 16px; line-height: normal; text-align: center">
-                    {{ login.user.userName }}
+                    {{ login.user.username }}
                   </div>
 
                   <div style="margin-top: 35px" class="listAll">

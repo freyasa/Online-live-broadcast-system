@@ -2,7 +2,7 @@
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs, onMounted,} from 'vue'
 import {login} from './global/global'
-import {video, mine, exit} from "./global/static/base64Template";
+import {video, mine, exit, defaultAvatar} from "./global/static/base64Template";
 import User from "./global/vo/User";
 import {Search} from '@element-plus/icons-vue'
 import {logo} from "./global/static/base64Template";
@@ -17,7 +17,10 @@ let showLoginPage = ref(false);
 let showWhichPage = 'login' // login or register
 let handleUser = ref(new User());
 let login_button = ref(true);
-
+let userPasswordError = ref(false);
+let affirmPasswordError = ref(false);
+let successRegister = ref(false);
+let loginState = ref(false);
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
   router.push({
@@ -150,25 +153,88 @@ const switchPage = () => {
 }
 
 const handleLogin = () => {
-
+  axios
+      .post("http://localhost:5173/dev/user/login", {
+        userAccount: handleUser.value.userAccount,
+        userPassword: handleUser.value.userPassword,
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code !== 200) {
+          successRegister.value = false;
+          userPasswordError.value = true;
+          affirmPasswordError.value = false;
+        } else {
+          login.loginState = true;
+          login.user = data.data.data;
+          console.log(login.user.userAvatar)
+          console.log(login.user.userAvatar == null)
+          console.log(login.user.userAvatar === '')
+          if (login.user.userAvatar == null || login.user.userAvatar === '') {
+            login.user.userAvatar = defaultAvatar;
+          }
+          login.loginState = true;
+          loginState.value = true;
+          localStorage['user'] = JSON.stringify(login.user);
+          showLoginPage.value = false;
+          console.log(login.user)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        successRegister.value = false;
+        userPasswordError.value = true;
+        affirmPasswordError.value = false;
+      })
 }
 
 const handleRegister = () => {
+  console.log(handleUser.value)
+  if (handleUser.value.userPassword === handleUser.value.userAffirmPassword) {
+    axios
+        .post("http://localhost:5173/dev/user/register", {
+          userAccount: handleUser.value.userAccount,
+          userPassword: handleUser.value.userPassword,
+          checkPassword: handleUser.value.userAffirmPassword
+        })
+        .then((data) => {
+          console.log(data.data);
+          successRegister.value = true;
+          userPasswordError.value = false;
+          affirmPasswordError.value = false;
+          switchPage();
+          if (data.data.code !== 200) {
+            successRegister.value = false;
+            userPasswordError.value = false;
+            affirmPasswordError.value = true;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          successRegister.value = false;
+          userPasswordError.value = false;
+          affirmPasswordError.value = true;
+        });
+  } else {
+    affirmPasswordError.value = true;
+  }
+}
 
+const exitLogin = () => {
+  console.log(1)
+  login.loginState = false;
+  login.user = {};
 }
 
 window.setInterval(displayControl, 100)
 
 onMounted(() => {
-  axios
-      .get("http://localhost:5173/dev/user/getCurrentUser", {})
-      // .post("http://localhost:8081/dev/user/getCurrentUser", {})
-      .then((data) => {
-        console.log(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  if (localStorage['user'] != null) {
+    login.user = JSON.parse(localStorage['user']);
+    login.loginState = true;
+  } else {
+    login.loginState = false;
+  }
 })
 </script>
 
@@ -222,8 +288,8 @@ onMounted(() => {
             </el-menu-item>
 
             <div class="flex-grow"/>
-            <el-menu-item index="6" v-if="!login.loginState" @click="showLoginPage = true">登录</el-menu-item>
-            <el-menu-item index="6" v-else style="border-bottom: 0">
+            <el-menu-item index="6" v-show="!login.loginState" @click="showLoginPage = true">登录</el-menu-item>
+            <el-menu-item index="6" v-show="login.loginState" style="border-bottom: 0">
               <!--              <div id="userAvatarDiv" class="personal_info"-->
               <!--                   style="width: 76px; height: 76px; z-index: 10; position: absolute">-->
               <!--                <el-avatar :size="36"-->
@@ -237,7 +303,7 @@ onMounted(() => {
               <!--              @mouseout="userAvatarDown"-->
               <div>
                 <el-card @mouseover="cardHover=true" @mouseout="cardHover=false" id="userCard"
-                         style="width: 300px; position: fixed; top: 65px; right: 155px; z-index: 1;
+                         style="width: 300px; position: fixed; top: 65px; right: 115px; z-index: 1;
                          border-radius: 10px; visibility: hidden; cursor: default; line-height: normal">
 
                   <div style="height: 20px"></div>
@@ -267,7 +333,7 @@ onMounted(() => {
                       <div style="display: inline-flex;margin-top: 10px">
                         <el-image style="width: 20px; height: 20px; margin-left: 20px" :src="exit" :fit="'fill'"/>
                       </div>
-                      <div class="listItemFont" style="display: inline-flex">
+                      <div class="listItemFont" style="display: inline-flex" @click="exitLogin">
                         退出登录
                       </div>
                     </div>
@@ -319,6 +385,12 @@ onMounted(() => {
         </div>
       </div>
 
+      <div style="margin-top: 20px">
+        <el-alert v-show="successRegister" title="注册成功" type="success" show-icon/>
+        <el-alert v-show="affirmPasswordError" title="用户名已存在或两次密码不一致" type="error" show-icon/>
+        <el-alert v-show="userPasswordError" title="用户名或密码错误" type="error" show-icon/>
+      </div>
+
       <div style="width: 60%; margin-left: 20%; margin-top: 60px">
         <div style="">
           <el-input v-model="handleUser.userAccount" placeholder="">
@@ -331,6 +403,13 @@ onMounted(() => {
           <el-input v-model="handleUser.userPassword" placeholder="">
             <template #prepend>
               <div style="font-size: 15px; color: #555555">密&nbsp;&nbsp;&nbsp;码</div>
+            </template>
+          </el-input>
+        </div>
+        <div style="margin-top: 20px" v-show="!login_button">
+          <el-input v-model="handleUser.userAffirmPassword" placeholder="">
+            <template #prepend>
+              <div style="font-size: 15px; color: #555555">确认密码</div>
             </template>
           </el-input>
         </div>

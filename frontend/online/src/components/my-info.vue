@@ -46,7 +46,7 @@ const affirmModifyInfo = () => {
 
   <!--  <div style="font-size: 30px; text-align: left; margin-left: 20px">我的信息</div>-->
   <div style="background-color: #f0f0f0; height: calc(100vh - 60px)">
-    <div style="width: 70%; background-image: url('http://8.140.143.119:8000/images/2024/02/01/live_background.webp');
+    <div style="width: 70%; background-image: url('https://img2.imgtp.com/2024/02/06/3Et6amP8.webp');
               margin-left: 15%; height: 180px; text-align: left; border-radius: 2px">
       <div style="display: inline-flex; margin-left: 75px; margin-top: 100px">
         <el-avatar :size="64" style=""

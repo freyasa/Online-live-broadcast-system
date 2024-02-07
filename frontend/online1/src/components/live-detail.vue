@@ -30,4 +30,56 @@
     function stuEmitSch(){
         $bus.emit('schEvent',name);
     }
+
+    <h2>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>2.模板语法</title>
+        <!-- <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.7.0/vue.js"></script> -->
+        <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.js"></script>
+    </head>
+
+    <body>
+        <div id="root">
+            <h2>Number+1:{{number + 1}}</h2>
+            <h2>字符串倒转:{{ mess.split('').reverse().join()}}</h2>
+            <h3>今天的天气:{{ isHot ? '炎热' : '凉爽' }}</h3>
+            <button v-on:click="changeWeather">切换天气</button>
+        </div>
+
+        <script>
+            let {createApp,ref} = Vue;
+             createApp({
+            //     data(){
+            //         return {
+            //             number:10,
+            //             mess:'Hello,World~',
+            //             isHot:true
+            //         }
+            //     },
+            //     methods:{
+            //         changeWeather(){
+            //             this.isHot = !this.isHot
+            //         },
+            //     },
+            // }).mount('#root')
+            setup() {
+                let number = 10;
+                let mess = 'Hello,World';
+                let isHot = ref(true) ;
+                function changeWeather(){
+                        isHot.value = !isHot.value
+                    }
+                return {
+                number,mess,isHot,changeWeather
+                }
+            }
+        }).mount('#root')
+        </script>
+    </body>
+    </html>
+    </h2>
 </script>

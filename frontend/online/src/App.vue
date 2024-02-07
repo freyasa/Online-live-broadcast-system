@@ -231,13 +231,40 @@ window.setInterval(displayControl, 100)
 onMounted(() => {
   if (localStorage['user'] != null && localStorage['user'] != '') {
     login.user = JSON.parse(localStorage['user']);
-    login.loginState = true;
-    loginState.value = true;
+    let token = login.user.token;
+    axios
+        .get("http://localhost:5173/dev/user/getCurrentUser",
+            {
+              headers: {
+                authorization: token,
+              }
+            })
+        .then((data) => {
+          // console.log("data.data");
+          // console.log(data.data);
+          login.user.uuid = data.data.data.uuid;
+          login.user.userAccount = data.data.data.useraccount;
+          login.user.userName = data.data.data.username;
+          login.user.userSex = data.data.data.usersex;
+          login.user.userAge = data.data.data.userage;
+          login.user.userAvatar = data.data.data.useravatar;
+          login.user.userEmail = data.data.data.useremail;
+          login.user.userSignature = data.data.data.userSignature;
+          login.loginState = true;
+          loginState.value = true;
+          localStorage['user'] = JSON.stringify(login.user);
+        })
+        .catch((err) => {
+          console.log(err);
+          login.loginState = false;
+          loginState.value = false;
+        })
   } else {
     login.loginState = false;
     loginState.value = false;
   }
-  console.log(login.user)
+  // console.log("login.user")
+  // console.log(login.user)
 })
 </script>
 
@@ -403,14 +430,14 @@ onMounted(() => {
           </el-input>
         </div>
         <div style="margin-top: 40px">
-          <el-input v-model="handleUser.userPassword" placeholder="">
+          <el-input v-model="handleUser.userPassword" placeholder="" show-password>
             <template #prepend>
               <div style="font-size: 15px; color: #555555">密&nbsp;&nbsp;&nbsp;码</div>
             </template>
           </el-input>
         </div>
         <div style="margin-top: 20px" v-show="!login_button">
-          <el-input v-model="handleUser.userAffirmPassword" placeholder="">
+          <el-input v-model="handleUser.userAffirmPassword" placeholder="" show-password>
             <template #prepend>
               <div style="font-size: 15px; color: #555555">确认密码</div>
             </template>

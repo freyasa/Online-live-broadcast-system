@@ -29,7 +29,7 @@ export default defineConfig({
                 rewrite: (path) => path//.replace(/^\/images/, '')
             },
             '/dev': {
-                target: 'http://localhost:8080/.',	//实际请求地址
+                target: 'http://8.140.143.119:8080/.',	//实际请求地址
                 changeOrigin: true,
                 rewrite: (path) => path//.replace(/^\/images/, '')
             },

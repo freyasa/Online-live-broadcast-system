@@ -4,6 +4,10 @@ import User from "../global/vo/User";
 import {ref} from "vue";
 import {genFileId} from 'element-plus'
 import type {UploadInstance, UploadProps, UploadRawFile} from 'element-plus'
+import axios from "axios";
+import {defaultAvatar} from "../global/static/base64Template";
+import {ElMessage} from 'element-plus'
+
 
 const upload = ref<UploadInstance>()
 let showPasswordError = ref(false);
@@ -33,17 +37,17 @@ const preModifyInfo = () => {
 
 
 const getBase64 = (file) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let reader = new FileReader();
     let imgResult = "";
     reader.readAsDataURL(file);
-    reader.onload = function() {
+    reader.onload = function () {
       imgResult = reader.result;
     };
-    reader.onerror = function(error) {
+    reader.onerror = function (error) {
       reject(error);
     };
-    reader.onloadend = function() {
+    reader.onloadend = function () {
       resolve(imgResult);
     };
   });
@@ -61,7 +65,7 @@ const getFile = (file) => {
   if (!isLt5M) {
     console.log('上传图片大小不能超过 5MB!');
   }
-  if((isJPG || isPNG) && isLt5M){
+  if ((isJPG || isPNG) && isLt5M) {
     getBase64(file.raw).then(res => {
       modifyUser.value.userAvatar = res;
     });
@@ -80,6 +84,7 @@ const cancelModifyInfo = () => {
     modifyElement[i].style.display = 'none';
   }
 }
+
 const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.clearFiles()
   const file = files[0] as UploadRawFile
@@ -96,10 +101,80 @@ const affirmModifyAvatar = (options) => {
 const affirmModifyInfo = () => {
   // upload.value!.submit()
   // console.log(upload.value)
+  axios
+      .post("http://localhost:5173/dev/user/updateBaseInfo", {
+            uuid: login.user.uuid,
+            username: modifyUser.value.userName,
+            usersex: parseInt(modifyUser.value.userSex),
+            userage: modifyUser.value.userAge,
+            useravatar: modifyUser.value.userAvatar,
+            useremail: modifyUser.value.userEmail,
+            userSignature: modifyUser.value.userSignature
+          },
+          {
+            headers: {
+              authorization: login.user.token,
+            }
+          })
+      .then((data) => {
+        console.log(data.data);
+        login.user.userSex = modifyUser.value.userSex;
+        login.user.userAge = modifyUser.value.userAge;
+        login.user.userAvatar = modifyUser.value.userAvatar;
+        login.user.userEmail = modifyUser.value.userEmail;
+        login.user.userSignature = modifyUser.value.userSignature;
+        ElMessage({
+          message: '更新成功',
+          type: 'success',
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        ElMessage.error('更新失败');
+      })
 }
 
 const affirmModifyPwd = () => {
-  showPasswordError
+  // let modifyPassword = ref({
+  //   oldPassword: '',
+  //   newPassword: '',
+  //   checkPassword: ''
+  // })
+  if (modifyPassword.value.newPassword === modifyPassword.value.checkPassword) {
+    axios
+        .post("http://localhost:5173/dev/user/updatePsw", {
+              oldPassword: modifyPassword.value.oldPassword,
+              newPassword: modifyPassword.value.newPassword,
+              checkPassword: modifyPassword.value.checkPassword
+            },
+            {
+              headers: {
+                authorization: login.user.token,
+              }
+            })
+        .then((data) => {
+          console.log(data.data);
+          if (data.data.code === 202) {
+            ElMessage.error('新密码过于简单');
+          } else if(data.data.code ===200){
+            ElMessage({
+              message: '更新成功',
+              type: 'success',
+            });
+          }
+          else {
+            ElMessage.error('请重新登录');
+            login.loginState = false;
+            login.user = {};
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          ElMessage.error('更新失败');
+        })
+  } else {
+    showPasswordError.value = true;
+  }
 }
 </script>
 
@@ -137,7 +212,7 @@ const affirmModifyPwd = () => {
 
         <div class="display">
           <span class="attribute">用户名</span>:
-          <span class="value"> {{ login.user.userAccount }}</span>
+          <span class="value"> {{ login.user.userName }}</span>
         </div>
 
         <div class="display">
@@ -179,9 +254,9 @@ const affirmModifyPwd = () => {
                   <template #trigger>
                     <el-button type="primary">select file</el-button>
                   </template>
-<!--                  <el-button class="ml-3" type="success" @click="affirmModifyAvatar">-->
-<!--                    upload to server-->
-<!--                  </el-button>-->
+                  <!--                  <el-button class="ml-3" type="success" @click="affirmModifyAvatar">-->
+                  <!--                    upload to server-->
+                  <!--                  </el-button>-->
                   <template #tip>
                     <div class="el-upload__tip text-red">
                       limit 1 file, new file will cover the old file
@@ -195,7 +270,7 @@ const affirmModifyPwd = () => {
               <span class="attribute">性别</span>:
               <el-radio-group v-model="modifyUser.userSex">å
                 <el-radio label="1">男</el-radio>
-                <el-radio label="0">女</el-radio>
+                <el-radio label="2">女</el-radio>
               </el-radio-group>
             </div>
 
@@ -234,18 +309,18 @@ const affirmModifyPwd = () => {
           <div class="modify">
             <br/>
             <span class="attribute">旧密码</span>:
-            <el-input v-model="modifyPassword.oldPassword" class="value input"></el-input>
+            <el-input v-model="modifyPassword.oldPassword" class="value input" show-password></el-input>
             <!--          <el-input v-model="modifyUser.userAge" class="value input"></el-input>-->
           </div>
 
           <div class="modify">
             <span class="attribute">新密码</span>:
-            <el-input v-model="modifyPassword.newPassword" class="value input"></el-input>
+            <el-input v-model="modifyPassword.newPassword" class="value input" show-password></el-input>
           </div>
 
           <div class="modify">
             <span class="attribute">确认密码</span>:
-            <el-input v-model="modifyPassword.checkPassword" class="value input"></el-input>
+            <el-input v-model="modifyPassword.checkPassword" class="value input" show-password></el-input>
           </div>
           <div style="margin-left: 100px; margin-top: 20px" class="modify">
             <el-button type="success" @click="affirmModifyPwd">确认修改</el-button>

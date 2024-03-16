@@ -80,7 +80,7 @@ onMounted(()=>{
   </div>
 
   <div style="background-color: #f1f2f3; text-align: center;; margin-top: 30px">
-    <div style="width: 1380px; margin-left: 270px">
+    <div style="width: 1380px; margin-left: calc((100% - 1380px)/2);">
       <div style="width: 100%; text-align: left">
         <span style="padding-left: 10px; font-size: 25px; font-weight: 400">推荐直播</span>
       </div>

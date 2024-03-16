@@ -1,6 +1,8 @@
 package com.niit.onlivestream.config;
 
 
+import com.niit.onlivestream.domain.CommentLog;
+import com.niit.onlivestream.domain.PresentLog;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.Set;
 
 import static com.niit.onlivestream.contant.RedisDataUse.*;
 
@@ -30,6 +33,11 @@ public class RedisConfig {
     private final int db0 = 0;
 
     private final int db1 = 1;
+    private final int db2 = 2;
+
+
+    private final int db_comment = 3;
+
 
     @Bean
     public GenericObjectPoolConfig getPoolConfig(){
@@ -51,7 +59,7 @@ public class RedisConfig {
         config.setHostName(host);
         int port = 6379;
         config.setPort(port);
-        String password = "123456";
+        String password = "arthurevans777";
         config.setPassword(RedisPassword.of(password));
         int timeout = 3;
         LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
@@ -76,6 +84,31 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+
+
+    @NotNull
+    private RedisTemplate<String, CommentLog> getObjectRedisTemplate2() {
+        RedisTemplate<String, CommentLog> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return redisTemplate;
+    }
+
+
+    @NotNull
+    private RedisTemplate<String, Set<CommentLog>> getSetRedisTemplate() {
+        RedisTemplate<String, Set<CommentLog>> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return redisTemplate;
+    }
+
+
+
     /**
      * userToken数据库
      * @return
@@ -94,6 +127,7 @@ public class RedisConfig {
         return new StringRedisTemplate(factory);
     }
 
+
     /**
      * 直播信息数据库
      * @return
@@ -104,14 +138,70 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(this.getFactory(db1));
         return redisTemplate;
     }
+
     @Bean(name = LiveStringRedisTemplate)
     public StringRedisTemplate getRedisTemplate2(){
         RedisConnectionFactory factory = getFactory(db1);
         return new StringRedisTemplate(factory);
     }
 
+    /**
+     *  2号数据库 存储 sessionID 和 房间名
+     */
+    /**
+     * 直播信息数据库
+     * @return
+     */
+    @Bean(name = SocketRedisTemplate)
+    public RedisTemplate<String, Object> redisTemplate3() {
+        RedisTemplate<String, Object> redisTemplate = getObjectRedisTemplate();
+        redisTemplate.setConnectionFactory(this.getFactory(db2));
+        return redisTemplate;
+    }
+    @Bean(name = SocketStringRedisTemplate)
+    public StringRedisTemplate getRedisTemplate3(){
+        RedisConnectionFactory factory = getFactory(db2);
+        return new StringRedisTemplate(factory);
+    }
 
 
+    /**
+     * 评论数据库
+     */
+    @Bean(name = CommentRedisTemplate)
+    public RedisTemplate<String, Set<CommentLog>> setRedisTemplate() {
+        RedisTemplate<String, Set<CommentLog>> redisTemplate = getSetRedisTemplate();
+        redisTemplate.setConnectionFactory(getFactory(db_comment));
+        return redisTemplate;
+    }
+
+
+    @Bean(name = "CommentRedis")
+    public RedisTemplate<String, CommentLog> setRedisTemplate3() {
+        RedisTemplate<String, CommentLog> redisTemplate = getObjectRedisTemplate2();
+        redisTemplate.setConnectionFactory(getFactory(db_comment));
+        return redisTemplate;
+    }
+
+
+    @NotNull
+    private RedisTemplate<String, PresentLog> getObjectRedisTemplate3() {
+        RedisTemplate<String, PresentLog> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return redisTemplate;
+    }
+
+
+    private final static int db_gift=4;
+    @Bean(name = "PresentRedisTemplate")
+    public RedisTemplate<String, PresentLog> redisTemplate4() {
+        RedisTemplate<String, PresentLog> redisTemplate = getObjectRedisTemplate3();
+        redisTemplate.setConnectionFactory(this.getFactory(db_gift));
+        return redisTemplate;
+    }
 
 
 }

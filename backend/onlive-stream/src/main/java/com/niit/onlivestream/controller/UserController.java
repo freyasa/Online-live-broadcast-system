@@ -48,6 +48,7 @@ public class UserController {
      * @param userRegisterRequest 注册请求体
      * @return 用户ID
      */
+    @CrossOrigin
     @PostMapping("/register")
     public BaseResponse<String> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         // 校验
@@ -73,6 +74,7 @@ public class UserController {
      * @param request 保存session
      * @return 脱敏后的用户信息
      */
+    @CrossOrigin
     @PostMapping("/login")
     public BaseResponse<UserLoginResponse> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request){
         if(userLoginRequest==null)
@@ -107,6 +109,7 @@ public class UserController {
      * 根据token
      * @return 得到当前用户信息
      */
+    @CrossOrigin
     @GetMapping("/getCurrentUser")
     public BaseResponse<UserInfo> userLogin(){
         UserInfo user= ThreadLocalUtil.get();
@@ -121,7 +124,7 @@ public class UserController {
      * @param request 基本信息请求
      * @return 更新是否成共
      */
-
+    @CrossOrigin
     @PostMapping("/updateBaseInfo")
     public BaseResponse<String> userRegister(@RequestBody UserChangeInfoRequest request) {
         // 校验
@@ -157,7 +160,7 @@ public class UserController {
         return ResultUtils.success("更新成功");
     }
 
-
+    @CrossOrigin
     @PostMapping("/updatePsw")
     public BaseResponse<String> userChangePsw(@RequestBody UserChangePswRequest request) {
         // 校验

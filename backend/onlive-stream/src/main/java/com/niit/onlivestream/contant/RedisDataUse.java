@@ -10,5 +10,12 @@ public interface RedisDataUse {
 
     public final String LiveStringRedisTemplate = "LiveStringRedisTemplate";
 
+    public final String SocketRedisTemplate = "SocketRedisTemplate";
+
+    public final String SocketStringRedisTemplate = "SocketStringRedisTemplate";
+
+
+    public final String CommentRedisTemplate = "CommentRedisTemplate";
+
 
 }

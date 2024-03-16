@@ -19,7 +19,7 @@ spring:
     redis:
       host: 8.140.143.119
       port: 6379
-      password: 123456
+      password: arthurevans777
       timeout: 3
       database:
         db0: 0

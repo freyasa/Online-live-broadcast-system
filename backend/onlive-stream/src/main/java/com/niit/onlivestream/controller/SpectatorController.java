@@ -32,13 +32,18 @@ public class SpectatorController {
     @Resource(name = LiveRedisTemplate)
     private RedisTemplate<String, Object> liveTemplate;
 
+
+
     @Resource
     private FollowerInfoService followerInfoService;
+
+
 
     /**
      * 关注主播功能
      * @return 是否关注成功
      */
+    @CrossOrigin
     @PostMapping("/follow")
     public BaseResponse<String> followLive(@RequestBody FollowRequest request){
         if(request==null)
@@ -74,6 +79,7 @@ public class SpectatorController {
      * @param frequest 请求
      * @return 信息
      */
+    @CrossOrigin
     @PostMapping("/unfollow")
     public BaseResponse<String> unfollowLive(@RequestBody FollowRequest frequest){
         if(frequest==null)
@@ -97,6 +103,7 @@ public class SpectatorController {
      * @param funRequest  type 类型 uuid 用户ID
      * @return 关注的主播信息  或者 被关注的粉丝信息
      */
+    @CrossOrigin
     @PostMapping("getFunInfo")
     public BaseResponse<FunResponse>  getFollowMessage(@RequestBody FunRequest funRequest){
         if(funRequest==null)
@@ -120,6 +127,11 @@ public class SpectatorController {
         return ResultUtils.success(funResponse);
     }
 
+
+
+
+
+    @CrossOrigin
     @PostMapping("/star")
     public BaseResponse<String> starLive(@RequestBody StarRequest request){
         // 校验

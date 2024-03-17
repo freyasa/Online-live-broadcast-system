@@ -98,10 +98,18 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 
 const affirmModifyInfo = () => {
+  console.log({
+    liveid: modifyLiveInfo.value.liveid,
+    uuid: login.user.uuid,
+    roomName: modifyLiveInfo.value.roomname,
+    profile: modifyLiveInfo.value.profile,
+    partitionId: modifyLiveInfo.value.partitionid,
+    roomAvatar: modifyLiveInfo.value.roomAvatar
+  })
   axios
       .post("http://localhost:5173/dev/influencer/updateLive", {
         liveid: modifyLiveInfo.value.liveid,
-        uuid: modifyLiveInfo.value.uuid,
+        uuid: login.user.uuid,
         roomName: modifyLiveInfo.value.roomname,
         profile: modifyLiveInfo.value.profile,
         partitionId: modifyLiveInfo.value.partitionid,

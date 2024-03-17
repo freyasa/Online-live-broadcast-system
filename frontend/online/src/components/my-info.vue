@@ -101,6 +101,7 @@ const affirmModifyAvatar = (options) => {
 const affirmModifyInfo = () => {
   // upload.value!.submit()
   // console.log(upload.value)
+  console.log(modifyUser.value)
   axios
       .post("http://localhost:5173/dev/user/updateBaseInfo", {
             uuid: login.user.uuid,

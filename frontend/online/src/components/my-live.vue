@@ -114,7 +114,30 @@ const affirmModifyInfo = () => {
         profile: modifyLiveInfo.value.profile,
         partitionId: modifyLiveInfo.value.partitionid,
         roomAvatar: modifyLiveInfo.value.roomAvatar
-      },{
+      }, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 201) {
+          ElMessage.error('请重新登录');
+        } else if (data.data.code === 200) {
+
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
+const handleOnLive = () => {
+  axios
+      .post("http://localhost:5173/dev/influencer/startlive", {
+        liveid: liveInfo.value.liveid,
+        uuid: login.user.uuid
+      }, {
         headers: {
           authorization: login.user.token,
         }
@@ -167,7 +190,7 @@ getAllPartition();
               <div style="font-size: 16px; font-weight: 600">直播间地址</div>
               <div style="font-size: 14px">{{ 'http://8.140.143.119/live/' + liveInfo.liveid }}</div>
               <div style="margin-top: 50px">
-                <el-button color="#ff4b98" :dark='false' style="color: #ffffff" @click="console.log('开播')">我要开播
+                <el-button color="#ff4b98" :dark='false' style="color: #ffffff" @click="handleOnLive">我要开播
                 </el-button>
                 <!--/*                <button style="background-color: #ff4b98; color: white; width: 90px; height: 35px; font-size: 13px" @click="console.log('开播')">我要开播</button>*/-->
                 <el-button @click="modifyRoomInfoVisible = true">更改信息</el-button>

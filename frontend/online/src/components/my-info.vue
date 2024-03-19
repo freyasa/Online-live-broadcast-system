@@ -17,6 +17,7 @@ let modifyPassword = ref({
   newPassword: '',
   checkPassword: ''
 })
+let upFile = ref();
 
 for (let i in modifyUser) {
   modifyUser.value[i] = login.user[i];
@@ -67,7 +68,7 @@ const getFile = (file) => {
   }
   if ((isJPG || isPNG) && isLt5M) {
     getBase64(file.raw).then(res => {
-      modifyUser.value.userAvatar = res;
+      // modifyUser.value.userAvatar = res;
     });
   }
 }
@@ -98,41 +99,73 @@ const affirmModifyAvatar = (options) => {
   console.log(upload.value)
 }
 
+const handleChange = (file, fileList) => {
+  console.log(file, fileList)
+  upFile.value = file.raw
+}
+
 const affirmModifyInfo = () => {
   // upload.value!.submit()
   // console.log(upload.value)
-  console.log(modifyUser.value)
-  axios
-      .post("http://localhost:5173/dev/user/updateBaseInfo", {
-            uuid: login.user.uuid,
-            username: modifyUser.value.userName,
-            usersex: parseInt(modifyUser.value.userSex),
-            userage: modifyUser.value.userAge,
-            useravatar: modifyUser.value.userAvatar,
-            useremail: modifyUser.value.userEmail,
-            userSignature: modifyUser.value.userSignature
-          },
-          {
-            headers: {
-              authorization: login.user.token,
-            }
-          })
-      .then((data) => {
-        console.log(data.data);
-        login.user.userSex = modifyUser.value.userSex;
-        login.user.userAge = modifyUser.value.userAge;
-        login.user.userAvatar = modifyUser.value.userAvatar;
-        login.user.userEmail = modifyUser.value.userEmail;
-        login.user.userSignature = modifyUser.value.userSignature;
-        ElMessage({
-          message: '更新成功',
-          type: 'success',
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        ElMessage.error('更新失败');
-      })
+
+  let fd = new FormData();
+  fd.append("uuid", login.user.uuid);       //附件类型
+  fd.append("username", modifyUser.value.userName);       //附件类型
+  fd.append("usersex", parseInt(String(modifyUser.value.userSex)));       //附件类型
+  fd.append("userage", modifyUser.value.userAge);       //附件类型
+  fd.append("photo", upFile.value);       //附件类型
+  fd.append("useremail", modifyUser.value.userEmail);       //附件类型
+  fd.append("userSignature", modifyUser.value.userSignature);       //附件类型
+
+  console.log(fd)
+  console.log(upFile.value)
+
+  let config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'authorization': login.user.token,
+    }
+  }
+
+  axios.post('http://localhost:5173/dev/user/updateBaseInfo', fd, config).then(data => {
+    console.log(data.data)
+  }).catch(data => {
+    console.log(data)
+  })
+
+
+  // console.log(modifyUser.value)
+  // axios
+  //     .post("http://localhost:5173/dev/user/updateBaseInfo", {
+  //           uuid: login.user.uuid,
+  //           username: modifyUser.value.userName,
+  //           usersex: parseInt(modifyUser.value.userSex),
+  //           userage: modifyUser.value.userAge,
+  //           useravatar: modifyUser.value.userAvatar,
+  //           useremail: modifyUser.value.userEmail,
+  //           userSignature: modifyUser.value.userSignature
+  //         },
+  //         {
+  //           headers: {
+  //             authorization: login.user.token,
+  //           }
+  //         })
+  //     .then((data) => {
+  //       console.log(data.data);
+  //       login.user.userSex = modifyUser.value.userSex;
+  //       login.user.userAge = modifyUser.value.userAge;
+  //       login.user.userAvatar = modifyUser.value.userAvatar;
+  //       login.user.userEmail = modifyUser.value.userEmail;
+  //       login.user.userSignature = modifyUser.value.userSignature;
+  //       ElMessage({
+  //         message: '更新成功',
+  //         type: 'success',
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       ElMessage.error('更新失败');
+  //     })
 }
 
 const affirmModifyPwd = () => {
@@ -247,8 +280,8 @@ const affirmModifyPwd = () => {
                     class="upload-demo"
                     action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
                     :limit="1"
-                    :on-change="getFile"
-                    :on-exceed="handleExceed"
+                    :on-change="handleChange"
+                    :on-exceed="handleChange"
                     :http-request="affirmModifyAvatar"
                     :auto-upload="false"
                 >

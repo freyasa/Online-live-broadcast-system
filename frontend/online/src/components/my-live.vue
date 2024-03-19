@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import axios from "axios";
 import {login} from "../global/global";
 import {ElMessage, genFileId, UploadProps, UploadRawFile} from 'element-plus'
@@ -17,6 +17,7 @@ const modifyLiveInfo = ref({
 });
 const liveInfo = ref(new LiveInfo());
 
+let upFile = ref();
 
 const setLength = () => {
   inputNumber.value = inputBarrage.value === '' ? 0 : inputBarrage.value.length
@@ -97,39 +98,70 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.handleStart(file)
 }
 
-const affirmModifyInfo = () => {
-  console.log({
-    liveid: modifyLiveInfo.value.liveid,
-    uuid: login.user.uuid,
-    roomName: modifyLiveInfo.value.roomname,
-    profile: modifyLiveInfo.value.profile,
-    partitionId: modifyLiveInfo.value.partitionid,
-    roomAvatar: modifyLiveInfo.value.roomAvatar
-  })
-  axios
-      .post("http://localhost:5173/dev/influencer/updateLive", {
-        liveid: modifyLiveInfo.value.liveid,
-        uuid: login.user.uuid,
-        roomName: modifyLiveInfo.value.roomname,
-        profile: modifyLiveInfo.value.profile,
-        partitionId: modifyLiveInfo.value.partitionid,
-        roomAvatar: modifyLiveInfo.value.roomAvatar
-      }, {
-        headers: {
-          authorization: login.user.token,
-        }
-      })
-      .then((data) => {
-        console.log(data.data);
-        if (data.data.code === 201) {
-          ElMessage.error('请重新登录');
-        } else if (data.data.code === 200) {
+const handleChange = (file, fileList) => {
+  console.log(file, fileList)
+  upFile.value = file.raw
+}
 
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+const affirmModifyInfo = () => {
+  // console.log({
+  //   liveid: modifyLiveInfo.value.liveid,
+  //   uuid: login.user.uuid,
+  //   roomName: modifyLiveInfo.value.roomname,
+  //   profile: modifyLiveInfo.value.profile,
+  //   partitionId: modifyLiveInfo.value.partitionid,
+  //   roomAvatar: modifyLiveInfo.value.roomAvatar
+  // })
+
+  let fd = new FormData();
+  fd.append("liveId", modifyLiveInfo.value.liveid);       //附件类型
+  fd.append("uuid", login.user.uuid);       //附件类型
+  fd.append("roomName", modifyLiveInfo.value.roomname);       //附件类型
+  fd.append("profile", modifyLiveInfo.value.profile);       //附件类型
+  fd.append("partitionId", modifyLiveInfo.value.partitionid);       //附件类型
+  fd.append("roomAvatar", upFile.value);       //附件类型
+
+  console.log(1)
+
+  let config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'authorization': login.user.token,
+
+    }
+  }
+
+  axios.post('http://localhost:5173/dev/influencer/updateLive', fd, config).then(data => {
+    console.log(data.data)
+  }).catch(data => {
+    console.log(data)
+  })
+
+
+  // axios
+  //     .post("http://localhost:5173/dev/influencer/updateLive", {
+  //       liveid: modifyLiveInfo.value.liveid,
+  //       uuid: login.user.uuid,
+  //       roomName: modifyLiveInfo.value.roomname,
+  //       profile: modifyLiveInfo.value.profile,
+  //       partitionId: modifyLiveInfo.value.partitionid,
+  //       roomAvatar: modifyLiveInfo.value.roomAvatar
+  //     }, {
+  //       headers: {
+  //         authorization: login.user.token,
+  //       }
+  //     })
+  //     .then((data) => {
+  //       console.log(data.data);
+  //       if (data.data.code === 201) {
+  //         ElMessage.error('请重新登录');
+  //       } else if (data.data.code === 200) {
+  //
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
 }
 
 const handleOnLive = () => {
@@ -160,9 +192,47 @@ const getAllPartition = () => {
 
 }
 
+//这里后端接口需要用登录的用户id，通过session获取
+// const userInfo = getSessStorage("userInfo") as { userId: string };
+const userInfo = null;
+// WebSocket
+const ws = ref();
+const initWebSocket = () => {
+  ws.value = new WebSocket('ws://localhost:8080/dev/live');
+  ws.value.onopen = () => {
+    console.log("连接成功");
+  };
+  //后端设置心跳，会每间隔一定时间，触发一次，根据内容变化处理逻辑
+  ws.value.onmessage = (e: any) => {
+    console.log(e, "广播返回的消息");
+    //后端约定了，如果返回字符串“UPDATE”，就更新表格
+    if (e.data === "UPDATE") {
+      console.log(123)
+    }
+  };
+  ws.value.onerror = () => {
+    console.log("连接错误");
+    //断连后每5秒重连一次
+    setTimeout(() => {
+      initWebSocket();
+    }, 5000);
+  };
+};
 
-getLiveRoomInfo();
-getAllPartition();
+//关闭链接（在页面销毁时销毁连接）
+const closeWebSocket = () => {
+  ws.value.close();
+};
+
+onMounted(() => {
+  getLiveRoomInfo();
+  getAllPartition();
+  initWebSocket();
+})
+
+onUnmounted(() => {
+  closeWebSocket();
+});
 
 </script>
 
@@ -274,8 +344,9 @@ getAllPartition();
                     class="upload-demo"
                     action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
                     :limit="1"
-                    :on-change="getFile"
-                    :on-exceed="handleExceed"
+                    :data="uploadData"
+                    :on-change="handleChange"
+                    :on-exceed="handleChange"
                     :http-request="affirmModifyAvatar"
                     :auto-upload="false"
                 >

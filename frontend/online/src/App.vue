@@ -263,6 +263,7 @@ onMounted(() => {
     login.loginState = false;
     loginState.value = false;
   }
+  console.log(login.user.userAvatar)
   // console.log("login.user")
   // console.log(login.user)
 })

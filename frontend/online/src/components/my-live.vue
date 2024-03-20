@@ -4,7 +4,12 @@ import axios from "axios";
 import {login} from "../global/global";
 import {ElMessage, genFileId, UploadProps, UploadRawFile} from 'element-plus'
 import LiveInfo from "../global/vo/LiveInfo";
+import flvjs from "flv.js";
+import {flatMap} from "_@volar_typescript@1.11.1@@volar/typescript/lib/typescript/core";
+import {useRoute, useRouter} from "vue-router";
 
+const route = useRoute();
+const router = useRouter();
 const inputBarrage = ref('');
 const modifyRoomInfoVisible = ref(false);
 const modifyLiveInfo = ref({
@@ -17,10 +22,32 @@ const modifyLiveInfo = ref({
 });
 const liveInfo = ref(new LiveInfo());
 
+let flvPlayer = ref();
 let upFile = ref();
-
+let inputNumber = ref(0);
+let commentList = ref([]);
+let isLive = ref(false);
 const setLength = () => {
   inputNumber.value = inputBarrage.value === '' ? 0 : inputBarrage.value.length
+}
+
+const createVideo = (url, elementId) => {
+  if (flvjs.isSupported()) {
+    let videoElement = document.getElementById(elementId);
+    flvPlayer.value = flvjs.createPlayer({
+      type: "flv",
+      enableWorker: true, //浏览器端开启flv.js的worker,多进程运行flv.js
+      isLive: true, //直播模式
+      hasAudio: false, //关闭音频
+      hasVideo: true,
+      stashInitialSize: 128,
+      enableStashBuffer: true, //播放flv时，设置是否启用播放缓存，只在直播起作用。
+      url: url,
+    });
+    flvPlayer.value.attachMediaElement(videoElement);
+    flvPlayer.value.load();
+    flvPlayer.value.play();
+  }
 }
 
 const getLiveRoomInfo = () => {
@@ -48,6 +75,8 @@ const getLiveRoomInfo = () => {
           liveInfo.value.roomAvatar = data.data.data.roomAvatar;
           liveInfo.value.roomname = data.data.data.roomname;
           liveInfo.value.uuid = data.data.data.uuid;
+          initWebSocket();
+          getCurrentLiveByLiveId();
         }
       })
       .catch((err) => {
@@ -121,13 +150,10 @@ const affirmModifyInfo = () => {
   fd.append("partitionId", modifyLiveInfo.value.partitionid);       //附件类型
   fd.append("roomAvatar", upFile.value);       //附件类型
 
-  console.log(1)
-
   let config = {
     headers: {
       'Content-Type': 'multipart/form-data',
       'authorization': login.user.token,
-
     }
   }
 
@@ -179,7 +205,39 @@ const handleOnLive = () => {
         if (data.data.code === 201) {
           ElMessage.error('请重新登录');
         } else if (data.data.code === 200) {
+          ElMessage({
+            message: '开播成功',
+            type: 'success',
+          })
+          isLive.value = true;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=' + liveInfo.value.liveid, "videoLive");
+}
 
+const handleOffLive = () => {
+  axios
+      .post("http://localhost:5173/dev/influencer/endlive", {
+        liveid: liveInfo.value.liveid,
+        uuid: login.user.uuid
+      }, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 201) {
+          ElMessage.error('请重新登录');
+        } else if (data.data.code === 200) {
+          ElMessage({
+            message: '下播成功',
+            type: 'success',
+          })
+          isLive.value = false;
         }
       })
       .catch((err) => {
@@ -192,23 +250,78 @@ const getAllPartition = () => {
 
 }
 
+const getCurrentLive = () => {
+  axios
+      .get("http://localhost:5173/dev/influencer/getRoomInfo?uuid=" + login.user.uuid)
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 201) {
+          ElMessage.error('请重新登录');
+        } else if (data.data.code === 200) {
+          liveInfo.value.liveid = data.data.data.liveid;
+          liveInfo.value.partitionid = data.data.data.partitionid;
+          liveInfo.value.profile = data.data.data.profile;
+          liveInfo.value.roomAvatar = data.data.data.roomAvatar;
+          liveInfo.value.roomname = data.data.data.roomname;
+          liveInfo.value.uuid = data.data.data.uuid;
+          getCurrentLiveByLiveId();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
+const getCurrentLiveByLiveId = () => {
+  axios
+      .get("http://localhost:5173/dev/influencer/findIslive?liveID=" + liveInfo.value.liveid, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 201) {
+          isLive.value = false;
+        } else if (data.data.code === 200) {
+          isLive.value = true;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
 //这里后端接口需要用登录的用户id，通过session获取
 // const userInfo = getSessStorage("userInfo") as { userId: string };
 const userInfo = null;
-// WebSocket
+
+
 const ws = ref();
 const initWebSocket = () => {
-  ws.value = new WebSocket('ws://localhost:8080/dev/live');
+  ws.value = new WebSocket('ws://8.140.143.119:8080/dev/live');
   ws.value.onopen = () => {
     console.log("连接成功");
+    // console.log({
+    //   type: 'JOIN',
+    //   chatRoom: modifyLiveInfo.value.liveid,
+    //   userName: login.user.userName,
+    //   userId: login.user.uuid,
+    // })
+    ws.value.send(JSON.stringify({
+      'type': 'JOIN',
+      'chatRoom': modifyLiveInfo.value.liveid,
+      'userName': login.user.userName,
+      'userId': login.user.uuid,
+    }))
   };
+
   //后端设置心跳，会每间隔一定时间，触发一次，根据内容变化处理逻辑
   ws.value.onmessage = (e: any) => {
-    console.log(e, "广播返回的消息");
-    //后端约定了，如果返回字符串“UPDATE”，就更新表格
-    if (e.data === "UPDATE") {
-      console.log(123)
-    }
+    console.log(e.data);
+    let res = JSON.parse(e.data);
+    if (res.type === 'CHAT')
+      commentList.value.push({userName: res.userName, content: res.content})
   };
   ws.value.onerror = () => {
     console.log("连接错误");
@@ -224,10 +337,42 @@ const closeWebSocket = () => {
   ws.value.close();
 };
 
+const sendMessage = () => {
+  console.log({
+    'type': 'CHAT',
+    // chatRoom: modifyLiveInfo.value.liveid,
+    'userName': login.user.userName,
+    'content': inputBarrage.value,
+    // userId: login.user.uuid,
+  });
+  ws.value.send(JSON.stringify({
+    type: 'CHAT',
+    chatRoom: modifyLiveInfo.value.liveid,
+    userName: login.user.userName,
+    content: inputBarrage.value,
+    userId: login.user.uuid,
+  }))
+  inputBarrage.value = '';
+  inputNumber.value = 0;
+}
+
+const sendGift = () => {
+  ws.value.send(JSON.stringify({
+    type: 'GIFT',
+    chatRoom: modifyLiveInfo.value.liveid,
+    userName: login.user.userName,
+    userId: login.user.uuid,
+    giftId: ''
+  }))
+  inputBarrage.value = '';
+  inputNumber.value = 0;
+}
+
 onMounted(() => {
   getLiveRoomInfo();
   getAllPartition();
-  initWebSocket();
+  // initWebSocket();
+  // createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=' + liveInfo.value.liveid, "videoLive");
 })
 
 onUnmounted(() => {
@@ -260,7 +405,11 @@ onUnmounted(() => {
               <div style="font-size: 16px; font-weight: 600">直播间地址</div>
               <div style="font-size: 14px">{{ 'http://8.140.143.119/live/' + liveInfo.liveid }}</div>
               <div style="margin-top: 50px">
-                <el-button color="#ff4b98" :dark='false' style="color: #ffffff" @click="handleOnLive">我要开播
+                <el-button v-show="!isLive" color="#ff4b98" :dark='false' style="color: #ffffff" @click="handleOnLive">
+                  我要开播
+                </el-button>
+                <el-button v-show="isLive" color="#ff4b98" :dark='false' style="color: #ffffff" @click="handleOffLive">
+                  我要下播
                 </el-button>
                 <!--/*                <button style="background-color: #ff4b98; color: white; width: 90px; height: 35px; font-size: 13px" @click="console.log('开播')">我要开播</button>*/-->
                 <el-button @click="modifyRoomInfoVisible = true">更改信息</el-button>
@@ -275,21 +424,15 @@ onUnmounted(() => {
 
             <div style="height: 340px; width: 280px; padding: 5px 10px 5px 10px">
 
-              <el-scrollbar max-height="560px" style="overflow: auto">
+              <el-scrollbar max-height="560px" style="overflow: auto; text-align: left">
                 <ul
                     style="background-color: white; height: 100%; width: 280px; margin: 0; padding: 0;">
                   <!--                    v-infinite-scroll="loadBarrage"-->
-                  <li>
+                  <li v-for="(item, index) in commentList" :key="index">
                     <div style="padding: 5px; font-size: 14px">
-                      <span style="color: #9499A0">发送者：</span>
-                      <span style="color: #61666D">消息内容</span>
-                    </div>
-                  </li>
-                  <li v-for="i in 100" :key="i">
-                    <div style="padding: 5px; font-size: 14px">
-                      <span style="color: #9499A0">发送者：</span>
+                      <span style="color: #9499A0">{{ item.userName }}</span>：
                       <span
-                          style="color: #61666D">消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容</span>
+                          style="color: #61666D">{{ item.content }}</span>
                     </div>
                   </li>
                 </ul>
@@ -306,13 +449,15 @@ onUnmounted(() => {
                       outline:none; wrap:hard; box-shadow: inset 0 0 0 rgba(0,0,0,0.5);"
               maxlength="20"
               placeholder="发个弹幕呗～"
-              @keyup="setLength()"
+              @keyup="setLength"
           />
-                <div style="position:relative; left:220px; bottom:23px; font-size:12px; color:#999999">
+                <div style="position:relative; left:100px; bottom:23px; font-size:12px; color:#999999">
                   {{ inputNumber + " / 20" }}
                 </div>
               </div>
-              <el-button type="primary" size="small" style="margin-left: 210px; margin-top: 8px">&nbsp;&nbsp;&nbsp;发送&nbsp;&nbsp;&nbsp;</el-button>
+              <el-button type="primary" size="small" style="margin-left: 210px; margin-top: 8px" @click="sendMessage">
+                &nbsp;&nbsp;&nbsp;发送&nbsp;&nbsp;&nbsp;
+              </el-button>
             </div>
           </el-card>
 
@@ -378,4 +523,49 @@ onUnmounted(() => {
 .modify {
   line-height: 2.5;
 }
+
+
+/*//全屏按钮*/
+/*video::-webkit-media-controls-fullscreen-button {*/
+/*  display: none;*/
+/*}*/
+
+/*//播放按钮*/
+/*video::-webkit-media-controls-play-button {*/
+/*  display: none;*/
+/*}*/
+
+/*//进度条*/
+video::-webkit-media-controls-timeline {
+  display: none;
+}
+
+/*//观看的当前时间*/
+video::-webkit-media-controls-current-time-display {
+  display: none;
+}
+
+/*//剩余时间*/
+video::-webkit-media-controls-time-remaining-display {
+  display: none;
+}
+
+/*//音量按钮*/
+/*video::-webkit-media-controls-mute-button {*/
+/*  display: none;*/
+/*}*/
+
+/*video::-webkit-media-controls-toggle-closed-captions-button {*/
+/*  display: none;*/
+/*}*/
+
+/*//音量的控制条*/
+/*video::-webkit-media-controls-volume-slider {*/
+/*  display: none;*/
+/*}*/
+
+/*//所有控件*/
+/*video::-webkit-media-controls-enclosure {*/
+/*  display: none;*/
+/*}*/
 </style>

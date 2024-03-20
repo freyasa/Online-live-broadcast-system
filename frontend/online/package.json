@@ -12,6 +12,7 @@
     "@vitejs/plugin-legacy": "^5.3.0",
     "axios": "^1.6.7",
     "element-plus": "^2.4.4",
+    "flv.js": "^1.6.2",
     "terser": "^5.27.0",
     "vue": "^3.3.11",
     "vue-class-component": "^7.2.6",

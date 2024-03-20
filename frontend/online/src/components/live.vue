@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 //------------import-----------------
 // import global from "../global/global";
-import {ref, reactive, toRefs, unref} from 'vue'
-import {ClickOutside as vClickOutside} from 'element-plus'
+import {ref, reactive, toRefs, unref, onMounted, onUnmounted} from 'vue'
+import {ClickOutside as vClickOutside, ElMessage} from 'element-plus'
 import {presentTemplate, battery} from "../global/static/base64Template";
 import {rank1, rank2, rank3} from "../global/static/base64Template";
 import {login} from "../global/global";
+import axios from "axios";
+import {useRoute, useRouter} from "vue-router";
 
 //------------variable-----------------
 const inputBarrage = ref('')
@@ -13,7 +15,14 @@ const inputNumber = ref(0)
 const barrageCount = ref(10)
 const url = ref(presentTemplate)
 const batteryUrl = ref(battery)
+const route = useRoute();
+const router = useRouter();
 
+let liveInfo = ref({});
+let commentList = ref([]);
+let followVisable = ref(true);
+let allPartition = ref([]);
+let allGift = ref([]);
 //------------function-----------------
 // 滑到底请求一下
 const loadBarrage = () => {
@@ -33,13 +42,127 @@ const recharge = () => {
   console.log('recharge')
 }
 
-const isLogin = () => {
-  if (login.loginState) {
+const ws = ref();
+const initWebSocket = () => {
+  ws.value = new WebSocket('ws://8.140.143.119:8080/dev/live');
+  ws.value.onopen = () => {
+    console.log("连接成功");
+    console.log({
+      'type': 'JOIN',
+      'chatRoom': route.params.liveId,
+      'userName': login.user.userName,
+      'userId': login.user.uuid,
+    })
+    ws.value.send(JSON.stringify({
+      'type': 'JOIN',
+      'chatRoom': route.params.liveId,
+      'userName': login.user.userName,
+      'userId': login.user.uuid,
+    }))
+  };
 
-  }
+  //后端设置心跳，会每间隔一定时间，触发一次，根据内容变化处理逻辑
+  ws.value.onmessage = (e: any) => {
+    console.log(e.data);
+    let res = JSON.parse(e.data);
+    if (res.type === 'CHAT')
+      commentList.value.push({userName: res.userName, content: res.content})
+  };
+  ws.value.onerror = () => {
+    console.log("连接错误");
+    //断连后每5秒重连一次
+    setTimeout(() => {
+      initWebSocket();
+    }, 5000);
+  };
+};
+
+//关闭链接（在页面销毁时销毁连接）
+const closeWebSocket = () => {
+  ws.value.close();
+};
+
+const sendMessage = () => {
+  // console.log({
+  //   type: 'CHAT',
+  //   chatRoom: route.params.liveId,
+  //   userName: login.user.userName,
+  //   content: inputBarrage.value,
+  //   userId: login.user.uuid,
+  // });
+  ws.value.send(JSON.stringify({
+    type: 'CHAT',
+    chatRoom: route.params.liveId,
+    userName: login.user.userName,
+    content: inputBarrage.value,
+    userId: login.user.uuid,
+  }))
+  inputBarrage.value = '';
+  inputNumber.value = 0;
 }
 
+const sendGift = () => {
+  ws.value.send(JSON.stringify({
+    type: 'GIFT',
+    chatRoom: liveInfo.value.liveid,
+    userName: login.user.userName,
+    userId: login.user.uuid,
+    giftId: ''
+  }))
+  inputBarrage.value = '';
+  inputNumber.value = 0;
+}
 
+const getCurrentLive = () => {
+  axios
+      .get("http://localhost:5173/dev/influencer/live?liveID=" + route.params.liveId, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          liveInfo.value.userName = data.data.data.userName;
+          liveInfo.value.userSignature = data.data.data.userSignature;
+          liveInfo.value.age = data.data.data.age;
+          liveInfo.value.sex = data.data.data.sex;
+          liveInfo.value.liveid = data.data.data.roomforeignid;
+          liveInfo.value.partitionid = data.data.data.partitionid;
+          liveInfo.value.profile = data.data.data.profile;
+          liveInfo.value.roomAvatar = data.data.data.roomAvatar;
+          liveInfo.value.userAvatar = data.data.data.userAvatar;
+          liveInfo.value.roomname = data.data.data.roomname;
+          if (data.data.data.partitionid === 999)
+            liveInfo.value.partition = '无分区'
+          else
+            liveInfo.value.partition = allPartition.value[data.data.data.partitionid];
+          initWebSocket();
+          console.log(liveInfo.value)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  axios
+      .get("http://localhost:5173/dev/influencer/findIslive?liveID=" + route.params.liveId, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 201) {
+          ElMessage.error(data.data.description);
+        } else if (data.data.code === 200) {
+          initWebSocket();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
 
 // const buttonRef = ref()
 // const popoverRef = ref()
@@ -47,9 +170,54 @@ const isLogin = () => {
 //   unref(popoverRef).popperRef?.delayHide?.()
 // }
 
+const getAllPartition = () => {
+  axios
+      .get("http://localhost:5173/dev/partition/info", {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          allPartition.value = data.data.data;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
+const getAllGift = () => {
+  axios
+      .get("http://localhost:5173/dev/gift/info", {
+        headers: {
+          authorization: login.user.token,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          allGift.value = data.data.data;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
 
 
 //------------setup-----------------
+onMounted(() => {
+  getCurrentLive();
+  getAllPartition();
+  getAllGift();
+})
+
+onUnmounted(() => {
+  closeWebSocket();
+});
 
 </script>
 
@@ -61,19 +229,24 @@ const isLogin = () => {
                style="width: 1189px; height: 880px; min-height: 732px; min-width: 920px; margin-right: 10px; padding: 0">
         <div style="height: 100px; width: 100%; text-align: left; display: inline-flex">
           <div style="margin-top: 18px; margin-left: 18px">
-            <el-avatar :size="64" :src="circleUrl"/>
+            <el-avatar :size="64" :src="liveInfo.userAvatar"/>
           </div>
           <div style="margin-left: 18px">
             <div style="margin-top: 20px">
-              <span style="font-size: 18px; color: black">{{ '直播间名称' + $route.params.liveId }}</span>
+              <span style="font-size: 18px; color: black">{{ liveInfo.roomname }}</span>
             </div>
             <div style="display:inline-flex; margin-top: 10px">
               <div>
-                <span style="font-size: 16px; color:#4f4f4f;">{{ '用户名' }}</span>
+                <span style="font-size: 16px; color:#4f4f4f;">{{ liveInfo.userName }}</span>
               </div>
 
               <div style="margin-left: 20px">
-                <span style="color:#7f7f7f;">{{ '分区' }}</span>
+                <span style="color:#7f7f7f;">{{ liveInfo.partition }}</span>
+              </div>
+
+              <div style="margin-left: 850px">
+                <el-button type="primary" size="small" v-show="followVisable">关注</el-button>
+                <el-button type="primary" size="small" v-show="!followVisable">取消关注</el-button>
               </div>
             </div>
           </div>
@@ -95,7 +268,7 @@ const isLogin = () => {
 
           <div
               style="height: 104px; width: 80px; margin-top: 15px; text-align: center; cursor:pointer; margin-right: 20px"
-              @click="recharge()">
+              @click="recharge">
             <div style="height: 50px; width: 50px; margin-right: 15px; background-color: #fef7e4; border-radius: 50%;">
               <el-image style="width: 30px; height: 30px; margin-top: 10px" :src="batteryUrl" :fit="fit"/>
             </div>
@@ -107,24 +280,13 @@ const isLogin = () => {
           <el-divider direction="vertical"/>
 
           <div style="height: 104px; width: 80px; margin-top: 15px; text-align: center; cursor:pointer"
-               @click="sendPresent(this)">
+               @click="sendPresent(this)" v-for="(item, index) in allGift">
             <div style="height: 50px; width: 50px; margin-right: 15px">
-              <el-image style="width: 50px; height: 50px" :src="url" :fit="fit"/>
+              <el-image style="width: 50px; height: 50px" :src="item.presentavatar" :fit="fit"/>
             </div>
             <div style="width: 80px; height: 17px">
-              <div style="margin-top: 2px; font-size: 12px; color: #18191c">{{ '小花花' }}</div>
-              <div style="font-size: 12px; color: #9499a0">{{ '1电池' }}</div>
-            </div>
-          </div>
-
-          <div style="height: 104px; width: 80px; margin-top: 15px; text-align: center; cursor:pointer"
-               @click="sendPresent(this)">
-            <div style="height: 50px; width: 50px; margin-right: 15px">
-              <el-image style="width: 50px; height: 50px" :src="url" :fit="fit"/>
-            </div>
-            <div style="width: 80px; height: 17px">
-              <div style="margin-top: 2px; font-size: 12px; color: #18191c">{{ '小花花' }}</div>
-              <div style="font-size: 12px; color: #9499a0">{{ '1电池' }}</div>
+              <div style="margin-top: 2px; font-size: 12px; color: #18191c">{{ item.name }}</div>
+              <div style="font-size: 12px; color: #9499a0">{{  item.value + '电池' }}</div>
             </div>
           </div>
 
@@ -132,32 +294,18 @@ const isLogin = () => {
       </el-card>
 
       <el-card class="box-card" style="width: 300px; height: 880px">
-        <div style="height: 178px; width: 100%; text-align: center" ref="buttonRef" v-click-outside="onClickOutside">
+        <div style="height: 178px; width: 100%; text-align: center" ref="buttonRef">
           <div style="font-size: 14px; font-weight: 560; padding-top: 10px">高能用户</div>
 
-          <!--          <el-popover-->
-          <!--              ref="popoverRef"-->
-          <!--              :virtual-ref="buttonRef"-->
-          <!--              trigger="click"-->
-          <!--              title="With title"-->
-          <!--              virtual-triggering-->
-          <!--              :width="300"-->
-          <!--              :teleported="false"-->
-          <!--              :popper-style="{  }"-->
-          <!--              :show-arrow="false"-->
-          <!--              :offset="-179"-->
-          <!--          >-->
-          <!--            <span>asdasdasdasd</span>-->
-          <!--          </el-popover>-->
           <div style="margin-top: 12px">
 
             <div style="width: 100%; height: 42px; display: inline-flex">
               <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit" />
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit"/>
               </div>
 
               <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
-                <el-avatar :size="36" :src="circleUrl" />
+                <el-avatar :size="36" :src="circleUrl"/>
               </div>
 
               <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
@@ -171,11 +319,11 @@ const isLogin = () => {
 
             <div style="width: 100%; height: 42px; display: inline-flex">
               <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank2" :fit="fit" />
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank2" :fit="fit"/>
               </div>
 
               <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
-                <el-avatar :size="36" :src="circleUrl" />
+                <el-avatar :size="36" :src="circleUrl"/>
               </div>
 
               <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
@@ -189,11 +337,11 @@ const isLogin = () => {
 
             <div style="width: 100%; height: 42px; display: inline-flex">
               <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank3" :fit="fit" />
+                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank3" :fit="fit"/>
               </div>
 
               <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
-                <el-avatar :size="36" :src="circleUrl" />
+                <el-avatar :size="36" :src="circleUrl"/>
               </div>
 
               <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
@@ -214,16 +362,11 @@ const isLogin = () => {
           <el-scrollbar max-height="560px" style="overflow: auto">
             <ul v-infinite-scroll="loadBarrage"
                 style="background-color: white; height: 100%; width: 280px; margin: 0; padding: 0;">
-              <li>
+
+              <li v-for="(item, index) in commentList" :key="index">
                 <div style="padding: 5px; font-size: 14px">
-                  <span style="color: #9499A0">发送者：</span>
-                  <span style="color: #61666D">消息内容</span>
-                </div>
-              </li>
-              <li v-for="i in barrageCount" :key="i">
-                <div style="padding: 5px; font-size: 14px">
-                  <span style="color: #9499A0">发送者：</span>
-                  <span style="color: #61666D">消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容</span>
+                  <span style="color: #9499A0">{{ item.userName }}：</span>
+                  <span style="color: #61666D">{{ item.content }}</span>
                 </div>
               </li>
             </ul>
@@ -246,7 +389,7 @@ const isLogin = () => {
               {{ inputNumber + " / 20" }}
             </div>
           </div>
-          <el-button type="primary" size="small" style="margin-left: 210px; margin-top: 8px">&nbsp;&nbsp;&nbsp;发送&nbsp;&nbsp;&nbsp;</el-button>
+          <el-button type="primary" size="small" style="margin-left: 210px; margin-top: 8px" @click="sendMessage">&nbsp;&nbsp;&nbsp;发送&nbsp;&nbsp;&nbsp;</el-button>
         </div>
       </el-card>
     </div>
@@ -254,7 +397,7 @@ const isLogin = () => {
       <span style="font-size: 20px; margin-left: 20px">简介</span>
       <el-card class="box-card" style="width: 100%; height: 75%; margin-top: 5px; text-align: center">
 
-        <span class="box">{{ '这里是直播间简介' }}</span>
+        <span class="box">{{ liveInfo.profile }}</span>
       </el-card>
     </div>
   </div>
@@ -318,4 +461,19 @@ const isLogin = () => {
 //.el-tooltip__popper[x-placement^=top] .el-popper__arrow {
 //  border-top-color: blue;
 //}
+
+/*//进度条*/
+video::-webkit-media-controls-timeline {
+  display: none;
+}
+
+/*//观看的当前时间*/
+video::-webkit-media-controls-current-time-display {
+  display: none;
+}
+
+/*//剩余时间*/
+video::-webkit-media-controls-time-remaining-display {
+  display: none;
+}
 </style>

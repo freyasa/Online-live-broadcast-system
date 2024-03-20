@@ -3,6 +3,7 @@
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
 import {onMounted,onUnmounted} from 'vue'
+import flvjs from "flv.js";
 
 //------------variable-----------------
 const router = useRouter();
@@ -10,7 +11,7 @@ const recommendCarouselLiveId = ref(0)
 const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg')
 
 let lastSelectRecommendCarousel = null;
-
+let flvPlayer = ref();
 
 //------------function-----------------
 const toPagePath = (url: string) => {
@@ -19,6 +20,26 @@ const toPagePath = (url: string) => {
     path: url,
   });
 };
+
+const createVideo = (url, elementId) => {
+  if (flvjs.isSupported()) {
+    let videoElement = document.getElementById(elementId);
+    flvPlayer.value = flvjs.createPlayer({
+      type: "flv",
+      enableWorker: true, //浏览器端开启flv.js的worker,多进程运行flv.js
+      isLive: true, //直播模式
+      hasAudio: false, //关闭音频
+      hasVideo: true,
+      stashInitialSize: 128,
+      enableStashBuffer: true, //播放flv时，设置是否启用播放缓存，只在直播起作用。
+      url: url,
+    });
+    console.log(flvPlayer)
+    flvPlayer.value.attachMediaElement(videoElement);
+    flvPlayer.value.load();
+    flvPlayer.value.play();
+  }
+}
 
 const toRecommendCarousel = (context, index) => {
   const docu = document.getElementById('recommend_carousel' + index);
@@ -37,11 +58,17 @@ const toRecommendCarousel = (context, index) => {
   // console.log(context.target.style.border);
 }
 
+const getPartition = () => {
+
+}
+
 
 //------------setup-----------------
 onMounted(()=>{
   lastSelectRecommendCarousel = document.getElementById('recommend_carousel0');
   lastSelectRecommendCarousel.style.backgroundColor = '#61ace9'
+  createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=17',"videoLive")
+
 })
 
 
@@ -150,5 +177,20 @@ onMounted(()=>{
     transform: scale(1.1);
   }
 }
+
+video::-webkit-media-controls-timeline {
+  display: none;
+}
+
+/*//观看的当前时间*/
+video::-webkit-media-controls-current-time-display {
+  display: none;
+}
+
+/*//剩余时间*/
+video::-webkit-media-controls-time-remaining-display {
+  display: none;
+}
+
 
 </style>

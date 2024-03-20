@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {login} from "../global/global";
 import User from "../global/vo/User";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {genFileId} from 'element-plus'
 import type {UploadInstance, UploadProps, UploadRawFile} from 'element-plus'
 import axios from "axios";
@@ -19,10 +19,10 @@ let modifyPassword = ref({
 })
 let upFile = ref();
 
-for (let i in modifyUser) {
-  modifyUser.value[i] = login.user[i];
-  // console.log(modifyUser[i])
-}
+// for (let i in modifyUser) {
+//   modifyUser.value[i] = login.user[i];
+//   // console.log(modifyUser[i])
+// }
 
 const preModifyInfo = () => {
   const displayElement = document.getElementsByClassName('display')
@@ -129,6 +129,12 @@ const affirmModifyInfo = () => {
 
   axios.post('http://localhost:5173/dev/user/updateBaseInfo', fd, config).then(data => {
     console.log(data.data)
+    if (data.data.code === 200) {
+      ElMessage({
+        message: '更新成功',
+        type: 'success',
+      });
+    }
   }).catch(data => {
     console.log(data)
   })
@@ -168,6 +174,41 @@ const affirmModifyInfo = () => {
   //     })
 }
 
+const getCurrentUser = () => {
+  let token = login.user.token;
+  axios
+      .get("http://localhost:5173/dev/user/getCurrentUser",
+          {
+            headers: {
+              authorization: token,
+            }
+          })
+      .then((data) => {
+        // console.log("data.data");
+        // console.log(data.data);
+        login.user.uuid = data.data.data.uuid;
+        login.user.userAccount = data.data.data.useraccount;
+        login.user.userName = data.data.data.username;
+        login.user.userSex = data.data.data.usersex;
+        login.user.userAge = data.data.data.userage;
+        login.user.userAvatar = data.data.data.useravatar;
+        login.user.userEmail = data.data.data.useremail;
+        login.user.userSignature = data.data.data.userSignature;
+
+        modifyUser.value.uuid = data.data.data.uuid;
+        modifyUser.value.userAccount = data.data.data.useraccount;
+        modifyUser.value.userName = data.data.data.username;
+        modifyUser.value.userSex = data.data.data.usersex;
+        modifyUser.value.userAge = data.data.data.userage;
+        modifyUser.value.userAvatar = data.data.data.useravatar;
+        modifyUser.value.userEmail = data.data.data.useremail;
+        modifyUser.value.userSignature = data.data.data.userSignature;
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+}
+
 const affirmModifyPwd = () => {
   // let modifyPassword = ref({
   //   oldPassword: '',
@@ -190,13 +231,12 @@ const affirmModifyPwd = () => {
           console.log(data.data);
           if (data.data.code === 202) {
             ElMessage.error('新密码过于简单');
-          } else if(data.data.code ===200){
+          } else if (data.data.code === 200) {
             ElMessage({
               message: '更新成功',
               type: 'success',
             });
-          }
-          else {
+          } else {
             ElMessage.error('请重新登录');
             login.loginState = false;
             login.user = {};
@@ -210,6 +250,11 @@ const affirmModifyPwd = () => {
     showPasswordError.value = true;
   }
 }
+
+onMounted(() => {
+  getCurrentUser();
+})
+
 </script>
 
 <template>
@@ -224,7 +269,7 @@ const affirmModifyPwd = () => {
               margin-left: 15%; height: 180px; text-align: left; border-radius: 2px">
       <div style="display: inline-flex; margin-left: 75px; margin-top: 100px">
         <el-avatar :size="64" style=""
-                   :src="login.user.userAvatar"
+                   :src="modifyUser.userAvatar"
         />
         <div style="color: white; font-weight: 600; line-height: 64px; margin-left: 20px; font-size: 20px">
           {{ login.user.username }}

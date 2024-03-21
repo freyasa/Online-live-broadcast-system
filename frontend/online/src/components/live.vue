@@ -35,7 +35,26 @@ const setLength = () => {
 }
 
 const sendPresent = (obj) => {
-  // console.log(obj.value)
+  console.log({
+    type: "GIFT",
+    chatRoom: route.params.liveId,
+    userId: login.user.uuid,
+    userName:login.user.userName,
+    giftId: obj.id,
+    giftName:obj.name,
+    giftValue:obj.value,
+    giftProfile:obj.illustration
+  })
+  ws.value.send(JSON.stringify({
+    type: "GIFT",
+    chatRoom: route.params.liveId,
+    userId: login.user.uuid,
+    userName:login.user.userName,
+    giftId: obj.id,
+    giftName:obj.name,
+    giftValue:obj.value,
+    giftProfile:obj.illustration
+  }))
 }
 
 const recharge = () => {
@@ -63,10 +82,13 @@ const initWebSocket = () => {
 
   //后端设置心跳，会每间隔一定时间，触发一次，根据内容变化处理逻辑
   ws.value.onmessage = (e: any) => {
-    console.log(e.data);
     let res = JSON.parse(e.data);
+    console.log(res);
     if (res.type === 'CHAT')
-      commentList.value.push({userName: res.userName, content: res.content})
+      commentList.value.push({type: 'chat', userName: res.userName, content: res.content})
+    else if (res.type === 'GIFT') {
+      commentList.value.push({type: 'gift', giftName: res.giftName, userName: res.userName})
+    }
   };
   ws.value.onerror = () => {
     console.log("连接错误");
@@ -101,17 +123,17 @@ const sendMessage = () => {
   inputNumber.value = 0;
 }
 
-const sendGift = () => {
-  ws.value.send(JSON.stringify({
-    type: 'GIFT',
-    chatRoom: liveInfo.value.liveid,
-    userName: login.user.userName,
-    userId: login.user.uuid,
-    giftId: ''
-  }))
-  inputBarrage.value = '';
-  inputNumber.value = 0;
-}
+// const sendGift = () => {
+//   ws.value.send(JSON.stringify({
+//     type: 'GIFT',
+//     chatRoom: liveInfo.value.liveid,
+//     userName: login.user.userName,
+//     userId: login.user.uuid,
+//     giftId: ''
+//   }))
+//   inputBarrage.value = '';
+//   inputNumber.value = 0;
+// }
 
 const getCurrentLive = () => {
   axios
@@ -280,7 +302,7 @@ onUnmounted(() => {
           <el-divider direction="vertical"/>
 
           <div style="height: 104px; width: 80px; margin-top: 15px; text-align: center; cursor:pointer"
-               @click="sendPresent(this)" v-for="(item, index) in allGift">
+               @click="sendPresent(item)" v-for="(item, index) in allGift">
             <div style="height: 50px; width: 50px; margin-right: 15px">
               <el-image style="width: 50px; height: 50px" :src="item.presentavatar" :fit="fit"/>
             </div>
@@ -364,9 +386,15 @@ onUnmounted(() => {
                 style="background-color: white; height: 100%; width: 280px; margin: 0; padding: 0;">
 
               <li v-for="(item, index) in commentList" :key="index">
-                <div style="padding: 5px; font-size: 14px">
+                <div style="padding: 5px; font-size: 14px" v-show="item.type === 'chat'">
                   <span style="color: #9499A0">{{ item.userName }}：</span>
                   <span style="color: #61666D">{{ item.content }}</span>
+                </div>
+
+                <div style="padding: 5px; font-size: 14px" v-show="item.type === 'gift'">
+<!--                  <span style="color: #9499A0">{{ item.userName }}：</span>-->
+<!--                  <span style="color: #61666D">{{ item.content }}</span>-->
+                  <div style="border-radius: 8px; background-color: #efefef; color: black; text-align: center">{{item.userName + '送出了' + item.giftName}}</div>
                 </div>
               </li>
             </ul>

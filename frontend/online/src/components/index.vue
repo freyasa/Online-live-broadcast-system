@@ -2,8 +2,10 @@
 //------------import-----------------
 import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
-import {onMounted,onUnmounted} from 'vue'
+import {onMounted, onUnmounted} from 'vue'
 import flvjs from "flv.js";
+import axios from "_axios@1.6.7@axios";
+import {login} from "../global/global";
 
 //------------variable-----------------
 const router = useRouter();
@@ -12,6 +14,8 @@ const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21aff
 
 let lastSelectRecommendCarousel = null;
 let flvPlayer = ref();
+let recommendCarouselList = ref([]);
+let recommendLiveList = ref([]);
 
 //------------function-----------------
 const toPagePath = (url: string) => {
@@ -41,7 +45,7 @@ const createVideo = (url, elementId) => {
   }
 }
 
-const toRecommendCarousel = (context, index) => {
+const toRecommendCarousel = (context, index, item) => {
   const docu = document.getElementById('recommend_carousel' + index);
   // console.log(docu); // 输出组件实例
   // console.log(context); // 输出组件实例
@@ -62,13 +66,51 @@ const getPartition = () => {
 
 }
 
+const getRecommendCarousel = () => {
+  axios
+      .get("http://localhost:5173/dev/liveOnline/random?num=" + 5, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          recommendCarouselList.value = data.data.data;
+          lastSelectRecommendCarousel = document.getElementById('recommend_carousel0');
+          lastSelectRecommendCarousel.style.backgroundColor = '#61ace9'
+          console.log(recommendCarouselList.value.length)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
+const getRecommendLive = () => {
+  axios
+      .get("http://localhost:5173/dev/liveOnline/random?num=" + 10, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          recommendLiveList.value = data.data.data;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
 
 //------------setup-----------------
-onMounted(()=>{
-  lastSelectRecommendCarousel = document.getElementById('recommend_carousel0');
-  lastSelectRecommendCarousel.style.backgroundColor = '#61ace9'
-  createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=17',"videoLive")
-
+onMounted(() => {
+  // createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=17', "videoLive")
+  getRecommendCarousel();
+  getRecommendLive();
 })
 
 
@@ -78,7 +120,7 @@ onMounted(()=>{
   <div style="width: 100%; height: 738px;
   background-position: center; text-align: center;
   background-image: url('https://img2.imgtp.com/2024/02/04/4f6cOhwz.jpg')">
-<!--  background-image: url('http://8.140.143.119:8000/images/2024/01/27/pexels-photo-1054218bc2f53a94c640c5d.jpg')">-->
+    <!--  background-image: url('http://8.140.143.119:8000/images/2024/01/27/pexels-photo-1054218bc2f53a94c640c5d.jpg')">-->
     <div style="height: 630px; width: 1342px; display: inline-flex; margin-top: 54px">
       <div style="width: auto; height: 630px">
         <video
@@ -95,13 +137,14 @@ onMounted(()=>{
       <div
           style="width: 220px; height: 630px; margin-left: 12px; border-radius: 5px; background-color: rgba(0, 0, 0, 0.5)">
 
-        <div v-for="(i, index) in 5" :id="'recommend_carousel' + index" :key="i" class="recommend_carousel" @click="toRecommendCarousel($event, index)"
+        <div v-for="(item, index) in recommendCarouselList" :id="'recommend_carousel' + index" :key="index"
+             class="recommend_carousel" @click="toRecommendCarousel($event, index, item)"
              style="width: 200px; height: 110px; margin-top: 13px; margin-left: 10px; margin-right: 10px; border-radius: 5px">
           <div>
-            <el-image style="width: 196px; height: 106px; margin-top: 2px; border-radius: 5px" :src="urlTemplate" :fit="fit"/>
+            <el-image style="width: 196px; height: 106px; margin-top: 2px; border-radius: 5px" :src="item.roomAvatar"
+                      :fit="fit"/>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -111,24 +154,24 @@ onMounted(()=>{
       <div style="width: 100%; text-align: left">
         <span style="padding-left: 10px; font-size: 25px; font-weight: 400">推荐直播</span>
       </div>
-      <el-card class="box-card" @click="toPagePath('/live/' + '1')" style="cursor:pointer" v-for="i in 50" :key="i">
+      <el-card class="box-card" @click="toPagePath('/live/' + item.liveid)" style="cursor:pointer" v-for="(item, index) in recommendLiveList" :key="index">
         <div style="width: 92%; height: 60%; padding-left: 4%; padding-top: 4%">
-          <el-image style="width: 100%; height: 100%; border-radius: 5px"
-                    :src="urlTemplate"
+          <el-image style="width: 253.914px; height: 142.820px; border-radius: 5px"
+                    :src="item.roomAvatar"
                     fit="scale-down"/>
         </div>
         <div style="text-align: left; width: 92%; margin-left: 4%;  display: flex">
-          <el-avatar :size="50" :src="circleUrl" style="margin-top: 2%; margin-left: 1%"/>
+          <el-avatar :size="50" :src="item.avatar" style="margin-top: 2%; margin-left: 1%"/>
           <div style="display: inline-block; margin-left: 15px; margin-top: 2.5%;">
             <div>
-              <span style="font-size: 18px">这里是标题</span>
+              <span style="font-size: 18px">{{ item.roomname }}</span>
             </div>
             <div>
               <span style="font-size: 14px; color: #7f7f7f">这里是用户名</span>
             </div>
           </div>
           <div style="margin-top: 12.5%; margin-left: 17%">
-            <el-button type="primary" size="small">关注</el-button>
+<!--            <el-button type="primary" size="small">关注</el-button>-->
           </div>
         </div>
       </el-card>

@@ -7,6 +7,7 @@ import User from "./global/vo/User";
 import {Search} from '@element-plus/icons-vue'
 import {logo} from "./global/static/base64Template";
 import axios from 'axios'
+import {ElMessage} from "_element-plus@2.5.1@element-plus";
 
 
 const router = useRouter();
@@ -21,6 +22,10 @@ let userPasswordError = ref(false);
 let affirmPasswordError = ref(false);
 let successRegister = ref(false);
 let loginState = ref(false);
+let recommendCarouselList = ref([]);
+let recommendLiveList = ref([]);
+
+
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
   router.push({

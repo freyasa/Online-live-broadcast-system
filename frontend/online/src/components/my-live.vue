@@ -159,6 +159,13 @@ const affirmModifyInfo = () => {
 
   axios.post('http://localhost:5173/dev/influencer/updateLive', fd, config).then(data => {
     console.log(data.data)
+    if (data.data.code === 200) {
+      ElMessage({
+        message: '修改成功',
+        type: 'success',
+      })
+      modifyRoomInfoVisible.value = false;
+    }
   }).catch(data => {
     console.log(data)
   })

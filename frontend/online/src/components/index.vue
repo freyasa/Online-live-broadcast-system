@@ -16,7 +16,7 @@ let lastSelectRecommendCarousel = null;
 let flvPlayer = ref();
 let recommendCarouselList = ref([]);
 let recommendLiveList = ref([]);
-
+let allPartition = ref([]);
 //------------function-----------------
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
@@ -60,10 +60,26 @@ const toRecommendCarousel = (context, index, item) => {
     lastSelectRecommendCarousel.style.backgroundColor = 'transparent'
   lastSelectRecommendCarousel = docu
   // console.log(context.target.style.border);
+  createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=' + item.liveid, "videoLive")
 }
 
 const getPartition = () => {
-
+  axios
+      .get("http://localhost:5173/dev/partition/info", {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          allPartition.value = data.data.data;
+          console.log(allPartition)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 }
 
 const getRecommendCarousel = () => {
@@ -80,6 +96,7 @@ const getRecommendCarousel = () => {
           lastSelectRecommendCarousel = document.getElementById('recommend_carousel0');
           lastSelectRecommendCarousel.style.backgroundColor = '#61ace9'
           console.log(recommendCarouselList.value.length)
+          createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=' + recommendCarouselList.value[0].liveid, "videoLive")
         }
       })
       .catch((err) => {
@@ -108,9 +125,10 @@ const getRecommendLive = () => {
 
 //------------setup-----------------
 onMounted(() => {
-  // createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=17', "videoLive")
+  //
   getRecommendCarousel();
   getRecommendLive();
+  getPartition();
 })
 
 
@@ -141,7 +159,7 @@ onMounted(() => {
              class="recommend_carousel" @click="toRecommendCarousel($event, index, item)"
              style="width: 200px; height: 110px; margin-top: 13px; margin-left: 10px; margin-right: 10px; border-radius: 5px">
           <div>
-            <el-image style="width: 196px; height: 106px; margin-top: 2px; border-radius: 5px" :src="item.roomAvatar"
+            <img style="width: 196px; height: 106px; margin-top: 2px; border-radius: 5px" :src="item.roomAvatar"
                       :fit="fit"/>
           </div>
         </div>
@@ -156,18 +174,17 @@ onMounted(() => {
       </div>
       <el-card class="box-card" @click="toPagePath('/live/' + item.liveid)" style="cursor:pointer" v-for="(item, index) in recommendLiveList" :key="index">
         <div style="width: 92%; height: 60%; padding-left: 4%; padding-top: 4%">
-          <el-image style="width: 253.914px; height: 142.820px; border-radius: 5px"
-                    :src="item.roomAvatar"
-                    fit="scale-down"/>
+          <img style="width: 253.914px; height: 142.820px; border-radius: 5px"
+                    :src="item.roomAvatar"/>
         </div>
         <div style="text-align: left; width: 92%; margin-left: 4%;  display: flex">
-          <el-avatar :size="50" :src="item.avatar" style="margin-top: 2%; margin-left: 1%"/>
+          <el-avatar :size="50" :src="item.userAvatar" style="margin-top: 2%; margin-left: 1%"/>
           <div style="display: inline-block; margin-left: 15px; margin-top: 2.5%;">
             <div>
               <span style="font-size: 18px">{{ item.roomname }}</span>
             </div>
             <div>
-              <span style="font-size: 14px; color: #7f7f7f">这里是用户名</span>
+              <span style="font-size: 14px; color: #7f7f7f">{{item.userName}}</span>
             </div>
           </div>
           <div style="margin-top: 12.5%; margin-left: 17%">

@@ -43,7 +43,15 @@ const defaultRoutes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/show",
+    path: "/show/:partitionId",
+    component: () => import("../../components/live-details.vue"),
+    name: 'show',
+    meta: {
+      title: '房间详情界面'
+    }
+  },
+  {
+    path: "/all",
     component: () => import("../../components/live-details.vue"),
     name: 'show',
     meta: {

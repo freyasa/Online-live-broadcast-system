@@ -24,7 +24,7 @@ let successRegister = ref(false);
 let loginState = ref(false);
 let recommendCarouselList = ref([]);
 let recommendLiveList = ref([]);
-
+let allPartition = ref([]);
 
 const toPagePath = (url: string) => {
   // 这里回调写成对象，方便后面传参 push 写成 replace 不会留下历史记录
@@ -224,6 +224,25 @@ const handleRegister = () => {
   }
 }
 
+const getPartition = () => {
+  axios
+      .get("http://localhost:5173/dev/partition/info", {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          allPartition.value = data.data.data;
+          console.log(allPartition)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
 const exitLogin = () => {
   login.loginState = false;
   loginState.value = false;
@@ -271,6 +290,7 @@ onMounted(() => {
   console.log(login.user.userAvatar)
   // console.log("login.user")
   // console.log(login.user)
+  getPartition();
 })
 </script>
 
@@ -308,20 +328,21 @@ onMounted(() => {
               <!--              <img src="http://localhost:5173/2024/02/04/L57lXrGq.png" style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>-->
             </el-menu-item>
             <el-menu-item index="2" @click="toPagePath('/')">首页</el-menu-item>
-            <el-menu-item index="3">游戏</el-menu-item>
-            <el-menu-item index="4">娱乐</el-menu-item>
-            <el-menu-item index="5">电台</el-menu-item>
-            <el-menu-item index="50" style="margin-left: 150px; width: 600px">
-              <el-input
-                  style=""
-                  v-model="input2"
-                  class="w-100 m-2"
-                  placeholder="Please Input"
-                  :prefix-icon="Search"
-              />
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              <el-button>搜索</el-button>
-            </el-menu-item>
+            <el-menu-item index="3" @click="toPagePath('/')">所有直播</el-menu-item>
+            <div v-for="(item, index) in allPartition" :key="index">
+            <el-menu-item :index="item.id">{{item.name}}</el-menu-item>
+            </div>
+<!--            <el-menu-item index="50" style="margin-left: 150px; width: 600px">-->
+<!--              <el-input-->
+<!--                  style=""-->
+<!--                  v-model="input2"-->
+<!--                  class="w-100 m-2"-->
+<!--                  placeholder="Please Input"-->
+<!--                  :prefix-icon="Search"-->
+<!--              />-->
+<!--              &nbsp;&nbsp;&nbsp;&nbsp;-->
+<!--              <el-button>搜索</el-button>-->
+<!--            </el-menu-item>-->
 
             <div class="flex-grow"/>
             <el-menu-item index="6" v-show="!loginState" @click="showLoginPage = true">登录</el-menu-item>

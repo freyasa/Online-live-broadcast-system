@@ -65,7 +65,7 @@ const toRecommendCarousel = (context, index, item) => {
 
 const getPartition = () => {
   axios
-      .get("http://localhost:5173/dev/partition/info", {
+      .get("http://8.140.143.119:8080/dev/partition/info", {
         headers: {
           authorization: login.user.token,
         }
@@ -84,7 +84,7 @@ const getPartition = () => {
 
 const getRecommendCarousel = () => {
   axios
-      .get("http://localhost:5173/dev/liveOnline/random?num=" + 5, {
+      .get("http://8.140.143.119:8080/dev/liveOnline/random?num=" + 5, {
         headers: {
           authorization: login.user.token,
         }
@@ -106,7 +106,7 @@ const getRecommendCarousel = () => {
 
 const getRecommendLive = () => {
   axios
-      .get("http://localhost:5173/dev/liveOnline/random?num=" + 10, {
+      .get("http://8.140.143.119:8080/dev/liveOnline/random?num=" + 10, {
         headers: {
           authorization: login.user.token,
         }

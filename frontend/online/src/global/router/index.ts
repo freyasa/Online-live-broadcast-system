@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw, createWebHashHistory } from "vue-router";
  
 // 2. 配置路由
 const defaultRoutes: Array<RouteRecordRaw> = [
@@ -52,10 +52,10 @@ const defaultRoutes: Array<RouteRecordRaw> = [
   },
   {
     path: "/all",
-    component: () => import("../../components/live-details.vue"),
-    name: 'show',
+    component: () => import("../../components/all.vue"),
+    name: 'all',
     meta: {
-      title: '房间详情界面'
+      title: '详情界面'
     }
   },
 ];

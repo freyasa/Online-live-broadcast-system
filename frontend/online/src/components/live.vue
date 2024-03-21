@@ -137,7 +137,7 @@ const sendMessage = () => {
 
 const getCurrentLive = () => {
   axios
-      .get("http://localhost:5173/dev/influencer/live?liveID=" + route.params.liveId, {
+      .get("http://8.140.143.119:8080/dev/influencer/live?liveID=" + route.params.liveId, {
         headers: {
           authorization: login.user.token,
         }
@@ -155,10 +155,11 @@ const getCurrentLive = () => {
           liveInfo.value.roomAvatar = data.data.data.roomAvatar;
           liveInfo.value.userAvatar = data.data.data.userAvatar;
           liveInfo.value.roomname = data.data.data.roomname;
+          liveInfo.value.uuid = data.data.data.uuid;
           if (data.data.data.partitionid === 999)
             liveInfo.value.partition = '无分区'
           else
-            liveInfo.value.partition = allPartition.value[data.data.data.partitionid];
+            liveInfo.value.partition = allPartition.value[data.data.data.partitionid].name;
           initWebSocket();
           console.log(liveInfo.value)
         }
@@ -168,7 +169,7 @@ const getCurrentLive = () => {
       });
 
   axios
-      .get("http://localhost:5173/dev/influencer/findIslive?liveID=" + route.params.liveId, {
+      .get("http://8.140.143.119:8080/dev/influencer/findIslive?liveID=" + route.params.liveId, {
         headers: {
           authorization: login.user.token,
         }
@@ -192,9 +193,77 @@ const getCurrentLive = () => {
 //   unref(popoverRef).popperRef?.delayHide?.()
 // }
 
+const getRelation = () => {
+  axios
+      .post("http://8.140.143.119:8080/dev/spectator/getFunInfo",{
+        "uuid": login.user.uuid, //账号ID
+        "type": "关注"
+      }, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          let funInfoList = data.data.data.funInfoList;
+          for (let item in funInfoList) {
+            if (funInfoList[item].uuid ===liveInfo.value.uuid) {
+              followVisable.value = false;
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
+const followAction = () => {
+  axios
+      .post("http://8.140.143.119:8080/dev/spectator/follow", {
+        "spectator": login.user.uuid, //当前用户ID
+        "influencer": liveInfo.value.uuid //主播账户ID
+      }, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          followVisable.value = false;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+const unFollowAction = () => {
+  axios
+      .post("http://8.140.143.119:8080/dev/spectator/unfollow", {
+        "spectator": login.user.uuid, //当前用户ID
+        "influencer": liveInfo.value.uuid //主播账户ID
+      }, {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          followVisable.value = true;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
+
 const getAllPartition = () => {
   axios
-      .get("http://localhost:5173/dev/partition/info", {
+      .get("http://8.140.143.119:8080/dev/partition/info", {
         headers: {
           authorization: login.user.token,
         }
@@ -212,7 +281,7 @@ const getAllPartition = () => {
 
 const getAllGift = () => {
   axios
-      .get("http://localhost:5173/dev/gift/info", {
+      .get("http://8.140.143.119:8080/dev/gift/info", {
         headers: {
           authorization: login.user.token,
           'Access-Control-Allow-Origin': '*'
@@ -235,6 +304,7 @@ onMounted(() => {
   getCurrentLive();
   getAllPartition();
   getAllGift();
+  getRelation();
 })
 
 onUnmounted(() => {
@@ -263,12 +333,12 @@ onUnmounted(() => {
               </div>
 
               <div style="margin-left: 20px">
-                <span style="color:#7f7f7f;">{{ liveInfo.partition }}</span>
+                <span style="color:#7f7f7f;">{{ liveInfo.partition === 999? '无分区' : liveInfo.partition }}</span>
               </div>
 
               <div style="margin-left: 850px">
-                <el-button type="primary" size="small" v-show="followVisable">关注</el-button>
-                <el-button type="primary" size="small" v-show="!followVisable">取消关注</el-button>
+                <el-button type="primary" size="small" v-show="followVisable" @click="followAction">关注</el-button>
+                <el-button type="primary" size="small" v-show="!followVisable" @click="unFollowAction">取消关注</el-button>
               </div>
             </div>
           </div>
@@ -283,7 +353,6 @@ onUnmounted(() => {
               height="100%"
               style="object-fit: fill"
           >
-
           </video>
         </div>
         <div style="height: 115px; width: 100%; display: inline-flex;" dir='rtl'>
@@ -316,70 +385,70 @@ onUnmounted(() => {
       </el-card>
 
       <el-card class="box-card" style="width: 300px; height: 880px">
-        <div style="height: 178px; width: 100%; text-align: center" ref="buttonRef">
-          <div style="font-size: 14px; font-weight: 560; padding-top: 10px">高能用户</div>
+<!--        <div style="height: 178px; width: 100%; text-align: center" ref="buttonRef">-->
+<!--          <div style="font-size: 14px; font-weight: 560; padding-top: 10px">高能用户</div>-->
 
-          <div style="margin-top: 12px">
+<!--          <div style="margin-top: 12px">-->
 
-            <div style="width: 100%; height: 42px; display: inline-flex">
-              <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit"/>
-              </div>
+<!--            <div style="width: 100%; height: 42px; display: inline-flex">-->
+<!--              <div style="width: 24px; height: 16px; margin-left: 9px">-->
+<!--                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank1" :fit="fit"/>-->
+<!--              </div>-->
 
-              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
-                <el-avatar :size="36" :src="circleUrl"/>
-              </div>
+<!--              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">-->
+<!--                <el-avatar :size="36" :src="circleUrl"/>-->
+<!--              </div>-->
 
-              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
-                {{ '用户名' }}
-              </div>
+<!--              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">-->
+<!--                {{ '用户名' }}-->
+<!--              </div>-->
 
-              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">
-                {{ '120' }}
-              </div>
-            </div>
+<!--              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">-->
+<!--                {{ '120' }}-->
+<!--              </div>-->
+<!--            </div>-->
 
-            <div style="width: 100%; height: 42px; display: inline-flex">
-              <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank2" :fit="fit"/>
-              </div>
+<!--            <div style="width: 100%; height: 42px; display: inline-flex">-->
+<!--              <div style="width: 24px; height: 16px; margin-left: 9px">-->
+<!--                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank2" :fit="fit"/>-->
+<!--              </div>-->
 
-              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
-                <el-avatar :size="36" :src="circleUrl"/>
-              </div>
+<!--              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">-->
+<!--                <el-avatar :size="36" :src="circleUrl"/>-->
+<!--              </div>-->
 
-              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
-                {{ '用户名' }}
-              </div>
+<!--              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">-->
+<!--                {{ '用户名' }}-->
+<!--              </div>-->
 
-              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">
-                {{ '12' }}
-              </div>
-            </div>
+<!--              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">-->
+<!--                {{ '12' }}-->
+<!--              </div>-->
+<!--            </div>-->
 
-            <div style="width: 100%; height: 42px; display: inline-flex">
-              <div style="width: 24px; height: 16px; margin-left: 9px">
-                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank3" :fit="fit"/>
-              </div>
+<!--            <div style="width: 100%; height: 42px; display: inline-flex">-->
+<!--              <div style="width: 24px; height: 16px; margin-left: 9px">-->
+<!--                <el-image style="width: 24px; height: 16px; margin-top: 13px" :src="rank3" :fit="fit"/>-->
+<!--              </div>-->
 
-              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">
-                <el-avatar :size="36" :src="circleUrl"/>
-              </div>
+<!--              <div style="width: 36px; height: 36px; margin-top: 3px; margin-left: 10px">-->
+<!--                <el-avatar :size="36" :src="circleUrl"/>-->
+<!--              </div>-->
 
-              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">
-                {{ '用户名' }}
-              </div>
+<!--              <div style="color:#2F3238; font-size: 12px; margin-left: 10px; line-height: 42px">-->
+<!--                {{ '用户名' }}-->
+<!--              </div>-->
 
-              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">
-                {{ '1' }}
-              </div>
-            </div>
-          </div>
-        </div>
+<!--              <div style="color:#000000; font-size: 12px; margin-left: auto; margin-right: 15px; line-height: 42px">-->
+<!--                {{ '1' }}-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
-        <el-divider style="margin: 0"/>
+<!--        <el-divider style="margin: 0"/>-->
 
-        <div style="height: 560px; width: 280px; padding: 5px 10px 5px 10px">
+        <div style="height: 730px; width: 280px; padding: 5px 10px 5px 10px">
 
           <el-scrollbar max-height="560px" style="overflow: auto">
             <ul v-infinite-scroll="loadBarrage"

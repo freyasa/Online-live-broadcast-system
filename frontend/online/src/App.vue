@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 import {ref, reactive, toRefs, onMounted,} from 'vue'
 import {login} from './global/global'
 import {video, mine, exit, defaultAvatar} from "./global/static/base64Template";
@@ -11,6 +11,7 @@ import {ElMessage} from "_element-plus@2.5.1@element-plus";
 
 
 const router = useRouter();
+const route = useRoute();
 let imgHover = false;
 let cardHover = false;
 let cardUp = false;
@@ -159,7 +160,7 @@ const switchPage = () => {
 
 const handleLogin = () => {
   axios
-      .post("http://localhost:5173/dev/user/login", {
+      .post("http://8.140.143.119:8080/dev/user/login", {
         userAccount: handleUser.value.userAccount,
         userPassword: handleUser.value.userPassword,
       })
@@ -196,7 +197,7 @@ const handleRegister = () => {
   console.log(handleUser.value)
   if (handleUser.value.userPassword === handleUser.value.userAffirmPassword) {
     axios
-        .post("http://localhost:5173/dev/user/register", {
+        .post("http://8.140.143.119:8080/dev/user/register", {
           userAccount: handleUser.value.userAccount,
           userPassword: handleUser.value.userPassword,
           checkPassword: handleUser.value.userAffirmPassword
@@ -226,7 +227,7 @@ const handleRegister = () => {
 
 const getPartition = () => {
   axios
-      .get("http://localhost:5173/dev/partition/info", {
+      .get("http://8.140.143.119:8080/dev/partition/info", {
         headers: {
           authorization: login.user.token,
         }
@@ -257,7 +258,7 @@ onMounted(() => {
     login.user = JSON.parse(localStorage['user']);
     let token = login.user.token;
     axios
-        .get("http://localhost:5173/dev/user/getCurrentUser",
+        .get("http://8.140.143.119:8080/dev/user/getCurrentUser",
             {
               headers: {
                 authorization: token,
@@ -323,14 +324,14 @@ onMounted(() => {
             <el-menu-item index="1">
               <el-image fit="fill" :src="logo"
                         style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>
-              <!--              <el-image fit="fill" src="http://localhost:5173/images/2024/01/25/logo_transparent.png"-->
+              <!--              <el-image fit="fill" src="http://8.140.143.119:8080/images/2024/01/25/logo_transparent.png"-->
               <!--              <span style="margin-left: 1em; font-size: 18px"></span>-->
-              <!--              <img src="http://localhost:5173/2024/02/04/L57lXrGq.png" style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>-->
+              <!--              <img src="http://8.140.143.119:8080/2024/02/04/L57lXrGq.png" style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>-->
             </el-menu-item>
             <el-menu-item index="2" @click="toPagePath('/')">首页</el-menu-item>
-            <el-menu-item index="3" @click="toPagePath('/')">所有直播</el-menu-item>
+            <el-menu-item index="3" @click="toPagePath('/all')">所有直播</el-menu-item>
             <div v-for="(item, index) in allPartition" :key="index">
-            <el-menu-item :index="item.id">{{item.name}}</el-menu-item>
+            <el-menu-item @click="toPagePath('/show/' + item.id)" :index="item.id">{{item.name}}</el-menu-item>
             </div>
 <!--            <el-menu-item index="50" style="margin-left: 150px; width: 600px">-->
 <!--              <el-input-->
@@ -410,7 +411,7 @@ onMounted(() => {
 
       <el-main style="padding: 0; text-align: center">
 
-        <router-view></router-view>
+        <router-view :key="route.fullPath"></router-view>
       </el-main>
 
       <el-footer style="padding: 0">

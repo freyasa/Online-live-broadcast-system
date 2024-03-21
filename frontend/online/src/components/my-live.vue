@@ -22,6 +22,7 @@ const modifyLiveInfo = ref({
 });
 const liveInfo = ref(new LiveInfo());
 
+let allPartition = ref([]);
 let flvPlayer = ref();
 let upFile = ref();
 let inputNumber = ref(0);
@@ -52,7 +53,7 @@ const createVideo = (url, elementId) => {
 
 const getLiveRoomInfo = () => {
   axios
-      .get("http://localhost:5173/dev/influencer/getRoomInfo?uuid=" + login.user.uuid, {
+      .get("http://8.140.143.119:8080/dev/influencer/getRoomInfo?uuid=" + login.user.uuid, {
         headers: {
           authorization: login.user.token,
         }
@@ -132,6 +133,25 @@ const handleChange = (file, fileList) => {
   upFile.value = file.raw
 }
 
+const getAllPartitions = () => {
+  axios
+      .get("http://8.140.143.119:8080/dev/partition/info", {
+        headers: {
+          authorization: login.user.token,
+        }
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.data.code === 200) {
+          allPartition.value = data.data.data;
+          console.log(allPartition.value)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
+
 const affirmModifyInfo = () => {
   // console.log({
   //   liveid: modifyLiveInfo.value.liveid,
@@ -157,7 +177,7 @@ const affirmModifyInfo = () => {
     }
   }
 
-  axios.post('http://localhost:5173/dev/influencer/updateLive', fd, config).then(data => {
+  axios.post('http://8.140.143.119:8080/dev/influencer/updateLive', fd, config).then(data => {
     console.log(data.data)
     if (data.data.code === 200) {
       ElMessage({
@@ -172,7 +192,7 @@ const affirmModifyInfo = () => {
 
 
   // axios
-  //     .post("http://localhost:5173/dev/influencer/updateLive", {
+  //     .post("http://8.140.143.119:8080/dev/influencer/updateLive", {
   //       liveid: modifyLiveInfo.value.liveid,
   //       uuid: login.user.uuid,
   //       roomName: modifyLiveInfo.value.roomname,
@@ -199,7 +219,7 @@ const affirmModifyInfo = () => {
 
 const handleOnLive = () => {
   axios
-      .post("http://localhost:5173/dev/influencer/startlive", {
+      .post("http://8.140.143.119:8080/dev/influencer/startlive", {
         liveid: liveInfo.value.liveid,
         uuid: login.user.uuid
       }, {
@@ -227,7 +247,7 @@ const handleOnLive = () => {
 
 const handleOffLive = () => {
   axios
-      .post("http://localhost:5173/dev/influencer/endlive", {
+      .post("http://8.140.143.119:8080/dev/influencer/endlive", {
         liveid: liveInfo.value.liveid,
         uuid: login.user.uuid
       }, {
@@ -254,12 +274,12 @@ const handleOffLive = () => {
 
 //获取所有分区信息
 const getAllPartition = () => {
-
+  getAllPartitions();
 }
 
 const getCurrentLive = () => {
   axios
-      .get("http://localhost:5173/dev/influencer/getRoomInfo?uuid=" + login.user.uuid)
+      .get("http://8.140.143.119:8080/dev/influencer/getRoomInfo?uuid=" + login.user.uuid)
       .then((data) => {
         console.log(data.data);
         if (data.data.code === 201) {
@@ -281,7 +301,7 @@ const getCurrentLive = () => {
 
 const getCurrentLiveByLiveId = () => {
   axios
-      .get("http://localhost:5173/dev/influencer/findIslive?liveID=" + liveInfo.value.liveid, {
+      .get("http://8.140.143.119:8080/dev/influencer/findIslive?liveID=" + liveInfo.value.liveid, {
         headers: {
           authorization: login.user.token,
         }
@@ -487,6 +507,18 @@ onUnmounted(() => {
         <span class="attribute">直播间简介</span>:
         <el-input v-model="modifyLiveInfo.profile" class="value input"></el-input>
       </div>
+
+      <div class="modify">
+        <span class="attribute">直播间分区</span>:
+        <br/>
+        <el-select v-model="modifyLiveInfo.partitionid" placeholder="Select" style="width: 240px">
+          <el-option
+              v-for="item in allPartition"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+          />
+        </el-select>      </div>
 
       <div class="modify">
         <span class="attribute">直播间封面</span>:

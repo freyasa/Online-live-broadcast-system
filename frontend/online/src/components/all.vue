@@ -25,7 +25,7 @@ const switchPage = () => {
 
 const getLiveList = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/liveOnline/page?num=" + currentPage.value + "&size=" + pageSize.value, {
+      .get("http://8.140.143.119:8081/dev/liveOnline/page?num=" + currentPage.value + "&size=" + pageSize.value, {
         headers: {
           authorization: login.user.token,
         }

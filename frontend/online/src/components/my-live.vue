@@ -53,7 +53,7 @@ const createVideo = (url, elementId) => {
 
 const getLiveRoomInfo = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/influencer/getRoomInfo?uuid=" + login.user.uuid, {
+      .get("http://8.140.143.119:8081/dev/influencer/getRoomInfo?uuid=" + login.user.uuid, {
         headers: {
           authorization: login.user.token,
         }
@@ -135,7 +135,7 @@ const handleChange = (file, fileList) => {
 
 const getAllPartitions = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/partition/info", {
+      .get("http://8.140.143.119:8081/dev/partition/info", {
         headers: {
           authorization: login.user.token,
         }
@@ -177,7 +177,7 @@ const affirmModifyInfo = () => {
     }
   }
 
-  axios.post('http://8.140.143.119:8080/dev/influencer/updateLive', fd, config).then(data => {
+  axios.post('http://8.140.143.119:8081/dev/influencer/updateLive', fd, config).then(data => {
     console.log(data.data)
     if (data.data.code === 200) {
       ElMessage({
@@ -192,7 +192,7 @@ const affirmModifyInfo = () => {
 
 
   // axios
-  //     .post("http://8.140.143.119:8080/dev/influencer/updateLive", {
+  //     .post("http://8.140.143.119:8081/dev/influencer/updateLive", {
   //       liveid: modifyLiveInfo.value.liveid,
   //       uuid: login.user.uuid,
   //       roomName: modifyLiveInfo.value.roomname,
@@ -219,7 +219,7 @@ const affirmModifyInfo = () => {
 
 const handleOnLive = () => {
   axios
-      .post("http://8.140.143.119:8080/dev/influencer/startlive", {
+      .post("http://8.140.143.119:8081/dev/influencer/startlive", {
         liveid: liveInfo.value.liveid,
         uuid: login.user.uuid
       }, {
@@ -247,7 +247,7 @@ const handleOnLive = () => {
 
 const handleOffLive = () => {
   axios
-      .post("http://8.140.143.119:8080/dev/influencer/endlive", {
+      .post("http://8.140.143.119:8081/dev/influencer/endlive", {
         liveid: liveInfo.value.liveid,
         uuid: login.user.uuid
       }, {
@@ -279,7 +279,7 @@ const getAllPartition = () => {
 
 const getCurrentLive = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/influencer/getRoomInfo?uuid=" + login.user.uuid)
+      .get("http://8.140.143.119:8081/dev/influencer/getRoomInfo?uuid=" + login.user.uuid)
       .then((data) => {
         console.log(data.data);
         if (data.data.code === 201) {
@@ -301,7 +301,7 @@ const getCurrentLive = () => {
 
 const getCurrentLiveByLiveId = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/influencer/findIslive?liveID=" + liveInfo.value.liveid, {
+      .get("http://8.140.143.119:8081/dev/influencer/findIslive?liveID=" + liveInfo.value.liveid, {
         headers: {
           authorization: login.user.token,
         }
@@ -326,7 +326,7 @@ const userInfo = null;
 
 const ws = ref();
 const initWebSocket = () => {
-  ws.value = new WebSocket('ws://8.140.143.119:8080/dev/live');
+  ws.value = new WebSocket('ws://8.140.143.119:8081/dev/live');
   ws.value.onopen = () => {
     console.log("连接成功");
     // console.log({

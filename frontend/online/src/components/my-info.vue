@@ -127,7 +127,7 @@ const affirmModifyInfo = () => {
     }
   }
 
-  axios.post('http://8.140.143.119:8080/dev/user/updateBaseInfo', fd, config).then(data => {
+  axios.post('http://8.140.143.119:8081/dev/user/updateBaseInfo', fd, config).then(data => {
     console.log(data.data)
     if (data.data.code === 200) {
       ElMessage({
@@ -142,7 +142,7 @@ const affirmModifyInfo = () => {
 
   // console.log(modifyUser.value)
   // axios
-  //     .post("http://8.140.143.119:8080/dev/user/updateBaseInfo", {
+  //     .post("http://8.140.143.119:8081/dev/user/updateBaseInfo", {
   //           uuid: login.user.uuid,
   //           username: modifyUser.value.userName,
   //           usersex: parseInt(modifyUser.value.userSex),
@@ -177,7 +177,7 @@ const affirmModifyInfo = () => {
 const getCurrentUser = () => {
   let token = login.user.token;
   axios
-      .get("http://8.140.143.119:8080/dev/user/getCurrentUser",
+      .get("http://8.140.143.119:8081/dev/user/getCurrentUser",
           {
             headers: {
               authorization: token,
@@ -217,7 +217,7 @@ const affirmModifyPwd = () => {
   // })
   if (modifyPassword.value.newPassword === modifyPassword.value.checkPassword) {
     axios
-        .post("http://8.140.143.119:8080/dev/user/updatePsw", {
+        .post("http://8.140.143.119:8081/dev/user/updatePsw", {
               oldPassword: modifyPassword.value.oldPassword,
               newPassword: modifyPassword.value.newPassword,
               checkPassword: modifyPassword.value.checkPassword

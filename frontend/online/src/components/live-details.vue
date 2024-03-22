@@ -20,7 +20,7 @@ const toPagePath = (url: string) => {
 
 const getLiveList = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/partition/liveInfo?id=" + route.params.partitionId, {
+      .get("http://8.140.143.119:8081/dev/partition/liveInfo?id=" + route.params.partitionId, {
         headers: {
           authorization: login.user.token,
         }

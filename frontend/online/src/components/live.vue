@@ -63,7 +63,7 @@ const recharge = () => {
 
 const ws = ref();
 const initWebSocket = () => {
-  ws.value = new WebSocket('ws://8.140.143.119:8080/dev/live');
+  ws.value = new WebSocket('ws://8.140.143.119:8081/dev/live');
   ws.value.onopen = () => {
     console.log("连接成功");
     console.log({
@@ -137,7 +137,7 @@ const sendMessage = () => {
 
 const getCurrentLive = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/influencer/live?liveID=" + route.params.liveId, {
+      .get("http://8.140.143.119:8081/dev/influencer/live?liveID=" + route.params.liveId, {
         headers: {
           authorization: login.user.token,
         }
@@ -169,7 +169,7 @@ const getCurrentLive = () => {
       });
 
   axios
-      .get("http://8.140.143.119:8080/dev/influencer/findIslive?liveID=" + route.params.liveId, {
+      .get("http://8.140.143.119:8081/dev/influencer/findIslive?liveID=" + route.params.liveId, {
         headers: {
           authorization: login.user.token,
         }
@@ -195,7 +195,7 @@ const getCurrentLive = () => {
 
 const getRelation = () => {
   axios
-      .post("http://8.140.143.119:8080/dev/spectator/getFunInfo",{
+      .post("http://8.140.143.119:8081/dev/spectator/getFunInfo",{
         "uuid": login.user.uuid, //账号ID
         "type": "关注"
       }, {
@@ -221,7 +221,7 @@ const getRelation = () => {
 
 const followAction = () => {
   axios
-      .post("http://8.140.143.119:8080/dev/spectator/follow", {
+      .post("http://8.140.143.119:8081/dev/spectator/follow", {
         "spectator": login.user.uuid, //当前用户ID
         "influencer": liveInfo.value.uuid //主播账户ID
       }, {
@@ -241,7 +241,7 @@ const followAction = () => {
 }
 const unFollowAction = () => {
   axios
-      .post("http://8.140.143.119:8080/dev/spectator/unfollow", {
+      .post("http://8.140.143.119:8081/dev/spectator/unfollow", {
         "spectator": login.user.uuid, //当前用户ID
         "influencer": liveInfo.value.uuid //主播账户ID
       }, {
@@ -263,7 +263,7 @@ const unFollowAction = () => {
 
 const getAllPartition = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/partition/info", {
+      .get("http://8.140.143.119:8081/dev/partition/info", {
         headers: {
           authorization: login.user.token,
         }
@@ -281,7 +281,7 @@ const getAllPartition = () => {
 
 const getAllGift = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/gift/info", {
+      .get("http://8.140.143.119:8081/dev/gift/info", {
         headers: {
           authorization: login.user.token,
           'Access-Control-Allow-Origin': '*'

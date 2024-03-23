@@ -63,7 +63,7 @@ const recharge = () => {
 
 const ws = ref();
 const initWebSocket = () => {
-  ws.value = new WebSocket('ws://8.140.143.119:8081/dev/live');
+  ws.value = new WebSocket('ws://8.140.143.119:8080/dev/live');
   ws.value.onopen = () => {
     console.log("连接成功");
     console.log({
@@ -284,7 +284,6 @@ const getAllGift = () => {
       .get("http://8.140.143.119:8081/dev/gift/info", {
         headers: {
           authorization: login.user.token,
-          'Access-Control-Allow-Origin': '*'
         }
       })
       .then((data) => {
@@ -337,7 +336,7 @@ onUnmounted(() => {
               </div>
 
               <div style="margin-left: 850px">
-                <el-button type="primary" size="small" v-show="followVisable" @click="followAction">关注</el-button>
+                <el-button type="primary" size="small" v-show="followVisable" @click="followAction" :disabled="login.user.uuid === liveInfo.uuid">关注</el-button>
                 <el-button type="primary" size="small" v-show="!followVisable" @click="unFollowAction">取消关注</el-button>
               </div>
             </div>
@@ -450,7 +449,7 @@ onUnmounted(() => {
 
         <div style="height: 730px; width: 280px; padding: 5px 10px 5px 10px">
 
-          <el-scrollbar max-height="560px" style="overflow: auto">
+          <el-scrollbar max-height="730px" style="overflow: auto">
             <ul v-infinite-scroll="loadBarrage"
                 style="background-color: white; height: 100%; width: 280px; margin: 0; padding: 0;">
 

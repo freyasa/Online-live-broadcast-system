@@ -326,7 +326,7 @@ const userInfo = null;
 
 const ws = ref();
 const initWebSocket = () => {
-  ws.value = new WebSocket('ws://8.140.143.119:8081/dev/live');
+  ws.value = new WebSocket('ws://8.140.143.119:8080/dev/live');
   ws.value.onopen = () => {
     console.log("连接成功");
     // console.log({

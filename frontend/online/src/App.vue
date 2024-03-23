@@ -160,7 +160,7 @@ const switchPage = () => {
 
 const handleLogin = () => {
   axios
-      .post("http://8.140.143.119:8080/dev/user/login", {
+      .post("http://8.140.143.119:8081/dev/user/login", {
         userAccount: handleUser.value.userAccount,
         userPassword: handleUser.value.userPassword,
       })
@@ -197,7 +197,7 @@ const handleRegister = () => {
   console.log(handleUser.value)
   if (handleUser.value.userPassword === handleUser.value.userAffirmPassword) {
     axios
-        .post("http://8.140.143.119:8080/dev/user/register", {
+        .post("http://8.140.143.119:8081/dev/user/register", {
           userAccount: handleUser.value.userAccount,
           userPassword: handleUser.value.userPassword,
           checkPassword: handleUser.value.userAffirmPassword
@@ -227,7 +227,7 @@ const handleRegister = () => {
 
 const getPartition = () => {
   axios
-      .get("http://8.140.143.119:8080/dev/partition/info", {
+      .get("http://8.140.143.119:8081/dev/partition/info", {
         headers: {
           authorization: login.user.token,
         }
@@ -258,7 +258,7 @@ onMounted(() => {
     login.user = JSON.parse(localStorage['user']);
     let token = login.user.token;
     axios
-        .get("http://8.140.143.119:8080/dev/user/getCurrentUser",
+        .get("http://8.140.143.119:8081/dev/user/getCurrentUser",
             {
               headers: {
                 authorization: token,
@@ -324,9 +324,9 @@ onMounted(() => {
             <el-menu-item index="1">
               <el-image fit="fill" :src="logo"
                         style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>
-              <!--              <el-image fit="fill" src="http://8.140.143.119:8080/images/2024/01/25/logo_transparent.png"-->
+              <!--              <el-image fit="fill" src="http://8.140.143.119:8081/images/2024/01/25/logo_transparent.png"-->
               <!--              <span style="margin-left: 1em; font-size: 18px"></span>-->
-              <!--              <img src="http://8.140.143.119:8080/2024/02/04/L57lXrGq.png" style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>-->
+              <!--              <img src="http://8.140.143.119:8081/2024/02/04/L57lXrGq.png" style="width: 190px; height: 190px; margin-top: 5px" @click="toPagePath('/')"/>-->
             </el-menu-item>
             <el-menu-item index="2" @click="toPagePath('/')">首页</el-menu-item>
             <el-menu-item index="3" @click="toPagePath('/all')">所有直播</el-menu-item>

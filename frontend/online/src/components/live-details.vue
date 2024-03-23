@@ -48,20 +48,20 @@ onMounted(() => {
       <div style="width: 100%; text-align: left">
 <!--        <span style="padding-left: 10px; font-size: 25px; font-weight: 400">推荐直播</span>-->
       </div>
-      <el-card class="box-card" @click="toPagePath('/live/' + '1')" style="cursor:pointer" v-for="(item, index) in liveList" :key="index">
-        <div style="width: 92%; height: 60%; padding-left: 4%; padding-top: 4%" @click="toPagePath('/live/' + item.liveid)">
+      <el-card class="box-card" @click="toPagePath('/live/' + item.liveid)" style="cursor:pointer" v-for="(item, index) in liveList" :key="index">
+        <div style="width: 92%; height: 60%; padding-left: 4%; padding-top: 4%">
           <img style="width: 253.914px; height: 142.820px; border-radius: 5px"
                     :src="item.roomAvatar"
                     fit="scale-down"/>
         </div>
         <div style="text-align: left; width: 92%; margin-left: 4%;  display: flex">
-          <el-avatar :size="50" :src="circleUrl" style="margin-top: 2%; margin-left: 1%"/>
+          <el-avatar :size="50" :src="item.userAvatar" style="margin-top: 2%; margin-left: 1%"/>
           <div style="display: inline-block; margin-left: 15px; margin-top: 2.5%;">
             <div>
               <span style="font-size: 18px">{{item.roomname}}</span>
             </div>
             <div>
-              <span style="font-size: 14px; color: #7f7f7f">{{item.username}}</span>
+              <span style="font-size: 14px; color: #7f7f7f">{{item.userName}}</span>
             </div>
           </div>
 <!--          <div style="margin-top: 12.5%; margin-left: 17%">-->

@@ -4,7 +4,7 @@ import {useRouter} from "vue-router";
 import {ref, reactive, toRefs,} from 'vue'
 import {onMounted, onUnmounted} from 'vue'
 import flvjs from "flv.js";
-import axios from "_axios@1.6.7@axios";
+import axios from "axios";
 import {login} from "../global/global";
 
 //------------variable-----------------
@@ -12,6 +12,7 @@ const router = useRouter();
 const recommendCarouselLiveId = ref(0)
 const urlTemplate = ref('https://i0.hdslb.com/bfs/archive/5980c275d22dc388c21affad6de81e568b3614a9.jpg')
 
+let selectLive = ref(0);
 let lastSelectRecommendCarousel = null;
 let flvPlayer = ref();
 let recommendCarouselList = ref([]);
@@ -61,6 +62,7 @@ const toRecommendCarousel = (context, index, item) => {
   lastSelectRecommendCarousel = docu
   // console.log(context.target.style.border);
   createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=' + item.liveid, "videoLive")
+  selectLive.value = item.liveid;
 }
 
 const getPartition = () => {
@@ -95,7 +97,8 @@ const getRecommendCarousel = () => {
           recommendCarouselList.value = data.data.data;
           lastSelectRecommendCarousel = document.getElementById('recommend_carousel0');
           lastSelectRecommendCarousel.style.backgroundColor = '#61ace9'
-          console.log(recommendCarouselList.value.length)
+          console.log(recommendCarouselList.value[0])
+          selectLive.value = recommendCarouselList.value[0].liveid;
           createVideo('http://8.140.143.119:8002/live?port=8001&app=live&stream=' + recommendCarouselList.value[0].liveid, "videoLive")
         }
       })
@@ -140,7 +143,7 @@ onMounted(() => {
   background-image: url('https://img2.imgtp.com/2024/02/04/4f6cOhwz.jpg')">
     <!--  background-image: url('http://8.140.143.119:8000/images/2024/01/27/pexels-photo-1054218bc2f53a94c640c5d.jpg')">-->
     <div style="height: 630px; width: 1342px; display: inline-flex; margin-top: 54px">
-      <div style="width: auto; height: 630px">
+      <div style="width: auto; height: 630px" @click="toPagePath('/live/' + selectLive)">
         <video
             id="videoLive"
             crossorigin="anonymous"
